@@ -9,17 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import gj.udacity.capstone.hisab.dummy.DummyContent.DummyItem;
+import gj.udacity.capstone.hisab.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@k OnListFragmentInteractionListener}
  * interface.
  */
 public class FeedFragment extends Fragment {
 
-    private OnListFragmentInteractionListener mListener;
+   // private OnListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -50,7 +50,7 @@ public class FeedFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            //recyclerView.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS));//, mListener));
         }
         return view;
     }
@@ -59,18 +59,20 @@ public class FeedFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        /*
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
+        */
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        //mListener = null;
     }
 
     /**
@@ -82,9 +84,9 @@ public class FeedFragment extends Fragment {
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
-     */
+     *
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
-    }
+    }*/
 }

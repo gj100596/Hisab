@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuHome"
+        android:title="Home"
+        android:icon="@mipmap/ic_launcher"/>
+    <item
+        android:id="@+id/menuSettled"
+        android:title="Settled"
+        android:icon="@mipmap/ic_launcher"/>
+    <item
+
+        android:id="@+id/menuSetting"
+        android:title="Setting"
+        android:icon="@mipmap/ic_launcher"/>
+</menu>
