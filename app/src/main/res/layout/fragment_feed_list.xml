@@ -7,5 +7,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    tools:context="gj.udacity.capstone.hisab.FeedFragment"
+    tools:context="gj.udacity.capstone.hisab.fragment.FeedFragment"
     tools:listitem="@layout/cardview_layout" />

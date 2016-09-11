@@ -1,4 +1,4 @@
-package gj.udacity.capstone.hisab;
+package gj.udacity.capstone.hisab.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import gj.udacity.capstone.hisab.adapter.FeedRecyclerViewAdapter;
+import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.dummy.DummyContent;
 
 /**
