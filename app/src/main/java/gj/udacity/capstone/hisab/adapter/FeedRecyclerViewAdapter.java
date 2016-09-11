@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import gj.udacity.capstone.hisab.fragment.DetailFragment;
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.dummy.DummyContent.DummyItem;
+import gj.udacity.capstone.hisab.fragment.DetailFragment;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
