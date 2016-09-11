@@ -10,4 +10,14 @@
     <string name="dp_temp_name">dp_crop.jpg</string>
     <string name="dp_temp_uncrop_name">dp.jpg</string>
     <string name="user_number_info">Number won\'t be shared. It will only be used when friend shares account status.</string>
+
+    <string name="category">Category</string>
+
+    <string-array name="category_list" >
+        <item>Food</item>
+        <item>Education</item>
+        <item>Party</item>
+        <item>Movie</item>
+        <item>Misc</item>
+    </string-array>
 </resources>

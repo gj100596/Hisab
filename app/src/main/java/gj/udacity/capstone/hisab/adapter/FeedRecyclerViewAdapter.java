@@ -1,5 +1,6 @@
 package gj.udacity.capstone.hisab.adapter;
 
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import gj.udacity.capstone.hisab.fragment.DetailFragment;
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.dummy.DummyContent.DummyItem;
 
@@ -19,17 +21,18 @@ import gj.udacity.capstone.hisab.dummy.DummyContent.DummyItem;
 public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerViewAdapter.ViewHolder> {
 
     private final List<DummyItem> mValues;
-    //private final OnListFragmentInteractionListener mListener;
+    private FragmentActivity context;
 
-    public FeedRecyclerViewAdapter(List<DummyItem> items){//}, OnListFragmentInteractionListener listener) {
+    public FeedRecyclerViewAdapter(List<DummyItem> items,FragmentActivity context){//}, OnListFragmentInteractionListener listener) {
         mValues = items;
+        this.context = context;
        // mListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.cardview_layout, parent, false);
+                .inflate(R.layout.history_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -38,15 +41,16 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
         holder.mItem = mValues.get(position);
         holder.mAmount.setText(mValues.get(position).id);
         holder.mName.setText(mValues.get(position).content);
+        holder.mName.setTag(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }*/
+                context.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.feed, DetailFragment.newInstance(holder.mName.getTag().toString()))
+                        .addToBackStack("Details")
+                        .commit();
             }
         });
     }

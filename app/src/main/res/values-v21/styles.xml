@@ -5,11 +5,4 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
-
-    <style name="DialogSlideAnim" parent="@android:style/Theme.Material.Dialog">
-        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
 </resources>

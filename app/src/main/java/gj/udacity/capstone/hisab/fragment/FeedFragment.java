@@ -52,7 +52,8 @@ public class FeedFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            recyclerView.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS));//, mListener));
+            recyclerView.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity()));//, mListener));
+
         }
         return view;
     }

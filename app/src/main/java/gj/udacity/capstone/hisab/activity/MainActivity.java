@@ -9,7 +9,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,8 +28,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import gj.udacity.capstone.hisab.fragment.FeedFragment;
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.fragment.AddSliderFragment;
+import gj.udacity.capstone.hisab.fragment.FeedFragment;
 import gj.udacity.capstone.hisab.fragment.UserEditSliderFragment;
 import gj.udacity.capstone.hisab.util.CircularImage;
 
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private File tempFile;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ImageView dp;
-    private View userEditDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        userEditDialog = findViewById(R.id.user_dialog);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -63,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                BottomSheetDialogFragment bottomSheetDialogFragment = new AddSliderFragment();
+                bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
             }
         });
 
@@ -175,13 +173,11 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
 
-
             if (requestCode == DP_IMAGE_INTENT_CODE) {
                 saveDPInFile(data);
 
                 Intent cropIntent = new Intent("com.android.camera.action.CROP");
                 Uri contentUri = Uri.fromFile(tempFile);
-
                 cropIntent.setDataAndType(contentUri, "image/*");
                 cropIntent.putExtra("crop", "true");
                 cropIntent.putExtra("aspectX", 1);
@@ -193,9 +189,14 @@ public class MainActivity extends AppCompatActivity {
                         Uri.fromFile(new File(this.getExternalFilesDir(
                                 Environment.DIRECTORY_PICTURES), getString(R.string.dp_temp_name))));
                 startActivityForResult(cropIntent, CROP_INTENT_CODE);
-            } else if (requestCode == CROP_INTENT_CODE) {
+            }
+            else if (requestCode == CROP_INTENT_CODE) {
                 saveDPInFile(data);
                 loadDP();
+            }
+            else{
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.feed);
+                fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
