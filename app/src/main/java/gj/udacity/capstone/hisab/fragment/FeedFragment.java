@@ -1,6 +1,7 @@
 package gj.udacity.capstone.hisab.fragment;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,8 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import gj.udacity.capstone.hisab.adapter.FeedRecyclerViewAdapter;
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.adapter.FeedRecyclerViewAdapter;
+import gj.udacity.capstone.hisab.database.TransactionContract;
 import gj.udacity.capstone.hisab.dummy.DummyContent;
 
 /**
@@ -52,7 +54,9 @@ public class FeedFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            recyclerView.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity()));//, mListener));
+            Cursor cursor = getActivity().getContentResolver().query(TransactionContract.Transaction.CONTENT_URI,
+                    null/*new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL}*/, null, null, null);
+            recyclerView.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity(),cursor));//, mListener));
 
         }
         return view;

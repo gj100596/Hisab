@@ -63,9 +63,6 @@ public class DBContentProvider extends ContentProvider {
         return null;
     }
 
-    /**
-     * This function gives a specific favorite movies
-     */
     private Cursor getTransactionHistoryDetail(Uri uri, String[] projection, String sortOrder) {
 
         String selectionString = Transaction.TABLE_NAME+
@@ -85,9 +82,6 @@ public class DBContentProvider extends ContentProvider {
         return cursor;
     }
 
-    /**
-     * This function gives all the favorite movies
-     */
     private Cursor getTransactionList(String[] projection, String sortOrder) {
 
         return mOpenHelper.getReadableDatabase().query(

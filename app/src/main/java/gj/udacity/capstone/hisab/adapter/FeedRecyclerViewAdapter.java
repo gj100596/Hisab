@@ -1,5 +1,6 @@
 package gj.udacity.capstone.hisab.adapter;
 
+import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,10 +23,12 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
 
     private final List<DummyItem> mValues;
     private FragmentActivity context;
+    private Cursor cursor;
 
-    public FeedRecyclerViewAdapter(List<DummyItem> items,FragmentActivity context){//}, OnListFragmentInteractionListener listener) {
+    public FeedRecyclerViewAdapter(List<DummyItem> items,FragmentActivity context, Cursor cursor){//}, OnListFragmentInteractionListener listener) {
         mValues = items;
         this.context = context;
+        this.cursor = cursor;
        // mListener = listener;
     }
 
@@ -38,6 +41,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+
         holder.mItem = mValues.get(position);
         holder.mAmount.setText(mValues.get(position).id);
         holder.mName.setText(mValues.get(position).content);
