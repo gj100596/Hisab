@@ -16,9 +16,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     static final String DATABASE_NAME = "hisab.db";
 
-    public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+
+    public DBHelper(Context context){
+        super(context,DATABASE_NAME,null,DATABASE_VERSION);
     }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -29,7 +31,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + Transaction.COLUMN_REASON + " TEXT NOT NULL"
                 + Transaction.COLUMN_AMOUNT + " REAL NOT NULL"
                 + Transaction.COLUMN_DATE + " DATE NOT NULL"
-                + Transaction.COLUMN_CATEGORY + "TEXT NOT NULL"
+                + Transaction.COLUMN_CATEGORY + " TEXT NOT NULL"
+                + Transaction.COLUMN_SETTLED + " INTEGER NOT NULL"
                 + ");";
 
         db.execSQL(createQuery);
