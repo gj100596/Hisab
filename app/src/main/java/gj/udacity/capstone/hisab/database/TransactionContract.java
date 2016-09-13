@@ -11,7 +11,7 @@ import android.provider.BaseColumns;
 
 public class TransactionContract {
 
-    public static final String CONTENT_AUTHORITY = "gj.udacity.capstone.hisab.database";
+    public static final String CONTENT_AUTHORITY = "gj.udacity.capstone.hisab";
 
     public static final Uri BASE_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public  static final String URI_PATH = "hisab";
@@ -28,10 +28,13 @@ public class TransactionContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + URI_PATH;
 
         //Name of table
-        public static final String TABLE_NAME = "Transaction";
+        public static final String TABLE_NAME = "TransactionTable";
 
         // Name of person consider for transaction
         public static final String COLUMN_NAME = "Name";
+
+        //Number of person for being primary key search
+        public static final String COLUMN_NUMBER = "Number";
 
         //Reason or Message for transaction
         public static final String COLUMN_REASON = "Reason";
@@ -40,7 +43,7 @@ public class TransactionContract {
         public static final String COLUMN_AMOUNT = "Amount";
 
         //Date of transaction
-        public static final String COLUMN_DATE = "Date";
+        public static final String COLUMN_DATE = "tDate";
 
         //Category of transaction(will be used for graph)
         public static final String COLUMN_CATEGORY  = "Category";

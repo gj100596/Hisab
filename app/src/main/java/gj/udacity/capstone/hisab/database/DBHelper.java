@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static gj.udacity.capstone.hisab.database.TransactionContract.*;
+import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
 
 /**
  * Created by Gaurav on 11-09-2016.
@@ -12,7 +12,7 @@ import static gj.udacity.capstone.hisab.database.TransactionContract.*;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 12;
 
     static final String DATABASE_NAME = "hisab.db";
 
@@ -25,14 +25,16 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        final String createQuery = "CREATE TABLE " + Transaction.TABLE_NAME + " ("
-                + Transaction._ID + " INTEGER PRIMARY KEY AUTOINCREMENT"
-                + Transaction.COLUMN_NAME + " TEXT NOT NULL"
-                + Transaction.COLUMN_REASON + " TEXT NOT NULL"
-                + Transaction.COLUMN_AMOUNT + " REAL NOT NULL"
-                + Transaction.COLUMN_DATE + " DATE NOT NULL"
-                + Transaction.COLUMN_CATEGORY + " TEXT NOT NULL"
-                + Transaction.COLUMN_SETTLED + " INTEGER NOT NULL"
+        final String createQuery = "CREATE TABLE " + Transaction.TABLE_NAME + "("
+                + Transaction._ID + " INTEGER AUTOINCREMENT,"
+                + Transaction.COLUMN_NAME + " TEXT NOT NULL,"
+                + Transaction.COLUMN_NUMBER + " INTEGER NOT NULL,"
+                + Transaction.COLUMN_REASON + " TEXT NOT NULL,"
+                + Transaction.COLUMN_AMOUNT + " REAL NOT NULL,"
+                + Transaction.COLUMN_DATE + " DATE NOT NULL,"
+                + Transaction.COLUMN_CATEGORY + " TEXT NOT NULL,"
+                + Transaction.COLUMN_SETTLED + " INTEGER NOT NULL,"
+                + "PRIMARY KEY("+ Transaction._ID+","+Transaction.COLUMN_NAME+","+Transaction.COLUMN_NUMBER
                 + ");";
 
         db.execSQL(createQuery);

@@ -1,6 +1,7 @@
 package gj.udacity.capstone.hisab.fragment;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import gj.udacity.capstone.hisab.R;
+
+import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
+import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
 
 /**
  * Created by Gaurav on 11-09-2016.
@@ -75,6 +79,17 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
+                ContentValues values = new ContentValues();
+                //ID to be auto incremented
+                //values.put(Transaction._ID, MovieID);
+                values.put(Transaction.COLUMN_NAME, nameEditText.getText().toString());
+                values.put(Transaction.COLUMN_REASON, reasonEditText.getText().toString());
+                values.put(Transaction.COLUMN_AMOUNT, Integer.parseInt(amountEditText.getText().toString()));
+                values.put(Transaction.COLUMN_SETTLED, 0);
+                values.put(Transaction.COLUMN_CATEGORY, "Some");
+                values.put(Transaction.COLUMN_DATE,"25-2-1996");
+
+                getActivity().getContentResolver().insert(BASE_URI, values);
                 AddSliderFragment.this.dismiss();
             }
         });

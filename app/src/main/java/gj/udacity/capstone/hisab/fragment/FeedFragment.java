@@ -3,7 +3,11 @@ package gj.udacity.capstone.hisab.fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,19 +25,16 @@ import gj.udacity.capstone.hisab.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@k OnListFragmentInteractionListener}
  * interface.
  */
-public class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor>{
 
+    private static final int CURSORLOADER_ID = 1;
+    private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
    // private OnListFragmentInteractionListener mListener;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public FeedFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static FeedFragment newInstance() {
         return new FeedFragment();
     }
@@ -54,14 +55,22 @@ public class FeedFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
+            String sortOrder = TransactionContract.Transaction.COLUMN_AMOUNT + " DESC";
             Cursor cursor = getActivity().getContentResolver().query(TransactionContract.Transaction.CONTENT_URI,
-                    null/*new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL}*/, null, null, null);
-            recyclerView.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity(),cursor));//, mListener));
+                    null/*new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL}*/, null, null, sortOrder);
+            feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity(),cursor);
+            recyclerView.setAdapter(feedRecyclerViewAdapter);
 
         }
         return view;
     }
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(CURSORLOADER_ID, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -80,6 +89,29 @@ public class FeedFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         //mListener = null;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // Sort order:  Ascending, by date.
+        String sortOrder = TransactionContract.Transaction.COLUMN_AMOUNT + " DESC";
+
+        return new CursorLoader(getActivity(),
+                TransactionContract.Transaction.CONTENT_URI,
+                null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                null,
+                null,
+                sortOrder);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        feedRecyclerViewAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        feedRecyclerViewAdapter.swapCursor(null);
     }
 
     /**

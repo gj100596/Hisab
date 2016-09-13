@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import gj.udacity.capstone.hisab.R;
-import gj.udacity.capstone.hisab.adapter.FeedRecyclerViewAdapter;
-import gj.udacity.capstone.hisab.dummy.DummyContent;
 
 public class DetailFragment extends Fragment {
 
@@ -47,7 +45,7 @@ public class DetailFragment extends Fragment {
 
         RecyclerView historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        historyList.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity()));
+        //historyList.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity()));
         return view;
     }
 
