@@ -1,7 +1,6 @@
 package gj.udacity.capstone.hisab.database;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -20,6 +19,8 @@ public class TransactionContract {
     public static final class Transaction implements BaseColumns{
 
         public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(URI_PATH).build();
+        public static final Uri UNSETTLE_URI = CONTENT_URI.buildUpon().appendPath("unsettle").build();
+        public static final Uri SETTLE_URI = CONTENT_URI.buildUpon().appendPath("settle").build();
 
         //URI for Content Provider
         public static final String CONTENT_TYPE =
@@ -51,9 +52,16 @@ public class TransactionContract {
         //To know if this is settled or not
         public static final String COLUMN_SETTLED = "Settled";
 
-        public static Uri buildLocationUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+
+        //URI Functions
+        public static Uri buildUnSettleDetailURI(String name, String number) {
+            return UNSETTLE_URI.buildUpon().appendPath(name+"_"+number).build();
         }
+
+        public static Uri buildSettleDetailURI(String name, String number) {
+            return SETTLE_URI.buildUpon().appendPath(name+"_"+number).build();
+        }
+
     }
 
 }

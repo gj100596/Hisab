@@ -83,6 +83,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                 //ID to be auto incremented
                 //values.put(Transaction._ID, MovieID);
                 values.put(Transaction.COLUMN_NAME, nameEditText.getText().toString());
+                values.put(Transaction.COLUMN_NUMBER,numberEditText.getText().toString());
                 values.put(Transaction.COLUMN_REASON, reasonEditText.getText().toString());
                 values.put(Transaction.COLUMN_AMOUNT, Integer.parseInt(amountEditText.getText().toString()));
                 values.put(Transaction.COLUMN_SETTLED, 0);

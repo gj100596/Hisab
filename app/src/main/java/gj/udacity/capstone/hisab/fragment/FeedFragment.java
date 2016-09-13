@@ -30,6 +30,7 @@ public class FeedFragment extends Fragment
 
     private static final int CURSORLOADER_ID = 1;
     private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
+
    // private OnListFragmentInteractionListener mListener;
 
     public FeedFragment() {
@@ -55,9 +56,10 @@ public class FeedFragment extends Fragment
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            String sortOrder = TransactionContract.Transaction.COLUMN_AMOUNT + " DESC";
-            Cursor cursor = getActivity().getContentResolver().query(TransactionContract.Transaction.CONTENT_URI,
-                    null/*new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL}*/, null, null, sortOrder);
+            Cursor cursor = getActivity().getContentResolver()
+                    .query(
+                            TransactionContract.Transaction.UNSETTLE_URI,
+                            null, null, null, null);
             feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity(),cursor);
             recyclerView.setAdapter(feedRecyclerViewAdapter);
 
@@ -93,25 +95,25 @@ public class FeedFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Sort order:  Ascending, by date.
-        String sortOrder = TransactionContract.Transaction.COLUMN_AMOUNT + " DESC";
 
         return new CursorLoader(getActivity(),
                 TransactionContract.Transaction.CONTENT_URI,
                 null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
                 null,
                 null,
-                sortOrder);
+                null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         feedRecyclerViewAdapter.swapCursor(data);
+        feedRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         feedRecyclerViewAdapter.swapCursor(null);
+        feedRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     /**

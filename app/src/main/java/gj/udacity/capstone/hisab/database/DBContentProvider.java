@@ -9,11 +9,22 @@ import android.support.annotation.Nullable;
 
 import static gj.udacity.capstone.hisab.database.TransactionContract.*;
 
+/*
+Unsettle list
+select Name,Number,sum(Amount),max(tDate) from tran where Settled=0 group by Name,Number;
+
+Unsettle detail
+select tran.Reason,tran.tDate,tran.Amount from tran where name="AB" and Number=735 and Settled=0;
+
+and rest 2 r same with Settled=1;
+ */
+
 public class DBContentProvider extends ContentProvider {
 
     private static final int LIST_UNSETTLE = 1;
     private static final int DETAIL_UNSETTLE = 2;
-    private static final int DETAIL_SETTLE = 3;
+    private static final int LIST_SETTLE = 3;
+    private static final int DETAIL_SETTLE = 4;
 
     private static final UriMatcher sUriMatcher = createUriMatcher();
     private DBHelper mOpenHelper;
@@ -22,8 +33,10 @@ public class DBContentProvider extends ContentProvider {
     static UriMatcher createUriMatcher(){
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         String authority = CONTENT_AUTHORITY;
-        matcher.addURI(authority , URI_PATH , LIST_UNSETTLE);
-        matcher.addURI(authority , URI_PATH + "/#" ,DETAIL_UNSETTLE);
+        matcher.addURI(authority , URI_PATH + "/unsettle", LIST_UNSETTLE);
+        matcher.addURI(authority , URI_PATH + "/unsettle/*" ,DETAIL_UNSETTLE);
+        matcher.addURI(authority , URI_PATH + "/settle", LIST_SETTLE);
+        matcher.addURI(authority , URI_PATH + "/settle/*" ,DETAIL_SETTLE);
 
         return  matcher;
     }
@@ -38,15 +51,20 @@ public class DBContentProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         int match = sUriMatcher.match(uri);
+        return  Transaction.CONTENT_TYPE;
 
+        /*
         switch (match){
             case LIST_UNSETTLE:
+            case LIST_SETTLE:
+                case L
                 return Transaction.CONTENT_TYPE;
             case DETAIL_UNSETTLE:
-                return  Transaction.CONTENT_ITEM_TYPE;
+                return  Transaction.CONTENT_TYPE;
             default:
                 return null;
-        }
+
+        }*/
     }
 
     @Nullable
@@ -56,24 +74,45 @@ public class DBContentProvider extends ContentProvider {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
             case LIST_UNSETTLE:
-                return getTransactionList(projection,sortOrder);
+                return getTransactionList(0);
             case DETAIL_UNSETTLE:
-                return getTransactionHistoryDetail(uri,projection,sortOrder);
+                return getTransactionHistoryDetail(uri,0);
+            case LIST_SETTLE:
+                return getTransactionList(1);
+            case DETAIL_SETTLE:
+                return getTransactionHistoryDetail(uri,1);
         }
         return null;
     }
 
-    private Cursor getTransactionHistoryDetail(Uri uri, String[] projection, String sortOrder) {
+    private Cursor getTransactionHistoryDetail(Uri uri,int settlementMode){
 
-        String selectionString = Transaction.TABLE_NAME+
-                "." + Transaction._ID + "=?" + " AND "+
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_SETTLED + "=0";
+        /*
+            select tran.Reason,tran.tDate,tran.Amount from tran where name="AB" and Number=735 and Settled=0;
+         */
+        String uriInfo = uri.getPathSegments().get(2);
+
+        String sortOrder = Transaction.COLUMN_DATE + " DESC";
+
+        String projection[] = new String[]{
+                Transaction._ID,
+                Transaction.COLUMN_REASON,
+                Transaction.COLUMN_DATE,
+                Transaction.COLUMN_AMOUNT,
+        };
+
+        String selectionString =
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=?"
+                        + " AND "+
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=?"
+                        + " AND "+
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_SETTLED + "="+settlementMode;
 
         Cursor cursor =  mOpenHelper.getReadableDatabase().query(
                 Transaction.TABLE_NAME,
                 projection,
                 selectionString,
-                new String[]{uri.getPathSegments().get(1)},
+                uriInfo.split("_"),
                 null,
                 null,
                 sortOrder
@@ -82,14 +121,29 @@ public class DBContentProvider extends ContentProvider {
         return cursor;
     }
 
-    private Cursor getTransactionList(String[] projection, String sortOrder) {
+    private Cursor getTransactionList(int settlementMode){
+        /*
+        select Name,Number,sum(Amount),max(tDate) from tran where Settled=0 group by Name,Number;
+         */
+
+        String sortOrder = TransactionContract.Transaction.COLUMN_AMOUNT + " DESC";
+
+        String projection[] = new String[]{
+                Transaction.COLUMN_NAME,
+                Transaction.COLUMN_NUMBER,
+                "SUM("+Transaction.COLUMN_AMOUNT+")",
+                "MAX("+Transaction.COLUMN_DATE+")"
+        };
+        String groupby = Transaction.COLUMN_NAME+","+Transaction.COLUMN_NUMBER;
+
+        String selectionString = Transaction.COLUMN_SETTLED + "="+settlementMode;
 
         return mOpenHelper.getReadableDatabase().query(
                 Transaction.TABLE_NAME,
                 projection,
+                selectionString,
                 null,
-                null,
-                null,
+                groupby,
                 null,
                 sortOrder
         );
@@ -101,7 +155,10 @@ public class DBContentProvider extends ContentProvider {
 
         long id = mOpenHelper.getWritableDatabase().insert(Transaction.TABLE_NAME,null,values);
         getContext().getContentResolver().notifyChange(uri, null);
-        return Transaction.buildLocationUri(id);
+        return Transaction.buildUnSettleDetailURI(
+                values.getAsString(Transaction.COLUMN_NAME),
+                values.getAsString(Transaction.COLUMN_NUMBER)
+                );
     }
 
 

@@ -12,7 +12,7 @@ import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 2;
 
     static final String DATABASE_NAME = "hisab.db";
 
@@ -26,15 +26,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         final String createQuery = "CREATE TABLE " + Transaction.TABLE_NAME + "("
-                + Transaction._ID + " INTEGER AUTOINCREMENT,"
+                + Transaction._ID + " INTEGER,"
                 + Transaction.COLUMN_NAME + " TEXT NOT NULL,"
-                + Transaction.COLUMN_NUMBER + " INTEGER NOT NULL,"
+                + Transaction.COLUMN_NUMBER + " TEXT NOT NULL,"
                 + Transaction.COLUMN_REASON + " TEXT NOT NULL,"
                 + Transaction.COLUMN_AMOUNT + " REAL NOT NULL,"
                 + Transaction.COLUMN_DATE + " DATE NOT NULL,"
                 + Transaction.COLUMN_CATEGORY + " TEXT NOT NULL,"
                 + Transaction.COLUMN_SETTLED + " INTEGER NOT NULL,"
-                + "PRIMARY KEY("+ Transaction._ID+","+Transaction.COLUMN_NAME+","+Transaction.COLUMN_NUMBER
+                + "PRIMARY KEY("+ Transaction._ID+","+Transaction.COLUMN_NAME+","+Transaction.COLUMN_NUMBER+")"
                 + ");";
 
         db.execSQL(createQuery);

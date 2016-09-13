@@ -23,6 +23,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     private final List<DummyItem> mValues;
     private FragmentActivity context;
 
+    private final int COLUMN_ID_INDEX = 0;
+    private final int COLUMN_REASON_INDEX = 1;
+    private final int COLUMN_DATE_INDEX = 2;
+    private final int COLUMN_AMOUNT_INDEX = 3;
+
     public DetailRecyclerViewAdapter(List<DummyItem> items, FragmentActivity context){//}, OnListFragmentInteractionListener listener) {
         mValues = items;
         this.context = context;

@@ -26,10 +26,13 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     private FragmentActivity context;
     private Cursor cursor;
     private boolean dataValid;
-
     private int rowIdColumn;
-
     private DataSetObserver dataSetObserver;
+
+    private final int COLUMN_NAME_INDEX = 0;
+    private final int COLUMN_NUMBER_INDEX = 1;
+    private final int COLUMN_SUM_INDEX = 2;
+    private final int COLUMN_DATE_INDEX = 3;
 
     public FeedRecyclerViewAdapter(List<DummyItem> items,FragmentActivity context, Cursor cursor){//}, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -54,9 +57,10 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         cursor.moveToPosition(position);
-        holder.mAmount.setText(cursor.getString(2));//mValues.get(position).id);
-        holder.mName.setText(cursor.getString(1));//mValues.get(position).content);
-        holder.mName.setTag(cursor.getString(0));//mValues.get(position).content);
+        holder.mAmount.setText(cursor.getString(COLUMN_SUM_INDEX));//mValues.get(position).id);
+        holder.mName.setText(cursor.getString(COLUMN_NAME_INDEX));//mValues.get(position).content);
+        holder.mName.setTag(cursor.getString(COLUMN_NUMBER_INDEX));//mValues.get(position).content);
+        holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
