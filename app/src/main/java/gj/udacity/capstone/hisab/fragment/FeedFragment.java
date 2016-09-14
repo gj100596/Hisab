@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.adapter.FeedRecyclerViewAdapter;
 import gj.udacity.capstone.hisab.database.TransactionContract;
-import gj.udacity.capstone.hisab.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -60,7 +59,7 @@ public class FeedFragment extends Fragment
                     .query(
                             TransactionContract.Transaction.UNSETTLE_URI,
                             null, null, null, null);
-            feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity(),cursor);
+            feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(),cursor);
             recyclerView.setAdapter(feedRecyclerViewAdapter);
 
         }
@@ -97,7 +96,7 @@ public class FeedFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         return new CursorLoader(getActivity(),
-                TransactionContract.Transaction.CONTENT_URI,
+                TransactionContract.Transaction.UNSETTLE_URI,
                 null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
                 null,
                 null,

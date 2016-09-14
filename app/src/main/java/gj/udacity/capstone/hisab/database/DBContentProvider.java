@@ -71,18 +71,23 @@ public class DBContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
-        Cursor retCursor;
+        Cursor retCursor = null;
         switch (sUriMatcher.match(uri)) {
             case LIST_UNSETTLE:
-                return getTransactionList(0);
+                retCursor = getTransactionList(0);
+                break;
             case DETAIL_UNSETTLE:
-                return getTransactionHistoryDetail(uri,0);
+                retCursor = getTransactionHistoryDetail(uri,0);
+                break;
             case LIST_SETTLE:
-                return getTransactionList(1);
+                retCursor = getTransactionList(1);
+                break;
             case DETAIL_SETTLE:
-                return getTransactionHistoryDetail(uri,1);
+                retCursor = getTransactionHistoryDetail(uri,1);
+                break;
         }
-        return null;
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
     private Cursor getTransactionHistoryDetail(Uri uri,int settlementMode){
@@ -156,7 +161,7 @@ public class DBContentProvider extends ContentProvider {
         long id = mOpenHelper.getWritableDatabase().insert(Transaction.TABLE_NAME,null,values);
         getContext().getContentResolver().notifyChange(uri, null);
         return Transaction.buildUnSettleDetailURI(
-                values.getAsString(Transaction.COLUMN_NAME),
+                values.getAsString(Transaction.COLUMN_NAME)+"_"+
                 values.getAsString(Transaction.COLUMN_NUMBER)
                 );
     }

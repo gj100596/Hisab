@@ -54,12 +54,12 @@ public class TransactionContract {
 
 
         //URI Functions
-        public static Uri buildUnSettleDetailURI(String name, String number) {
-            return UNSETTLE_URI.buildUpon().appendPath(name+"_"+number).build();
+        public static Uri buildUnSettleDetailURI(String userString){
+            return UNSETTLE_URI.buildUpon().appendPath(userString).build();
         }
 
-        public static Uri buildSettleDetailURI(String name, String number) {
-            return SETTLE_URI.buildUpon().appendPath(name+"_"+number).build();
+        public static Uri buildSettleDetailURI(String userString) {
+            return SETTLE_URI.buildUpon().appendPath(userString).build();
         }
 
     }

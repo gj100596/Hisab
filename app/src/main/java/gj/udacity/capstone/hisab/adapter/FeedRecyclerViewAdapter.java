@@ -9,24 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-
 import gj.udacity.capstone.hisab.R;
-import gj.udacity.capstone.hisab.dummy.DummyContent.DummyItem;
 import gj.udacity.capstone.hisab.fragment.DetailFragment;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified { OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
     private FragmentActivity context;
     private Cursor cursor;
     private boolean dataValid;
-    private int rowIdColumn;
     private DataSetObserver dataSetObserver;
 
     private final int COLUMN_NAME_INDEX = 0;
@@ -34,12 +24,10 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     private final int COLUMN_SUM_INDEX = 2;
     private final int COLUMN_DATE_INDEX = 3;
 
-    public FeedRecyclerViewAdapter(List<DummyItem> items,FragmentActivity context, Cursor cursor){//}, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public FeedRecyclerViewAdapter(FragmentActivity context, Cursor cursor){//}, OnListFragmentInteractionListener listener) {
         this.context = context;
         this.cursor = cursor;
         dataValid = cursor != null;
-        rowIdColumn = dataValid ? cursor.getColumnIndex("_id") : -1;
         dataSetObserver = new FeedRecyclerViewAdapter.NotifyingDataSetObserver();
         if (cursor != null) {
             cursor.registerDataSetObserver(dataSetObserver);
@@ -49,7 +37,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.history_list_item, parent, false);
+                .inflate(R.layout.cardview_layout, parent, false);
         return new ViewHolder(view);
     }
 
@@ -59,7 +47,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
         cursor.moveToPosition(position);
         holder.mAmount.setText(cursor.getString(COLUMN_SUM_INDEX));//mValues.get(position).id);
         holder.mName.setText(cursor.getString(COLUMN_NAME_INDEX));//mValues.get(position).content);
-        holder.mName.setTag(cursor.getString(COLUMN_NUMBER_INDEX));//mValues.get(position).content);
+        holder.mName.setTag(cursor.getString(COLUMN_NAME_INDEX)+"_"+cursor.getString(COLUMN_NUMBER_INDEX));//mValues.get(position).content);
         holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +77,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     @Override
     public long getItemId(int position) {
         if (dataValid && cursor != null && cursor.moveToPosition(position)) {
-            return cursor.getLong(rowIdColumn);
+            return Long.valueOf(cursor.getString(COLUMN_NUMBER_INDEX));
         }
         return 0;
     }
@@ -97,7 +85,6 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mName,mAmount,mDate;
-        public DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -137,11 +124,9 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
             if (dataSetObserver != null) {
                 cursor.registerDataSetObserver(dataSetObserver);
             }
-            rowIdColumn = newCursor.getColumnIndexOrThrow("_id");
             dataValid = true;
             notifyDataSetChanged();
         } else {
-            rowIdColumn = -1;
             dataValid = false;
             notifyDataSetChanged();
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter

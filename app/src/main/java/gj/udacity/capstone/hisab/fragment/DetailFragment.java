@@ -1,7 +1,11 @@
 package gj.udacity.capstone.hisab.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,17 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.adapter.DetailRecyclerViewAdapter;
+import gj.udacity.capstone.hisab.database.TransactionContract;
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private static final String ARG = "item_id";
+    private static final String ARG = "userString";
 
-    private String userID;
+    //Combination of name and number of particular friend
+    private String userString;
+
+    private DetailRecyclerViewAdapter detailRecyclerViewAdapter;
 
     public DetailFragment() {
         // Required empty public constructor
     }
-
 
     public static DetailFragment newInstance(String id){
         DetailFragment fragment = new DetailFragment();
@@ -33,7 +42,7 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userID = getArguments().getString(ARG);
+            userString = getArguments().getString(ARG);
         }
     }
 
@@ -45,8 +54,38 @@ public class DetailFragment extends Fragment {
 
         RecyclerView historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //historyList.setAdapter(new FeedRecyclerViewAdapter(DummyContent.ITEMS,getActivity()));
+
+        Cursor cursor = getActivity().getContentResolver()
+                .query(
+                        TransactionContract.Transaction.buildUnSettleDetailURI(userString),
+                        null, null, null, null);
+        detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(getActivity(),cursor);
+        historyList.setAdapter(detailRecyclerViewAdapter);
         return view;
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        return new CursorLoader(getActivity(),
+                TransactionContract.Transaction.UNSETTLE_URI,
+                null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        detailRecyclerViewAdapter.swapCursor(data);
+        detailRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        detailRecyclerViewAdapter.swapCursor(null);
+        detailRecyclerViewAdapter.notifyDataSetChanged();
     }
 
 }
