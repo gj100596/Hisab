@@ -9,7 +9,6 @@ import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private File tempFile;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ImageView dp;
+    private BottomSheetDialogFragment fabBottomSheetDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BottomSheetDialogFragment bottomSheetDialogFragment = new AddSliderFragment();
-                bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+                fabBottomSheetDialogFragment = new AddSliderFragment();
+                fabBottomSheetDialogFragment.show(getSupportFragmentManager(), fabBottomSheetDialogFragment.getTag());
             }
         });
 
@@ -195,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
                 loadDP();
             }
             else{
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.feed);
-                fragment.onActivityResult(requestCode, resultCode, data);
+                //Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.feed);
+                fabBottomSheetDialogFragment.onActivityResult(requestCode, resultCode, data);
             }
         }
     }

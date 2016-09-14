@@ -1,6 +1,7 @@
 package gj.udacity.capstone.hisab.fragment;
 
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,10 +13,13 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+
+import java.util.ArrayList;
 
 import gj.udacity.capstone.hisab.R;
 
@@ -43,7 +47,8 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
-    private EditText nameEditText,numberEditText;
+    private AutoCompleteTextView nameEditText;
+    private EditText numberEditText;
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
@@ -51,12 +56,34 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         View contentView = View.inflate(getContext(), R.layout.add_transaction, null);
         dialog.setContentView(contentView);
 
-        nameEditText = (EditText) contentView.findViewById(R.id.add_name);
+        nameEditText = (AutoCompleteTextView) contentView.findViewById(R.id.add_name);
         numberEditText = (EditText) contentView.findViewById(R.id.add_number);
         final EditText reasonEditText = (EditText) contentView.findViewById(R.id.add_reason);
         final EditText amountEditText = (EditText) contentView.findViewById(R.id.add_amount);
         final Spinner categorySpinner = (Spinner) contentView.findViewById(R.id.add_category);
         final ImageView contactImageView = (ImageView) contentView.findViewById(R.id.add_contact);
+
+        ArrayList<String> phone = new ArrayList<String>();
+
+        ContentResolver cr = getActivity().getContentResolver();
+
+        Cursor contactCursor = cr
+                .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+
+        while (contactCursor.moveToNext())
+        {
+            phone.add(
+                    contactCursor.getString(contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+            );
+        }
+        contactCursor.close();
+
+        String[] emailAddresses = new String[phone.size()];
+        phone.toArray(emailAddresses);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, phone);
+
+        nameEditText.setAdapter(adapter);
 
         contactImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +133,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == getActivity().RESULT_OK && requestCode == CONTACT_INTENT_CODE){
+        if(resultCode == getActivity().RESULT_OK){ // && requestCode == CONTACT_INTENT_CODE){
             Uri contactData = data.getData();
 
             Cursor cursor =  getActivity().getContentResolver().query(contactData, null, null, null, null);
