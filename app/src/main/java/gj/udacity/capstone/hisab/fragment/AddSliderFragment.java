@@ -28,10 +28,6 @@ import gj.udacity.capstone.hisab.R;
 import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
 import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
 
-/**
- * Created by Gaurav on 11-09-2016.
- */
-
 public class AddSliderFragment extends BottomSheetDialogFragment {
 
     private static final int CONTACT_INTENT_CODE = 300;

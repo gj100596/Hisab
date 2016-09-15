@@ -1,13 +1,18 @@
 package gj.udacity.capstone.hisab.adapter;
 
+import android.animation.ValueAnimator;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import gj.udacity.capstone.hisab.R;
 
@@ -72,7 +77,8 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mReason,mAmount,mDate;
+        public final TextView mReason, mAmount, mDate;
+        public final LinearLayout mSlidePanel,mMainLinear;
 
         public ViewHolder(View view) {
             super(view);
@@ -80,6 +86,52 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
             mReason = (TextView) view.findViewById(R.id.reason);
             mAmount = (TextView) view.findViewById(R.id.amount);
             mDate = (TextView) view.findViewById(R.id.date);
+            mSlidePanel = (LinearLayout) view.findViewById(R.id.sidePane);
+            mMainLinear = (LinearLayout) view.findViewById(R.id.mainLinear);
+            setUpSlider();
+        }
+
+        private static final int DEFAULT_THRESHOLD = 128;
+
+        private void setUpSlider() {
+            mView.setOnTouchListener(new View.OnTouchListener() {
+                int initialX = 0;
+                final float slop = ViewConfiguration.get(context).getScaledTouchSlop();
+
+                public boolean onTouch(final View view, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        initialX = (int) event.getX();
+                        view.setPadding(0, 0, 0, 0);
+                    } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        int currentX = (int) event.getX();
+                        int offset = currentX - initialX;
+                        if (Math.abs(offset) > slop) {
+                            view.setPadding(offset, 0, 0, 0);
+
+                            if (offset > DEFAULT_THRESHOLD) {
+                                mSlidePanel.setVisibility(View.INVISIBLE);
+                                mMainLinear.setVisibility(View.VISIBLE);
+                            } else if (offset < -DEFAULT_THRESHOLD) {
+                                mSlidePanel.setVisibility(View.VISIBLE);
+                                mMainLinear.setVisibility(View.INVISIBLE);
+                                Toast.makeText(context,"Some",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                        // Animate back if no action was performed.
+                        ValueAnimator animator = ValueAnimator.ofInt(view.getPaddingLeft(), 0);
+                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                view.setPadding((Integer) valueAnimator.getAnimatedValue(), 0, 0, 0);
+                            }
+                        });
+                        animator.setDuration(150);
+                        animator.start();
+                    }
+                    return true;
+                }
+            });
         }
     }
 
