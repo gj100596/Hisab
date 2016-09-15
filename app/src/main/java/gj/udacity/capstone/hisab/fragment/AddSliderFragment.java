@@ -12,12 +12,14 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -63,7 +65,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         final Spinner categorySpinner = (Spinner) contentView.findViewById(R.id.add_category);
         final ImageView contactImageView = (ImageView) contentView.findViewById(R.id.add_contact);
 
-        ArrayList<String> phone = new ArrayList<String>();
+        final ArrayList<String> phone = new ArrayList<String>();
 
         ContentResolver cr = getActivity().getContentResolver();
 
@@ -72,8 +74,12 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
 
         while (contactCursor.moveToNext())
         {
+            String contactName = contactCursor.getString(
+                    contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String contactNumber = contactCursor.getString(
+                    contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             phone.add(
-                    contactCursor.getString(contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+                    contactName.split(" ")[0]+" "+contactNumber
             );
         }
         contactCursor.close();
@@ -81,9 +87,19 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         String[] emailAddresses = new String[phone.size()];
         phone.toArray(emailAddresses);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, phone);
+        ArrayAdapter<String> adapter = 
+                new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, phone);
 
         nameEditText.setAdapter(adapter);
+        nameEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String part[] = ((TextView)view).getText().toString().split(" ",2);
+
+                nameEditText.setText(part[0]);
+                numberEditText.setText((part[1]).replace(" ",""));
+            }
+        });
 
         contactImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,8 +155,10 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             Cursor cursor =  getActivity().getContentResolver().query(contactData, null, null, null, null);
             cursor.moveToFirst();
 
-            numberEditText.setText(cursor.
-                    getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+            numberEditText.setText(
+                    cursor
+                        .getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                        .split(" ")[0]);
             nameEditText.setText(cursor.
                     getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
         }
