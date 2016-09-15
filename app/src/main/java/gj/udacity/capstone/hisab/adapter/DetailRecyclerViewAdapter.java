@@ -1,24 +1,29 @@
 package gj.udacity.capstone.hisab.adapter;
 
 import android.animation.ValueAnimator;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import gj.udacity.capstone.hisab.R;
+
+import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
 
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecyclerViewAdapter.ViewHolder> {
 
     private FragmentActivity context;
+    private String name,number,sum;
     private Cursor cursor;
     private boolean dataValid;
     private DataSetObserver dataSetObserver;
@@ -28,7 +33,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     private final int COLUMN_DATE_INDEX = 2;
     private final int COLUMN_AMOUNT_INDEX = 3;
 
-    public DetailRecyclerViewAdapter (FragmentActivity context, Cursor cursor){//}, OnListFragmentInteractionListener listener) {
+    public DetailRecyclerViewAdapter (FragmentActivity context, Cursor cursor,String name,String number){
         this.context = context;
         this.cursor = cursor;
         dataValid = cursor != null;
@@ -36,6 +41,9 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
         if (cursor != null) {
             cursor.registerDataSetObserver(dataSetObserver);
         }
+        this.name = name;
+        this.number = number;
+
     }
 
     @Override
@@ -51,7 +59,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
         cursor.moveToPosition(position);
         holder.mAmount.setText(cursor.getString(COLUMN_AMOUNT_INDEX));//mValues.get(position).id);
         holder.mReason.setText(cursor.getString(COLUMN_REASON_INDEX));//mValues.get(position).content);
-        holder.mReason.setTag(cursor.getString(COLUMN_ID_INDEX));//mValues.get(position).content);
+        holder.delete.setTag(cursor.getString(COLUMN_ID_INDEX));//mValues.get(position).content);
         holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));
     }
 
@@ -79,6 +87,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
         public final View mView;
         public final TextView mReason, mAmount, mDate;
         public final LinearLayout mSlidePanel,mMainLinear;
+        public final ImageView delete;
 
         public ViewHolder(View view) {
             super(view);
@@ -88,6 +97,35 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
             mDate = (TextView) view.findViewById(R.id.date);
             mSlidePanel = (LinearLayout) view.findViewById(R.id.sidePane);
             mMainLinear = (LinearLayout) view.findViewById(R.id.mainLinear);
+            delete = (ImageView) view.findViewById(R.id.delete);
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Do You want to settle this transaction?");
+                    builder.setTitle("Settle?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            context.getContentResolver().delete(BASE_URI, null,new String[]{
+                                    v.getTag().toString(),
+                                    name,
+                                    number
+                            });
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+
+                    builder.show();
+                }
+            });
+
+
             setUpSlider();
         }
 
@@ -109,12 +147,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
                             view.setPadding(offset, 0, 0, 0);
 
                             if (offset > DEFAULT_THRESHOLD) {
-                                mSlidePanel.setVisibility(View.INVISIBLE);
+                                mSlidePanel.setVisibility(View.GONE);
                                 mMainLinear.setVisibility(View.VISIBLE);
                             } else if (offset < -DEFAULT_THRESHOLD) {
                                 mSlidePanel.setVisibility(View.VISIBLE);
-                                mMainLinear.setVisibility(View.INVISIBLE);
-                                Toast.makeText(context,"Some",Toast.LENGTH_SHORT).show();
+                                mMainLinear.setVisibility(View.GONE);
                             }
                         }
                     } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {

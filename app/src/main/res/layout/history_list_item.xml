@@ -56,10 +56,13 @@
         android:id="@+id/sidePane"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/delete"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Some"/>
+            android:clickable="true"
+            android:src="@drawable/ic_delete_forever_black_36dp"/>
+
     </LinearLayout>
 </RelativeLayout>

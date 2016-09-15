@@ -169,10 +169,13 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        String MovieIDSelectionString = Transaction.TABLE_NAME+
-                "." + Transaction._ID + "=?";
+        String conditionString =
+                Transaction.TABLE_NAME + "." + Transaction._ID + "=?" +
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=?" +
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=?" ;
+
         int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
-                ,MovieIDSelectionString,selectionArgs);
+                ,conditionString,selectionArgs);
         if(rowDeleted != 0)
             getContext().getContentResolver().notifyChange(uri, null);
         return rowDeleted;

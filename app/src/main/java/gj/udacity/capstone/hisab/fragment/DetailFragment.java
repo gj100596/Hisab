@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.adapter.DetailRecyclerViewAdapter;
@@ -22,7 +23,7 @@ public class DetailFragment extends Fragment
     private static final String ARG = "userString";
 
     //Combination of name and number of particular friend
-    private String userString;
+    private String userString,userName,userNumber;
 
     private DetailRecyclerViewAdapter detailRecyclerViewAdapter;
 
@@ -43,6 +44,9 @@ public class DetailFragment extends Fragment
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             userString = getArguments().getString(ARG);
+            String[] split = userString.split("_");
+            userName=split[0];
+            userNumber=split[1];
         }
     }
 
@@ -51,6 +55,8 @@ public class DetailFragment extends Fragment
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+        TextView nameTextView = (TextView) view.findViewById(R.id.history_name);
+        nameTextView.setText(userName);
 
         RecyclerView historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -59,7 +65,7 @@ public class DetailFragment extends Fragment
                 .query(
                         TransactionContract.Transaction.buildUnSettleDetailURI(userString),
                         null, null, null, null);
-        detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(getActivity(),cursor);
+        detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(getActivity(),cursor,userName,userNumber);
         historyList.setAdapter(detailRecyclerViewAdapter);
         return view;
     }
