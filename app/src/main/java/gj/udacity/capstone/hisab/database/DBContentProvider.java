@@ -158,6 +158,22 @@ public class DBContentProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
+        String projection[] = new String[]{
+                "MAX("+Transaction._ID+")"
+        };
+        Cursor cursor = mOpenHelper.getReadableDatabase().query(
+                Transaction.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        cursor.moveToFirst();
+        values.put(Transaction._ID,cursor.getInt(0)+1);
+
         long id = mOpenHelper.getWritableDatabase().insert(Transaction.TABLE_NAME,null,values);
         getContext().getContentResolver().notifyChange(uri, null);
         return Transaction.buildUnSettleDetailURI(
@@ -170,9 +186,11 @@ public class DBContentProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         String conditionString =
-                Transaction.TABLE_NAME + "." + Transaction._ID + "=?" +
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=?" +
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=?" ;
+                Transaction.TABLE_NAME + "." + Transaction._ID + "=? "
+                        + " AND "+
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
+                        + " AND "+
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
 
         int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
                 ,conditionString,selectionArgs);

@@ -59,7 +59,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
         cursor.moveToPosition(position);
         holder.mAmount.setText(cursor.getString(COLUMN_AMOUNT_INDEX));//mValues.get(position).id);
         holder.mReason.setText(cursor.getString(COLUMN_REASON_INDEX));//mValues.get(position).content);
-        holder.delete.setTag(cursor.getString(COLUMN_ID_INDEX));//mValues.get(position).content);
+        holder.delete.setTag(cursor.getInt(COLUMN_ID_INDEX));//mValues.get(position).content);
         holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));
     }
 
