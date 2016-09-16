@@ -53,8 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.feed, FeedFragment.newInstance())
+                .replace(R.id.feed, FeedFragment.newInstance(0))
                 .commit();
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -78,13 +79,19 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menuHome:
-                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.feed, FeedFragment.newInstance(0))
+                                .commit();
                         break;
                     case R.id.menuSetting:
                         Toast.makeText(MainActivity.this, "Setting", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.menuSettled:
-                        Toast.makeText(MainActivity.this, "Settled", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.feed, FeedFragment.newInstance(1))
+                                .commit();
                         break;
                 }
                 return true;

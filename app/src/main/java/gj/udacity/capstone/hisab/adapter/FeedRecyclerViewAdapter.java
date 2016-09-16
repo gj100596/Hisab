@@ -53,9 +53,11 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DetailFragment detailFragment = DetailFragment.newInstance(holder.mName.getTag().toString(),0);
+                detailFragment.setHasOptionsMenu(true);
                 context.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.feed, DetailFragment.newInstance(holder.mName.getTag().toString()))
+                        .replace(R.id.feed, detailFragment)
                         .addToBackStack("Details")
                         .commit();
             }

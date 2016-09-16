@@ -26,17 +26,34 @@ public class DBContentProvider extends ContentProvider {
     private static final int LIST_SETTLE = 3;
     private static final int DETAIL_SETTLE = 4;
 
-    private static final UriMatcher sUriMatcher = createUriMatcher();
+    private static final int DELETE_ONE_SETTLE = 10;
+    private static final int DELETE_ALL_SETTLE = 11;
+    private static final int DELETE_ONE_PERMANENT = 12;
+    private static final int DELETE_ALL_PERMANENT = 13;
+
+    private static final UriMatcher uriQueryMatcher = createUriQueryMatcher();
+    private static final UriMatcher uriDeleteMatcher = createUriDeleteMatcher();
     private DBHelper mOpenHelper;
 
 
-    static UriMatcher createUriMatcher(){
+    static UriMatcher createUriQueryMatcher(){
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         String authority = CONTENT_AUTHORITY;
         matcher.addURI(authority , URI_PATH + "/unsettle", LIST_UNSETTLE);
         matcher.addURI(authority , URI_PATH + "/unsettle/*" ,DETAIL_UNSETTLE);
         matcher.addURI(authority , URI_PATH + "/settle", LIST_SETTLE);
         matcher.addURI(authority , URI_PATH + "/settle/*" ,DETAIL_SETTLE);
+
+        return  matcher;
+    }
+
+    static UriMatcher createUriDeleteMatcher(){
+        UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        String authority = CONTENT_AUTHORITY;
+        matcher.addURI(authority , URI_PATH + "/settle/*", DELETE_ONE_SETTLE);
+        matcher.addURI(authority , URI_PATH + "/settle_all/*" ,DELETE_ALL_SETTLE);
+        matcher.addURI(authority , URI_PATH + "/delete/*", DELETE_ONE_PERMANENT);
+        matcher.addURI(authority , URI_PATH + "/delete_all/*" ,DELETE_ALL_PERMANENT);
 
         return  matcher;
     }
@@ -50,7 +67,7 @@ public class DBContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-        int match = sUriMatcher.match(uri);
+        int match = uriQueryMatcher.match(uri);
         return  Transaction.CONTENT_TYPE;
 
         /*
@@ -72,7 +89,7 @@ public class DBContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
         Cursor retCursor = null;
-        switch (sUriMatcher.match(uri)) {
+        switch (uriQueryMatcher.match(uri)) {
             case LIST_UNSETTLE:
                 retCursor = getTransactionList(0);
                 break;
@@ -141,13 +158,13 @@ public class DBContentProvider extends ContentProvider {
         };
         String groupby = Transaction.COLUMN_NAME+","+Transaction.COLUMN_NUMBER;
 
-        String selectionString = Transaction.COLUMN_SETTLED + "="+settlementMode;
+        String selectionString = Transaction.COLUMN_SETTLED + "=?";
 
         return mOpenHelper.getReadableDatabase().query(
                 Transaction.TABLE_NAME,
                 projection,
                 selectionString,
-                null,
+                new String[]{""+settlementMode},
                 groupby,
                 null,
                 sortOrder
@@ -185,15 +202,88 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
+
+        int rowDeleted = 0;
+        switch (uriDeleteMatcher.match(uri)) {
+            case DELETE_ONE_SETTLE:
+                rowDeleted = settleOne(uri);
+                break;
+            case DELETE_ALL_SETTLE:
+                rowDeleted = settleAll(uri);
+                break;
+            case DELETE_ONE_PERMANENT:
+                rowDeleted = deleteOne(uri);
+                break;
+            case DELETE_ALL_PERMANENT:
+                rowDeleted = deleteAll(uri);
+                break;
+        }
+
+
+        return rowDeleted;
+    }
+
+    private int settleOne(Uri uri) {
+        String args = uri.getPathSegments().get(2);
         String conditionString =
                 Transaction.TABLE_NAME + "." + Transaction._ID + "=? "
                         + " AND "+
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
                         + " AND "+
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
+
+        ContentValues values = new ContentValues();
+        values.put(Transaction.COLUMN_SETTLED,1);
+
+        int rowDeleted  = mOpenHelper.getWritableDatabase().update(Transaction.TABLE_NAME,values
+                ,conditionString,args.split("_"));
+        if(rowDeleted != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+        return rowDeleted;
+    }
+
+    private int settleAll(Uri uri) {
+        String args = uri.getPathSegments().get(2);
+        String conditionString =
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
+                        + " AND "+
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
+
+        ContentValues values = new ContentValues();
+        values.put(Transaction.COLUMN_SETTLED,1);
+
+        int rowDeleted  = mOpenHelper.getWritableDatabase().update(Transaction.TABLE_NAME,values
+                ,conditionString,args.split("_"));
+        if(rowDeleted != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+        return rowDeleted;
+    }
+
+    private int deleteAll(Uri uri) {
+        String args = uri.getPathSegments().get(2);
+        String conditionString =
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
+                        + " AND "+
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
 
         int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
-                ,conditionString,selectionArgs);
+                ,conditionString,args.split("_"));
+        if(rowDeleted != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+        return rowDeleted;
+    }
+
+    private int deleteOne(Uri uri) {
+        String args = uri.getPathSegments().get(2);
+        String conditionString =
+                Transaction.TABLE_NAME + "." + Transaction._ID + "=? "
+                        + " AND "+
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
+                        + " AND "+
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
+
+        int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
+                ,conditionString,args.split("_"));
         if(rowDeleted != 0)
             getContext().getContentResolver().notifyChange(uri, null);
         return rowDeleted;

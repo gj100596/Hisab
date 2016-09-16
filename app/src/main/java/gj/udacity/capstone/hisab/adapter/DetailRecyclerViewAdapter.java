@@ -13,12 +13,10 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import gj.udacity.capstone.hisab.R;
-
-import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
+import gj.udacity.capstone.hisab.database.TransactionContract;
 
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecyclerViewAdapter.ViewHolder> {
 
@@ -59,7 +57,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
         cursor.moveToPosition(position);
         holder.mAmount.setText(cursor.getString(COLUMN_AMOUNT_INDEX));//mValues.get(position).id);
         holder.mReason.setText(cursor.getString(COLUMN_REASON_INDEX));//mValues.get(position).content);
-        holder.delete.setTag(cursor.getInt(COLUMN_ID_INDEX));//mValues.get(position).content);
+        holder.mDelete.setTag(cursor.getInt(COLUMN_ID_INDEX));//mValues.get(position).content);
         holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));
     }
 
@@ -86,8 +84,8 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mReason, mAmount, mDate;
-        public final LinearLayout mSlidePanel,mMainLinear;
-        public final ImageView delete;
+        //public final LinearLayout mMainLinear,mSlidePanel;
+        public final ImageView mDelete;
 
         public ViewHolder(View view) {
             super(view);
@@ -95,26 +93,28 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
             mReason = (TextView) view.findViewById(R.id.reason);
             mAmount = (TextView) view.findViewById(R.id.amount);
             mDate = (TextView) view.findViewById(R.id.date);
-            mSlidePanel = (LinearLayout) view.findViewById(R.id.sidePane);
-            mMainLinear = (LinearLayout) view.findViewById(R.id.mainLinear);
-            delete = (ImageView) view.findViewById(R.id.delete);
+            //mSlidePanel = (LinearLayout) view.findViewById(R.id.sidePane);
+            //mMainLinear = (LinearLayout) view.findViewById(R.id.mainLinear);
+            mDelete = (ImageView) view.findViewById(R.id.delete);
 
-            delete.setOnClickListener(new View.OnClickListener() {
+            mDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage("Do You want to settle this transaction?");
                     builder.setTitle("Settle?");
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            context.getContentResolver().delete(BASE_URI, null,new String[]{
-                                    v.getTag().toString(),
-                                    name,
-                                    number
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String args = v.getTag().toString() + "_" +
+                                            name + "_" +
+                                            number;
+
+                                    context.getContentResolver().delete(
+                                            TransactionContract.Transaction.buildOneSettleDeleteURI(args),
+                                            null, null);
+                                }
                             });
-                        }
-                    });
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -147,11 +147,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
                             view.setPadding(offset, 0, 0, 0);
 
                             if (offset > DEFAULT_THRESHOLD) {
-                                mSlidePanel.setVisibility(View.GONE);
-                                mMainLinear.setVisibility(View.VISIBLE);
+                                mDelete.setVisibility(View.GONE);
+                                mAmount.setVisibility(View.VISIBLE);
                             } else if (offset < -DEFAULT_THRESHOLD) {
-                                mSlidePanel.setVisibility(View.VISIBLE);
-                                mMainLinear.setVisibility(View.GONE);
+                                mDelete.setVisibility(View.VISIBLE);
+                                mAmount.setVisibility(View.GONE);
                             }
                         }
                     } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {

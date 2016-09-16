@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="gj.udacity.capstone.hisab.activity.MainActivity">
+
+    <item
+        android:icon="@drawable/ic_delete_forever_white_36dp"
+        android:id="@+id/settleTransaction"
+        app:showAsAction="always"
+        android:title="Settle" />
+
+</menu>

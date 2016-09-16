@@ -21,6 +21,10 @@ public class TransactionContract {
         public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(URI_PATH).build();
         public static final Uri UNSETTLE_URI = CONTENT_URI.buildUpon().appendPath("unsettle").build();
         public static final Uri SETTLE_URI = CONTENT_URI.buildUpon().appendPath("settle").build();
+        public static final Uri DELETE_SETTLE_URI = CONTENT_URI.buildUpon().appendPath("settle").build();
+        public static final Uri DELETE_PERMANENT_URI = CONTENT_URI.buildUpon().appendPath("delete").build();
+        public static final Uri DELETE_SETTLE_ALL_URI = CONTENT_URI.buildUpon().appendPath("settle_all").build();
+        public static final Uri DELETE_PERMANENT_ALL_URI = CONTENT_URI.buildUpon().appendPath("delete_all").build();
 
         //URI for Content Provider
         public static final String CONTENT_TYPE =
@@ -62,6 +66,18 @@ public class TransactionContract {
             return SETTLE_URI.buildUpon().appendPath(userString).build();
         }
 
+        public static Uri buildOneSettleDeleteURI(String userString){
+            return DELETE_SETTLE_URI.buildUpon().appendPath(userString).build();
+        }
+        public static Uri buildALLSettleDeleteURI(String userString){
+            return DELETE_SETTLE_ALL_URI.buildUpon().appendPath(userString).build();
+        }
+        public static Uri buildOnePermanentDeleteURI(String userString){
+            return DELETE_PERMANENT_URI.buildUpon().appendPath(userString).build();
+        }
+        public static Uri buildAllPermanentDeleteURI(String userString){
+            return DELETE_PERMANENT_ALL_URI.buildUpon().appendPath(userString).build();
+        }
     }
 
 }

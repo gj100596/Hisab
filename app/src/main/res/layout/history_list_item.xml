@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="15dp"
     android:layout_marginStart="15dp"
-    android:orientation="horizontal">
-
-    <LinearLayout
-        android:id="@+id/mainLinear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3">
-
+    android:orientation="horizontal"
+    android:weightSum="3">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -41,28 +34,46 @@
                 android:textAppearance="@android:style/TextAppearance.Material.Medium" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/amount"
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text="500"
-            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="500"
+                android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/delete"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:background="@color/sliderOptionBG"
+                android:src="@drawable/ic_delete_forever_white_36dp" />
+        </RelativeLayout>
 
     </LinearLayout>
 
+    <!--
     <LinearLayout
         android:id="@+id/sidePane"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
         <ImageView
-            android:id="@+id/delete"
+            android:id="@+id/mDelete"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
-            android:src="@drawable/ic_delete_forever_black_36dp"/>
+            android:src="@drawable/ic_delete_forever_black_36dp" />
 
     </LinearLayout>
 </RelativeLayout>
+
+-->

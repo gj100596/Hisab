@@ -30,18 +30,28 @@ public class FeedFragment extends Fragment
     private static final int CURSORLOADER_ID = 1;
     private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
 
+    private static final String ARG = "mode";
+    private int fragmentMode;
+
+
    // private OnListFragmentInteractionListener mListener;
 
     public FeedFragment() {
     }
 
-    public static FeedFragment newInstance() {
-        return new FeedFragment();
+    public static FeedFragment newInstance(int mode) {
+        FeedFragment fragment = new FeedFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG, mode);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null)
+            fragmentMode = getArguments().getInt(ARG);
     }
 
     @Override
@@ -55,10 +65,19 @@ public class FeedFragment extends Fragment
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            Cursor cursor = getActivity().getContentResolver()
-                    .query(
-                            TransactionContract.Transaction.UNSETTLE_URI,
-                            null, null, null, null);
+            Cursor cursor;
+            if(fragmentMode == 0) {
+                cursor = getActivity().getContentResolver()
+                        .query(
+                                TransactionContract.Transaction.UNSETTLE_URI,
+                                null, null, null, null);
+            }
+            else{
+                cursor = getActivity().getContentResolver()
+                        .query(
+                                TransactionContract.Transaction.SETTLE_URI,
+                                null, null, null, null);
+            }
             feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(),cursor);
             recyclerView.setAdapter(feedRecyclerViewAdapter);
 
@@ -95,12 +114,22 @@ public class FeedFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        return new CursorLoader(getActivity(),
-                TransactionContract.Transaction.UNSETTLE_URI,
-                null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
-                null,
-                null,
-                null);
+        if(fragmentMode == 0) {
+            return new CursorLoader(getActivity(),
+                    TransactionContract.Transaction.UNSETTLE_URI,
+                    null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                    null,
+                    null,
+                    null);
+        }
+        else{
+            return new CursorLoader(getActivity(),
+                    TransactionContract.Transaction.SETTLE_URI,
+                    null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                    null,
+                    null,
+                    null);
+        }
     }
 
     @Override
