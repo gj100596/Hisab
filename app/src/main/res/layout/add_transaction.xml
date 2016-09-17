@@ -6,27 +6,27 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:weightSum="5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="5">
 
         <AutoCompleteTextView
             android:id="@+id/add_name"
-            android:layout_weight="4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
+            android:layout_weight="4"
             android:ems="10"
             android:hint="Name"
             android:inputType="textPersonName" />
 
         <ImageView
             android:id="@+id/add_contact"
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:src="@android:drawable/sym_contact_card"/>
+            android:layout_weight="1"
+            android:src="@android:drawable/sym_contact_card" />
     </LinearLayout>
 
     <EditText
@@ -71,14 +71,41 @@
             android:visibility="invisible" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/add_amount"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:ems="10"
-        android:hint="Amount"
-        android:inputType="number" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/add_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:textColor="@android:color/holo_green_light"
+            android:ems="10"
+            android:hint="Amount"
+            android:inputType="number" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/givenRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Given"/>
+            <RadioButton
+                android:id="@+id/takenRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Taken"/>
+
+        </RadioGroup>
+    </LinearLayout>
 
     <Button
         android:id="@+id/add_button"

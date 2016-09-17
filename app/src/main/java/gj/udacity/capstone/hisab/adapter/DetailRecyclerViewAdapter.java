@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -55,7 +56,12 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         cursor.moveToPosition(position);
-        holder.mAmount.setText(cursor.getString(COLUMN_AMOUNT_INDEX));//mValues.get(position).id);
+        Integer amount = Integer.parseInt(cursor.getString(COLUMN_AMOUNT_INDEX));
+        holder.mAmount.setText(""+amount);//mValues.get(position).id);
+        if(amount<0)
+            holder.mAmount.setTextColor(Color.RED);
+        else
+            holder.mAmount.setTextColor(Color.GREEN);
         holder.mReason.setText(cursor.getString(COLUMN_REASON_INDEX));//mValues.get(position).content);
         holder.mDelete.setTag(cursor.getInt(COLUMN_ID_INDEX));//mValues.get(position).content);
         holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));

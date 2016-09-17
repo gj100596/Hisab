@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -60,11 +62,13 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         final EditText amountEditText = (EditText) contentView.findViewById(R.id.add_amount);
         final Spinner categorySpinner = (Spinner) contentView.findViewById(R.id.add_category);
         final ImageView contactImageView = (ImageView) contentView.findViewById(R.id.add_contact);
+        final RadioGroup transactionType = (RadioGroup) contentView.findViewById(R.id.radioGroup);
 
         final ArrayList<String> phone = new ArrayList<String>();
 
-        ContentResolver cr = getActivity().getContentResolver();
 
+        // Get The Conntact List for suggestions
+        ContentResolver cr = getActivity().getContentResolver();
         Cursor contactCursor = cr
                 .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
 
@@ -79,11 +83,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             );
         }
         contactCursor.close();
-
-        String[] emailAddresses = new String[phone.size()];
-        phone.toArray(emailAddresses);
-
-        ArrayAdapter<String> adapter = 
+        ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, phone);
 
         nameEditText.setAdapter(adapter);
@@ -106,14 +106,35 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             }
         });
 
+        // Category List
         ArrayAdapter<String> categoryAdapter =
                 new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_spinner_dropdown_item,
                         getResources().getStringArray(R.array.category_list));
         categorySpinner.setAdapter(categoryAdapter);
 
-        Button saveButton = (Button) contentView.findViewById(R.id.add_button);
+        // Transaction Type
+        transactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int amountVal = Integer.parseInt(amountEditText.getText().toString());
+                if(checkedId == R.id.takenRadio){
+                    if(amountVal>0)
+                        amountVal*=-1;
+                    amountEditText.setTextColor(Color.RED);
+                }
+                else{
+                    if(amountVal<0)
+                        amountVal*=-1;
+                    amountEditText.setTextColor(Color.GREEN);
+                }
+                amountEditText.setText(""+amountVal);
+            }
+        });
 
+
+        //Save Transaction
+        Button saveButton = (Button) contentView.findViewById(R.id.add_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

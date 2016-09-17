@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ImageView dp;
     private BottomSheetDialogFragment fabBottomSheetDialogFragment;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,18 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.feed, FeedFragment.newInstance(0))
                 .commit();
 
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if(getSupportFragmentManager().getBackStackEntryCount() == 0)
+                    fab.setVisibility(View.VISIBLE);
+                else
+                    fab.setVisibility(View.INVISIBLE);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureNavigationDrawer() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -83,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                                 .beginTransaction()
                                 .replace(R.id.feed, FeedFragment.newInstance(0))
                                 .commit();
+                        actionBarDrawerToggle.onDrawerClosed(navigationView);
                         break;
                     case R.id.menuSetting:
                         Toast.makeText(MainActivity.this, "Setting", Toast.LENGTH_SHORT).show();
