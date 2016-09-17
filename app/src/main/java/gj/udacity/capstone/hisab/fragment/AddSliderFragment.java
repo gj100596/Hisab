@@ -24,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import gj.udacity.capstone.hisab.R;
 
@@ -140,15 +141,19 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             public void onClick(View v) {
 
                 ContentValues values = new ContentValues();
-                //ID to be auto incremented
-                //values.put(Transaction._ID, MovieID);
                 values.put(Transaction.COLUMN_NAME, nameEditText.getText().toString());
                 values.put(Transaction.COLUMN_NUMBER,numberEditText.getText().toString());
                 values.put(Transaction.COLUMN_REASON, reasonEditText.getText().toString());
                 values.put(Transaction.COLUMN_AMOUNT, Integer.parseInt(amountEditText.getText().toString()));
                 values.put(Transaction.COLUMN_SETTLED, 0);
                 values.put(Transaction.COLUMN_CATEGORY, "Some");
-                values.put(Transaction.COLUMN_DATE,"25-2-1996");
+                Calendar instance = Calendar.getInstance();
+                int month = instance.get(Calendar.MONTH);
+                String monthString = month<10?("0"+month):(month+"");
+                String date = instance.get(Calendar.YEAR)+"-"
+                        + monthString  +"-"
+                        + instance.get(Calendar.DAY_OF_MONTH);
+                values.put(Transaction.COLUMN_DATE,date);
 
                 getActivity().getContentResolver().insert(BASE_URI, values);
                 AddSliderFragment.this.dismiss();
