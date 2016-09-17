@@ -12,6 +12,9 @@
     <string name="user_number_info">Number won\'t be shared. It will only be used when friend shares account status.</string>
 
     <string name="category">Category</string>
+    <string name="nav_drawer_pending">Pending</string>
+    <string name="nav_drawer_settled">Settled</string>
+    <string name="nav_drawer_setting">Setting</string>
 
     <string-array name="category_list" >
         <item>Food</item>

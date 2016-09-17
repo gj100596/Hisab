@@ -148,7 +148,7 @@ public class DBContentProvider extends ContentProvider {
         select Name,Number,sum(Amount),max(tDate) from tran where Settled=0 group by Name,Number;
          */
 
-        String sortOrder = TransactionContract.Transaction.COLUMN_AMOUNT + " DESC";
+        String sortOrder = Transaction.COLUMN_DATE + " DESC";
 
         String projection[] = new String[]{
                 Transaction.COLUMN_NAME,

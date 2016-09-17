@@ -2,7 +2,6 @@ package gj.udacity.capstone.hisab.adapter;
 
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -50,12 +49,12 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
         Integer amount = Integer.parseInt(cursor.getString(COLUMN_SUM_INDEX));
         holder.mAmount.setText(""+amount);//mValues.get(position).id);
         if(amount<0)
-            holder.mTransactionColor.setBackgroundColor(Color.RED);
+            holder.mTransactionColor.setBackgroundResource(R.color.sliderOptionBG);
         else
-            holder.mTransactionColor.setBackgroundColor(Color.GREEN);
+            holder.mTransactionColor.setBackgroundResource(R.color.materialGreen);
         holder.mName.setText(cursor.getString(COLUMN_NAME_INDEX));//mValues.get(position).content);
         holder.mName.setTag(cursor.getString(COLUMN_NAME_INDEX)+"_"+cursor.getString(COLUMN_NUMBER_INDEX));//mValues.get(position).content);
-        holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));
+        holder.mNumber.setText(cursor.getString(COLUMN_NUMBER_INDEX));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +92,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mName,mAmount,mDate;
+        public final TextView mName,mAmount, mNumber;
         public final ImageView mTransactionColor;
 
         public ViewHolder(View view) {
@@ -101,7 +100,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
             mView = view;
             mName = (TextView) view.findViewById(R.id.name);
             mAmount = (TextView) view.findViewById(R.id.amount);
-            mDate = (TextView) view.findViewById(R.id.date);
+            mNumber = (TextView) view.findViewById(R.id.date);
             mTransactionColor = (ImageView) view.findViewById(R.id.transactionTypeColor);
         }
     }
