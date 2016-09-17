@@ -19,15 +19,17 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     private Cursor cursor;
     private boolean dataValid;
     private DataSetObserver dataSetObserver;
+    private int fragmentMode;
 
     private final int COLUMN_NAME_INDEX = 0;
     private final int COLUMN_NUMBER_INDEX = 1;
     private final int COLUMN_SUM_INDEX = 2;
     private final int COLUMN_DATE_INDEX = 3;
 
-    public FeedRecyclerViewAdapter(FragmentActivity context, Cursor cursor){//}, OnListFragmentInteractionListener listener) {
+    public FeedRecyclerViewAdapter(FragmentActivity context, Cursor cursor, int fragmentMode){//}, OnListFragmentInteractionListener listener) {
         this.context = context;
         this.cursor = cursor;
+        this.fragmentMode = fragmentMode;
         dataValid = cursor != null;
         dataSetObserver = new FeedRecyclerViewAdapter.NotifyingDataSetObserver();
         if (cursor != null) {
@@ -46,7 +48,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         cursor.moveToPosition(position);
-        Integer amount = Integer.parseInt(cursor.getString(COLUMN_SUM_INDEX));
+        final Integer amount = Integer.parseInt(cursor.getString(COLUMN_SUM_INDEX));
         holder.mAmount.setText(""+amount);//mValues.get(position).id);
         if(amount<0)
             holder.mTransactionColor.setBackgroundResource(R.color.sliderOptionBG);
@@ -59,7 +61,10 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DetailFragment detailFragment = DetailFragment.newInstance(holder.mName.getTag().toString(),0);
+                DetailFragment detailFragment = DetailFragment.newInstance(
+                        holder.mName.getTag().toString(),
+                        amount,
+                        fragmentMode);
                 detailFragment.setHasOptionsMenu(true);
                 context.getSupportFragmentManager()
                         .beginTransaction()

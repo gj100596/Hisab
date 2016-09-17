@@ -78,7 +78,7 @@ public class FeedFragment extends Fragment
                                 TransactionContract.Transaction.SETTLE_URI,
                                 null, null, null, null);
             }
-            feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(),cursor);
+            feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(),cursor,fragmentMode);
             recyclerView.setAdapter(feedRecyclerViewAdapter);
 
         }

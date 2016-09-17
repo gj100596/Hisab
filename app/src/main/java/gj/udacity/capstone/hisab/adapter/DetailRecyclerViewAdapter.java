@@ -26,15 +26,18 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     private Cursor cursor;
     private boolean dataValid;
     private DataSetObserver dataSetObserver;
+    private int fragmentMode;
 
     private final int COLUMN_ID_INDEX = 0;
     private final int COLUMN_REASON_INDEX = 1;
     private final int COLUMN_DATE_INDEX = 2;
     private final int COLUMN_AMOUNT_INDEX = 3;
 
-    public DetailRecyclerViewAdapter (FragmentActivity context, Cursor cursor,String name,String number){
+    public DetailRecyclerViewAdapter (FragmentActivity context, Cursor cursor,String name,
+                                      String number, int fragmentMode){
         this.context = context;
         this.cursor = cursor;
+        this.fragmentMode = fragmentMode;
         dataValid = cursor != null;
         dataSetObserver = new DetailRecyclerViewAdapter.NotifyingDataSetObserver();
         if (cursor != null) {
@@ -107,20 +110,37 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
                 @Override
                 public void onClick(final View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Do You want to settle this transaction?");
-                    builder.setTitle("Settle?");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    String args = v.getTag().toString() + "_" +
-                                            name + "_" +
-                                            number;
+                    if(fragmentMode == 0) {
+                        builder.setMessage("Do You want to Settle this Transaction?");
+                        builder.setTitle("Settle?");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String args = v.getTag().toString() + "_" +
+                                        name + "_" +
+                                        number;
 
-                                    context.getContentResolver().delete(
-                                            TransactionContract.Transaction.buildOneSettleDeleteURI(args),
-                                            null, null);
-                                }
-                            });
+                                context.getContentResolver().delete(
+                                        TransactionContract.Transaction.buildOneSettleDeleteURI(args),
+                                        null, null);
+                            }
+                        });
+                    }else{
+                        builder.setMessage("Do You want to Delete this Transaction Permanently?");
+                        builder.setTitle("Delete?");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String args = v.getTag().toString() + "_" +
+                                        name + "_" +
+                                        number;
+
+                                context.getContentResolver().delete(
+                                        TransactionContract.Transaction.buildOnePermanentDeleteURI(args),
+                                        null, null);
+                            }
+                        });
+                    }
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

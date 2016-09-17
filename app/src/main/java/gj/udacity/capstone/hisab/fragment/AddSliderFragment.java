@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -22,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,22 +34,22 @@ import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction
 public class AddSliderFragment extends BottomSheetDialogFragment {
 
     private static final int CONTACT_INTENT_CODE = 300;
+
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback =
             new BottomSheetBehavior.BottomSheetCallback() {
-
         @Override
         public void onStateChanged(@NonNull View bottomSheet, int newState) {
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                 dismiss();
             }
         }
-
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
         }
     };
+
     private AutoCompleteTextView nameEditText;
-    private EditText numberEditText;
+    private EditText numberEditText,reasonEditText,amountEditText;
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
@@ -59,8 +59,8 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
 
         nameEditText = (AutoCompleteTextView) contentView.findViewById(R.id.add_name);
         numberEditText = (EditText) contentView.findViewById(R.id.add_number);
-        final EditText reasonEditText = (EditText) contentView.findViewById(R.id.add_reason);
-        final EditText amountEditText = (EditText) contentView.findViewById(R.id.add_amount);
+        reasonEditText = (EditText) contentView.findViewById(R.id.add_reason);
+        amountEditText = (EditText) contentView.findViewById(R.id.add_amount);
         final Spinner categorySpinner = (Spinner) contentView.findViewById(R.id.add_category);
         final ImageView contactImageView = (ImageView) contentView.findViewById(R.id.add_contact);
         final RadioGroup transactionType = (RadioGroup) contentView.findViewById(R.id.radioGroup);
@@ -118,18 +118,28 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         transactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                int amountVal = Integer.parseInt(amountEditText.getText().toString());
-                if(checkedId == R.id.takenRadio){
-                    if(amountVal>0)
-                        amountVal*=-1;
-                    amountEditText.setTextColor(Color.RED);
+                if(amountEditText.getText().toString().isEmpty()){
+                    amountEditText.setTextColor(getResources().getColor(R.color.sliderOptionBG));
+                    amountEditText.setText("-");
                 }
-                else{
-                    if(amountVal<0)
-                        amountVal*=-1;
-                    amountEditText.setTextColor(Color.GREEN);
+                else {
+                    int amountVal = 0;
+                    try {
+                        amountVal = Integer.parseInt(amountEditText.getText().toString());
+                    }catch(Exception e){
+                        Toast.makeText(getActivity(),"Make Sure Amount Value is Integer",Toast.LENGTH_SHORT).show();
+                    }
+                    if (checkedId == R.id.takenRadio) {
+                        if (amountVal > 0)
+                            amountVal *= -1;
+                        amountEditText.setTextColor(getResources().getColor(R.color.sliderOptionBG));
+                    } else {
+                        if (amountVal < 0)
+                            amountVal *= -1;
+                        amountEditText.setTextColor(getResources().getColor(R.color.materialGreen));
+                    }
+                    amountEditText.setText("" + amountVal);
                 }
-                amountEditText.setText(""+amountVal);
             }
         });
 
@@ -140,23 +150,26 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-                ContentValues values = new ContentValues();
-                values.put(Transaction.COLUMN_NAME, nameEditText.getText().toString());
-                values.put(Transaction.COLUMN_NUMBER,numberEditText.getText().toString());
-                values.put(Transaction.COLUMN_REASON, reasonEditText.getText().toString());
-                values.put(Transaction.COLUMN_AMOUNT, Integer.parseInt(amountEditText.getText().toString()));
-                values.put(Transaction.COLUMN_SETTLED, 0);
-                values.put(Transaction.COLUMN_CATEGORY, "Some");
-                Calendar instance = Calendar.getInstance();
-                int month = instance.get(Calendar.MONTH);
-                String monthString = month<10?("0"+month):(month+"");
-                String date = instance.get(Calendar.YEAR)+"-"
-                        + monthString  +"-"
-                        + instance.get(Calendar.DAY_OF_MONTH);
-                values.put(Transaction.COLUMN_DATE,date);
+                if(checkForEmpty()) {
 
-                getActivity().getContentResolver().insert(BASE_URI, values);
-                AddSliderFragment.this.dismiss();
+                    ContentValues values = new ContentValues();
+                    values.put(Transaction.COLUMN_NAME, nameEditText.getText().toString());
+                    values.put(Transaction.COLUMN_NUMBER, numberEditText.getText().toString());
+                    values.put(Transaction.COLUMN_REASON, reasonEditText.getText().toString());
+                    values.put(Transaction.COLUMN_AMOUNT, Integer.parseInt(amountEditText.getText().toString()));
+                    values.put(Transaction.COLUMN_SETTLED, 0);
+                    values.put(Transaction.COLUMN_CATEGORY, "Some");
+                    Calendar instance = Calendar.getInstance();
+                    int month = instance.get(Calendar.MONTH);
+                    String monthString = month < 10 ? ("0" + month) : (month + "");
+                    String date = instance.get(Calendar.YEAR) + "-"
+                            + monthString + "-"
+                            + instance.get(Calendar.DAY_OF_MONTH);
+                    values.put(Transaction.COLUMN_DATE, date);
+
+                    getActivity().getContentResolver().insert(BASE_URI, values);
+                    AddSliderFragment.this.dismiss();
+                }
             }
         });
 
@@ -167,6 +180,27 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         if( behavior != null && behavior instanceof BottomSheetBehavior ) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
+    }
+
+    private boolean checkForEmpty() {
+        if(nameEditText.getText().toString().isEmpty()){
+            Toast.makeText(getActivity(),"Please Enter Name",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(numberEditText.getText().toString().isEmpty()){
+            Toast.makeText(getActivity(),"Please Enter Mobile Number of Person",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(reasonEditText.getText().toString().isEmpty()){
+            Toast.makeText(getActivity(),"Please Enter Reason",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(amountEditText.getText().toString().isEmpty()){
+            Toast.makeText(getActivity(),"Please Enter Amount",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 
     @Override

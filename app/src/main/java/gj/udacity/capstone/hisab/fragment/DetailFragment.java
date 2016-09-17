@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import gj.udacity.capstone.hisab.R;
@@ -27,10 +28,11 @@ public class DetailFragment extends Fragment
 
     private static final String ARG_1 = "userString";
     private static final String ARG_2 = "mode";
+    private static final String ARG_3 = "totalAmount";
 
     //Combination of name and number of particular friend
     private String userString, userName, userNumber;
-    private int fragmentMode;
+    private int fragmentMode,totalAmount;
 
     private DetailRecyclerViewAdapter detailRecyclerViewAdapter;
 
@@ -38,11 +40,12 @@ public class DetailFragment extends Fragment
         // Required empty public constructor
     }
 
-    public static DetailFragment newInstance(String id,int mode) {
+    public static DetailFragment newInstance(String id,int totalAmount, int mode) {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_1, id);
         args.putInt(ARG_2, mode);
+        args.putInt(ARG_3,totalAmount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,6 +59,7 @@ public class DetailFragment extends Fragment
             userName = split[0];
             userNumber = split[1];
             fragmentMode = getArguments().getInt(ARG_2);
+            totalAmount = getArguments().getInt(ARG_3);
         }
     }
 
@@ -70,6 +74,10 @@ public class DetailFragment extends Fragment
         RecyclerView historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        LinearLayout bottomBar = (LinearLayout) view.findViewById(R.id.bottomBar);
+        TextView bottomTotalAmount = (TextView) view.findViewById(R.id.bottomAmount);
+        bottomTotalAmount.setText(""+totalAmount);
+
         Cursor cursor;
         if(fragmentMode == 0) {
             cursor = getActivity().getContentResolver()
@@ -83,7 +91,7 @@ public class DetailFragment extends Fragment
                             TransactionContract.Transaction.buildSettleDetailURI(userString),
                             null, null, null, null);
         }
-        detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(getActivity(), cursor, userName, userNumber);
+        detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(getActivity(), cursor, userName,userNumber,fragmentMode);
         historyList.setAdapter(detailRecyclerViewAdapter);
         return view;
     }
@@ -104,19 +112,36 @@ public class DetailFragment extends Fragment
 
         if (id == R.id.settleTransaction) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Do You want to settle Whole Transaction?");
-            builder.setTitle("Settle?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String args = userName + "_" + userNumber;
+            if(fragmentMode == 0) {
+                builder.setMessage("Do You want to settle Whole Transaction?");
+                builder.setTitle("Settle?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String args = userName + "_" + userNumber;
 
-                    getActivity().getContentResolver().delete(
-                            TransactionContract.Transaction.buildALLSettleDeleteURI(args),
-                            null, null);
-                    getActivity().onBackPressed();
-                }
-            });
+                        getActivity().getContentResolver().delete(
+                                TransactionContract.Transaction.buildALLSettleDeleteURI(args),
+                                null, null);
+                        getActivity().onBackPressed();
+                    }
+                });
+            }
+            else{
+                builder.setMessage("Do You want to Delete Whole Transaction Permanently?");
+                builder.setTitle("Delete?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String args = userName + "_" + userNumber;
+
+                        getActivity().getContentResolver().delete(
+                                TransactionContract.Transaction.buildAllPermanentDeleteURI(args),
+                                null, null);
+                        getActivity().onBackPressed();
+                    }
+                });
+            }
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -125,7 +150,6 @@ public class DetailFragment extends Fragment
 
             builder.show();
         }
-
         return super.onOptionsItemSelected(item);
 
     }

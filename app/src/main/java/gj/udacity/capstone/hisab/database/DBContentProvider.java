@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import static gj.udacity.capstone.hisab.database.TransactionContract.*;
+import static gj.udacity.capstone.hisab.database.TransactionContract.CONTENT_AUTHORITY;
+import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
+import static gj.udacity.capstone.hisab.database.TransactionContract.URI_PATH;
 
 /*
 Unsettle list
@@ -108,7 +110,6 @@ public class DBContentProvider extends ContentProvider {
     }
 
     private Cursor getTransactionHistoryDetail(Uri uri,int settlementMode){
-
         /*
             select tran.Reason,tran.tDate,tran.Amount from tran where name="AB" and Number=735 and Settled=0;
          */
@@ -260,14 +261,20 @@ public class DBContentProvider extends ContentProvider {
     }
 
     private int deleteAll(Uri uri) {
-        String args = uri.getPathSegments().get(2);
         String conditionString =
                         Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
-                        + " AND "+
-                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
+                        + " AND " +
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? "
+                        + " AND " +
+                        Transaction.TABLE_NAME + "." + Transaction.COLUMN_SETTLED + "=? ";
 
+        String[] finalArg = new String[3];
+        int i=0;
+        for(String x:uri.getPathSegments().get(2).split(" "))
+            finalArg[i++]=x;
+        finalArg[i]="1";
         int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
-                ,conditionString,args.split("_"));
+                ,conditionString,finalArg);
         if(rowDeleted != 0)
             getContext().getContentResolver().notifyChange(uri, null);
         return rowDeleted;
@@ -277,9 +284,9 @@ public class DBContentProvider extends ContentProvider {
         String args = uri.getPathSegments().get(2);
         String conditionString =
                 Transaction.TABLE_NAME + "." + Transaction._ID + "=? "
-                        + " AND "+
+                        + " AND " +
                         Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=? "
-                        + " AND "+
+                        + " AND " +
                         Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=? " ;
 
         int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
