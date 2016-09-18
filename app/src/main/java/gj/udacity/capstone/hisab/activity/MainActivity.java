@@ -1,7 +1,9 @@
 package gj.udacity.capstone.hisab.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,7 +11,9 @@ import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +59,21 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //Take Permission
+        if(
+            ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED
+            ||
+            ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    1);
+        }
 
         FeedFragment feedFragment = FeedFragment.newInstance(0);
 
@@ -204,6 +223,13 @@ public class MainActivity extends AppCompatActivity {
                     .transform(new CircularImage())
                     .into(dp);
         }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if(requestCode==1 && grantResults.length <1)
+            Toast.makeText(MainActivity.this,
+                    "Permission Denied! Few Feature might not work!", Toast.LENGTH_SHORT).show();
     }
 
     @Override

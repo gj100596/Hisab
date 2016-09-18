@@ -1,9 +1,11 @@
 package gj.udacity.capstone.hisab.fragment;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -11,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -67,24 +71,28 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
 
         final ArrayList<String> phone = new ArrayList<String>();
 
-
-        // Get The Contact List for suggestions
         ContentResolver cr = getActivity().getContentResolver();
-        Cursor contactCursor = cr
-                .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    1);
+        }else{
+            // Get The Contact List for suggestions
+            Cursor contactCursor = cr
+                    .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
 
-        while (contactCursor.moveToNext())
-        {
-            String contactName = contactCursor.getString(
-                    contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            String contactNumber = contactCursor.getString(
-                    contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            phone.add(
-                    contactName.split(" ")[0]+" "+contactNumber
-            );
+            while (contactCursor.moveToNext()) {
+                String contactName = contactCursor.getString(
+                        contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                String contactNumber = contactCursor.getString(
+                        contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                phone.add(
+                        contactName.split(" ")[0] + " " + contactNumber
+                );
+            }
+            contactCursor.close();
         }
-        contactCursor.close();
-
         // Get Name and Number of People added in our app but not in contact
         Cursor dbContact = cr
                 .query(Transaction.NAME_NO_URI, null, null, null, null);

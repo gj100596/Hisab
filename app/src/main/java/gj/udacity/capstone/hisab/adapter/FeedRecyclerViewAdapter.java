@@ -72,7 +72,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                         fragmentMode);
                 detailFragment.setHasOptionsMenu(true);
 
-                // Transition on History List
+                // Enter Transition on History List
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     Slide slide = new Slide(Gravity.BOTTOM);
                     slide.addTarget(R.id.history_list);
@@ -84,6 +84,18 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                     slide.setDuration(1000);
                     detailFragment.setEnterTransition(slide);
                 }
+                // Exit Transition on History List
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    Slide slide = new Slide(Gravity.LEFT);
+                    slide.addTarget(R.id.history_list);
+                    slide.setInterpolator(AnimationUtils
+                            .loadInterpolator(
+                                    context,
+                                    android.R.interpolator.linear_out_slow_in
+                            ));
+                    slide.setDuration(1000);
+                    detailFragment.setExitTransition(slide);
+                }
 
                 //Transition on Person Name...Shared Transition
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -92,6 +104,8 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                     detailFragment.setSharedElementEnterTransition(changeBoundsTransition);
 
                 }
+
+
                 context.getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.feed, detailFragment)
