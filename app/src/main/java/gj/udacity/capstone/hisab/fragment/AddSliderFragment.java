@@ -68,7 +68,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         final ArrayList<String> phone = new ArrayList<String>();
 
 
-        // Get The Conntact List for suggestions
+        // Get The Contact List for suggestions
         ContentResolver cr = getActivity().getContentResolver();
         Cursor contactCursor = cr
                 .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
@@ -84,6 +84,20 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             );
         }
         contactCursor.close();
+
+        // Get Name and Number of People added in our app but not in contact
+        Cursor dbContact = cr
+                .query(Transaction.NAME_NO_URI, null, null, null, null);
+
+        while (dbContact.moveToNext())
+        {
+            String contactName = dbContact.getString(0);
+            String contactNumber = dbContact.getString(1);
+            phone.add(
+                    contactName.split(" ")[0]+" "+contactNumber
+            );
+        }
+
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, phone);
 

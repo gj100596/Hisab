@@ -14,9 +14,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,9 +56,23 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        FeedFragment feedFragment = FeedFragment.newInstance(0);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Slide slide = new Slide(Gravity.LEFT);
+            slide.addTarget(R.id.cardLayoutList);
+            slide.setInterpolator(AnimationUtils
+                    .loadInterpolator(
+                            MainActivity.this,
+                            android.R.interpolator.linear_out_slow_in
+                    ));
+            slide.setDuration(1000);
+            feedFragment.setExitTransition(slide);
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.feed, FeedFragment.newInstance(0))
+                .replace(R.id.feed, feedFragment)
                 .commit();
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {

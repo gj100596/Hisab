@@ -27,6 +27,7 @@ public class DBContentProvider extends ContentProvider {
     private static final int DETAIL_UNSETTLE = 2;
     private static final int LIST_SETTLE = 3;
     private static final int DETAIL_SETTLE = 4;
+    private static final int NAME_NO_LIST = 5;
 
     private static final int DELETE_ONE_SETTLE = 10;
     private static final int DELETE_ALL_SETTLE = 11;
@@ -45,6 +46,7 @@ public class DBContentProvider extends ContentProvider {
         matcher.addURI(authority , URI_PATH + "/unsettle/*" ,DETAIL_UNSETTLE);
         matcher.addURI(authority , URI_PATH + "/settle", LIST_SETTLE);
         matcher.addURI(authority , URI_PATH + "/settle/*" ,DETAIL_SETTLE);
+        matcher.addURI(authority , URI_PATH + "/list" ,NAME_NO_LIST);
 
         return  matcher;
     }
@@ -104,9 +106,36 @@ public class DBContentProvider extends ContentProvider {
             case DETAIL_SETTLE:
                 retCursor = getTransactionHistoryDetail(uri,1);
                 break;
+            case NAME_NO_LIST:
+                retCursor = getDistinctNameNumber();
+                break;
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
+    }
+
+    private Cursor getDistinctNameNumber() {
+        /*
+        select TransactionTable.Name,TransactionTable.Number from TransactionTable
+        group by TransactionTable.Name,TransactionTable.Number
+         */
+        String projection[] = new String[]{
+                Transaction.COLUMN_NAME,
+                Transaction.COLUMN_NUMBER
+        };
+        String groupby = Transaction.COLUMN_NAME+","+Transaction.COLUMN_NUMBER;
+        Cursor cursor =  mOpenHelper.getReadableDatabase().query(
+                Transaction.TABLE_NAME,
+                projection,
+                null,
+                null,
+                groupby,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+        return cursor;
+
     }
 
     private Cursor getTransactionHistoryDetail(Uri uri,int settlementMode){

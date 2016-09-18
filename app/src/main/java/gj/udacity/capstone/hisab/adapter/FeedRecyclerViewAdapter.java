@@ -4,9 +4,14 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.transition.ChangeBounds;
+import android.transition.Slide;
+import android.transition.TransitionInflater;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,9 +71,31 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                         amount,
                         fragmentMode);
                 detailFragment.setHasOptionsMenu(true);
+
+                // Transition on History List
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    Slide slide = new Slide(Gravity.BOTTOM);
+                    slide.addTarget(R.id.history_list);
+                    slide.setInterpolator(AnimationUtils
+                            .loadInterpolator(
+                                    context,
+                                    android.R.interpolator.linear_out_slow_in
+                            ));
+                    slide.setDuration(1000);
+                    detailFragment.setEnterTransition(slide);
+                }
+
+                //Transition on Person Name...Shared Transition
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    ChangeBounds changeBoundsTransition = (ChangeBounds) TransitionInflater.
+                            from(context).inflateTransition(R.transition.change_bound);
+                    detailFragment.setSharedElementEnterTransition(changeBoundsTransition);
+
+                }
                 context.getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.feed, detailFragment)
+                        .addSharedElement(holder.mName, context.getString(R.string.shared_transition_person_name))
                         .addToBackStack("Details")
                         .commit();
             }
