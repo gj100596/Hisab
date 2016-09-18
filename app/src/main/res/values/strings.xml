@@ -14,14 +14,17 @@
     <string name="category">Category</string>
     <string name="nav_drawer_pending">Pending</string>
     <string name="nav_drawer_settled">Settled</string>
-    <string name="nav_drawer_setting">Setting</string>
+    <string name="nav_drawer_setting">E-Analysis</string>
     <string name="shared_transition_person_name">sharedPersonName</string>
 
-    <string-array name="category_list" >
+    <string-array name="category_list">
         <item>Food</item>
         <item>Education</item>
         <item>Party</item>
         <item>Movie</item>
         <item>Misc</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

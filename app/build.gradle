@@ -18,7 +18,9 @@ android {
         }
     }
 }
-
+repositories {
+    maven { url "https://jitpack.io" }
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.2.1'
@@ -28,6 +30,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.3'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support.test:runner:0.5'

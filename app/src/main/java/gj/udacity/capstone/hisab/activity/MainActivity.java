@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import gj.udacity.capstone.hisab.GraphFragment;
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.fragment.AddSliderFragment;
 import gj.udacity.capstone.hisab.fragment.FeedFragment;
@@ -134,7 +135,10 @@ public class MainActivity extends AppCompatActivity {
                         actionBarDrawerToggle.onDrawerClosed(navigationView);
                         break;
                     case R.id.menuSetting:
-                        Toast.makeText(MainActivity.this, "Setting", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.feed, GraphFragment.newInstance())
+                                .commit();
                         break;
                     case R.id.menuSettled:
                         getSupportFragmentManager()

@@ -28,6 +28,8 @@ public class DBContentProvider extends ContentProvider {
     private static final int LIST_SETTLE = 3;
     private static final int DETAIL_SETTLE = 4;
     private static final int NAME_NO_LIST = 5;
+    private static final int CHART_DATA = 6;
+    private static final int DATED_CHART_DATA = 7;
 
     private static final int DELETE_ONE_SETTLE = 10;
     private static final int DELETE_ALL_SETTLE = 11;
@@ -47,6 +49,8 @@ public class DBContentProvider extends ContentProvider {
         matcher.addURI(authority , URI_PATH + "/settle", LIST_SETTLE);
         matcher.addURI(authority , URI_PATH + "/settle/*" ,DETAIL_SETTLE);
         matcher.addURI(authority , URI_PATH + "/list" ,NAME_NO_LIST);
+        matcher.addURI(authority , URI_PATH + "/chart" ,CHART_DATA);
+        matcher.addURI(authority , URI_PATH + "/chart/*" ,DATED_CHART_DATA);
 
         return  matcher;
     }
@@ -109,9 +113,65 @@ public class DBContentProvider extends ContentProvider {
             case NAME_NO_LIST:
                 retCursor = getDistinctNameNumber();
                 break;
+            case CHART_DATA:
+                retCursor = getChartData();
+                break;
+            case DATED_CHART_DATA:
+                retCursor = getDatedChartData(uri);
+                break;
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
+    }
+
+    private Cursor getDatedChartData(Uri uri) {
+        /*
+        select TransactionTable.Category,count(*) from TransactionTable
+        where TransactionTable.tDate between "2016-8-16" and "2016-8-17"
+        group by TransactionTable.Category
+         */
+        String projection[] = new String[]{
+                Transaction.COLUMN_CATEGORY,
+                "COUNT(*)"
+        };
+        String groupby = Transaction.COLUMN_CATEGORY;
+
+        String selectionString =
+                Transaction.TABLE_NAME + "." + Transaction.COLUMN_DATE + " BETWEEN ? AND ?";
+        Cursor cursor =  mOpenHelper.getReadableDatabase().query(
+                Transaction.TABLE_NAME,
+                projection,
+                selectionString,
+                uri.getPathSegments().get(2).split("_"),
+                groupby,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+        return cursor;
+    }
+
+    private Cursor getChartData() {
+        /*
+        select TransactionTable.Category,count(*) from TransactionTable
+        group by TransactionTable.Category
+         */
+        String projection[] = new String[]{
+                Transaction.COLUMN_CATEGORY,
+                "COUNT(*)"
+        };
+        String groupby = Transaction.COLUMN_CATEGORY;
+        Cursor cursor =  mOpenHelper.getReadableDatabase().query(
+                Transaction.TABLE_NAME,
+                projection,
+                null,
+                null,
+                groupby,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+        return cursor;
     }
 
     private Cursor getDistinctNameNumber() {

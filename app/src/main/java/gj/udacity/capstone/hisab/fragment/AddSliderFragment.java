@@ -54,6 +54,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
 
     private AutoCompleteTextView nameEditText;
     private EditText numberEditText,reasonEditText,amountEditText;
+    private String[] categoryArray;
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
@@ -95,7 +96,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         }
         // Get Name and Number of People added in our app but not in contact
         Cursor dbContact = cr
-                .query(Transaction.NAME_NO_URI, null, null, null, null);
+                .query(Transaction.getNameNoUri(), null, null, null, null);
 
         while (dbContact.moveToNext())
         {
@@ -130,10 +131,11 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         });
 
         // Category List
+        categoryArray = getResources().getStringArray(R.array.category_list);
         ArrayAdapter<String> categoryAdapter =
                 new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_spinner_dropdown_item,
-                        getResources().getStringArray(R.array.category_list));
+                        categoryArray);
         categorySpinner.setAdapter(categoryAdapter);
 
         // Transaction Type
@@ -180,7 +182,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                     values.put(Transaction.COLUMN_REASON, reasonEditText.getText().toString());
                     values.put(Transaction.COLUMN_AMOUNT, Integer.parseInt(amountEditText.getText().toString()));
                     values.put(Transaction.COLUMN_SETTLED, 0);
-                    values.put(Transaction.COLUMN_CATEGORY, "Some");
+                    values.put(Transaction.COLUMN_CATEGORY, categoryArray[categorySpinner.getSelectedItemPosition()]);
                     Calendar instance = Calendar.getInstance();
                     int month = instance.get(Calendar.MONTH);
                     String monthString = month < 10 ? ("0" + month) : (month + "");

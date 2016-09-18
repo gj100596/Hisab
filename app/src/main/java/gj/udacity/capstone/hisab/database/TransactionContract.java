@@ -21,7 +21,6 @@ public class TransactionContract {
         public static final Uri CONTENT_URI = BASE_URI.buildUpon().appendPath(URI_PATH).build();
         public static final Uri UNSETTLE_URI = CONTENT_URI.buildUpon().appendPath("unsettle").build();
         public static final Uri SETTLE_URI = CONTENT_URI.buildUpon().appendPath("settle").build();
-        public static final Uri NAME_NO_URI = CONTENT_URI.buildUpon().appendPath("list").build();
         public static final Uri DELETE_SETTLE_URI = CONTENT_URI.buildUpon().appendPath("settle").build();
         public static final Uri DELETE_PERMANENT_URI = CONTENT_URI.buildUpon().appendPath("delete").build();
         public static final Uri DELETE_SETTLE_ALL_URI = CONTENT_URI.buildUpon().appendPath("settle_all").build();
@@ -79,6 +78,17 @@ public class TransactionContract {
         public static Uri buildAllPermanentDeleteURI(String userString){
             return DELETE_PERMANENT_ALL_URI.buildUpon().appendPath(userString).build();
         }
-    }
 
+        public static Uri getNameNoUri(){
+            return CONTENT_URI.buildUpon().appendPath("list").build();
+        }
+        public static Uri getChartUri(){
+            return CONTENT_URI.buildUpon().appendPath("chart").build();
+        }
+        public static Uri getDatedChartUri(String dateRegion){
+            Uri temp = CONTENT_URI.buildUpon().appendPath("chart").build();
+            return temp.buildUpon().appendPath(dateRegion).build();
+
+        }
+    }
 }
