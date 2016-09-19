@@ -1,6 +1,7 @@
 package gj.udacity.capstone.hisab.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -35,7 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import gj.udacity.capstone.hisab.GraphFragment;
+import gj.udacity.capstone.hisab.fragment.GraphFragment;
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.fragment.AddSliderFragment;
 import gj.udacity.capstone.hisab.fragment.FeedFragment;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView dp;
     private BottomSheetDialogFragment fabBottomSheetDialogFragment;
     private FloatingActionButton fab;
+    public static Activity thisAct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        thisAct = MainActivity.this;
 
         //Take Permission
         if(

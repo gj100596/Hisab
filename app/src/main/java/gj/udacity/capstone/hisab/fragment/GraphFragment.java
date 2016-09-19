@@ -1,4 +1,4 @@
-package gj.udacity.capstone.hisab;
+package gj.udacity.capstone.hisab.fragment;
 
 import android.app.DatePickerDialog;
 import android.database.Cursor;
@@ -20,6 +20,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 
+import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.database.TransactionContract;
 
 public class GraphFragment extends Fragment {

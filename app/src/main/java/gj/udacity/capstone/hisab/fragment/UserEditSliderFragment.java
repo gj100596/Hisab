@@ -2,6 +2,7 @@ package gj.udacity.capstone.hisab.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.activity.MainActivity;
+import gj.udacity.capstone.hisab.gcm.RegistrationIntentService;
 
 /**
  * Created by Gaurav on 11-09-2016.
@@ -57,6 +60,9 @@ public class UserEditSliderFragment extends BottomSheetDialogFragment {
                 editor.putString(getString(R.string.shared_pref_name),name.getText().toString());
                 editor.putString(getString(R.string.shared_pref_number),number.getText().toString());
                 editor.apply();
+
+                Intent gcmToken = new Intent(MainActivity.thisAct, RegistrationIntentService.class);
+                getActivity().startService(gcmToken);
 
                 UserEditSliderFragment.this.dismiss();
             }

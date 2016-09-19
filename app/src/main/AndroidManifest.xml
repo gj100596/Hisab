@@ -6,6 +6,17 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <!-- Permissions required for Google Cloud Messaging -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="gj.udacity.capstone.hisab.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="gj.udacity.capstone.hisab.permission.C2D_MESSAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,6 +36,45 @@
         <provider
             android:authorities="gj.udacity.capstone.hisab"
             android:name=".database.DBContentProvider"/>
+
+        <!-- ADD MEMBER GCM Receiver -->
+        <receiver android:name=".gcm.accountReportNotification">
+            <intent-filter>
+                <action android:name="gj.fortentia.askit.ADD_MEMBER" />
+            </intent-filter>
+        </receiver>
+        <!-- The Google Cloud Messaging receiver and services -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.example.android.sunshine.app" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".gcm.GCMListener"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".gcm.MyInstanceID"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".gcm.RegistrationIntentService"
+            android:exported="false" />
+
+
     </application>
 
 </manifest>
