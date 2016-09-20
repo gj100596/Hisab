@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.activity.MainActivity;
 import gj.udacity.capstone.hisab.fragment.DetailFragment;
 
 public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerViewAdapter.ViewHolder> {
@@ -72,46 +73,56 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                         fragmentMode);
                 detailFragment.setHasOptionsMenu(true);
 
-                // Enter Transition on History List
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    Slide slide = new Slide(Gravity.BOTTOM);
-                    slide.addTarget(R.id.history_list);
-                    slide.setInterpolator(AnimationUtils
-                            .loadInterpolator(
-                                    context,
-                                    android.R.interpolator.linear_out_slow_in
-                            ));
-                    slide.setDuration(1000);
-                    detailFragment.setEnterTransition(slide);
+                if(MainActivity.tabletDevice){
+
+                    context.getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.detailInMain, detailFragment)
+                            .addSharedElement(holder.mName, context.getString(R.string.shared_transition_person_name))
+                            .addToBackStack("Details")
+                            .commit();
                 }
-                // Exit Transition on History List
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    Slide slide = new Slide(Gravity.LEFT);
-                    slide.addTarget(R.id.history_list);
-                    slide.setInterpolator(AnimationUtils
-                            .loadInterpolator(
-                                    context,
-                                    android.R.interpolator.linear_out_slow_in
-                            ));
-                    slide.setDuration(1000);
-                    detailFragment.setExitTransition(slide);
+                else {
+                    // Enter Transition on History List
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        Slide slide = new Slide(Gravity.BOTTOM);
+                        slide.addTarget(R.id.history_list);
+                        slide.setInterpolator(AnimationUtils
+                                .loadInterpolator(
+                                        context,
+                                        android.R.interpolator.linear_out_slow_in
+                                ));
+                        slide.setDuration(1000);
+                        detailFragment.setEnterTransition(slide);
+                    }
+                    // Exit Transition on History List
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        Slide slide = new Slide(Gravity.LEFT);
+                        slide.addTarget(R.id.history_list);
+                        slide.setInterpolator(AnimationUtils
+                                .loadInterpolator(
+                                        context,
+                                        android.R.interpolator.linear_out_slow_in
+                                ));
+                        slide.setDuration(1000);
+                        detailFragment.setExitTransition(slide);
+                    }
+
+                    //Transition on Person Name...Shared Transition
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        ChangeBounds changeBoundsTransition = (ChangeBounds) TransitionInflater.
+                                from(context).inflateTransition(R.transition.change_bound);
+                        detailFragment.setSharedElementEnterTransition(changeBoundsTransition);
+
+                    }
+
+                    context.getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.feed, detailFragment)
+                            .addSharedElement(holder.mName, context.getString(R.string.shared_transition_person_name))
+                            .addToBackStack("Details")
+                            .commit();
                 }
-
-                //Transition on Person Name...Shared Transition
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    ChangeBounds changeBoundsTransition = (ChangeBounds) TransitionInflater.
-                            from(context).inflateTransition(R.transition.change_bound);
-                    detailFragment.setSharedElementEnterTransition(changeBoundsTransition);
-
-                }
-
-
-                context.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.feed, detailFragment)
-                        .addSharedElement(holder.mName, context.getString(R.string.shared_transition_person_name))
-                        .addToBackStack("Details")
-                        .commit();
             }
         });
     }

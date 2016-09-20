@@ -36,12 +36,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import gj.udacity.capstone.hisab.fragment.GraphFragment;
 import gj.udacity.capstone.hisab.R;
-import gj.udacity.capstone.hisab.fragment.AddSliderFragment;
+import gj.udacity.capstone.hisab.fragment.DetailFragment;
 import gj.udacity.capstone.hisab.fragment.FeedFragment;
+import gj.udacity.capstone.hisab.fragment.GraphFragment;
 import gj.udacity.capstone.hisab.fragment.UserEditSliderFragment;
 import gj.udacity.capstone.hisab.util.CircularImage;
+
+import static gj.udacity.capstone.hisab.R.id.fab;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,8 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ImageView dp;
     private BottomSheetDialogFragment fabBottomSheetDialogFragment;
-    private FloatingActionButton fab;
+    //private FloatingActionButton fab;
     public static Activity thisAct;
+    public static boolean tabletDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +82,16 @@ public class MainActivity extends AppCompatActivity {
                     1);
         }
 
+        // For tablet Layout
+        if(findViewById(R.id.detailInMain)!=null){
+            tabletDevice=true;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.detailInMain, DetailFragment.newInstance("x_1",2,0))
+                    .commit();
+        }
+
+
         FeedFragment feedFragment = FeedFragment.newInstance(0);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -98,17 +111,9 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.feed, feedFragment)
                 .commit();
 
-        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                if(getSupportFragmentManager().getBackStackEntryCount() == 0)
-                    fab.setVisibility(View.VISIBLE);
-                else
-                    fab.setVisibility(View.INVISIBLE);
 
-            }
-        });
 
+        /*
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 fabBottomSheetDialogFragment.show(getSupportFragmentManager(), fabBottomSheetDialogFragment.getTag());
             }
         });
+        */
 
         configureNavigationDrawer();
 

@@ -32,6 +32,7 @@ public class DetailFragment extends Fragment
 
     //Combination of name and number of particular friend
     private String userString, userName, userNumber;
+    //fragmentMode has 2 value: 0 for Unsettle Transaction and 1 for settled transaction
     private int fragmentMode,totalAmount;
 
     private DetailRecyclerViewAdapter detailRecyclerViewAdapter;

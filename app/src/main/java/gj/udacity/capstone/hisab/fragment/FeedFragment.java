@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -25,7 +26,7 @@ import gj.udacity.capstone.hisab.database.TransactionContract;
  * interface.
  */
 public class FeedFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor>{
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int CURSORLOADER_ID = 1;
     private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
@@ -34,7 +35,7 @@ public class FeedFragment extends Fragment
     private int fragmentMode;
 
 
-   // private OnListFragmentInteractionListener mListener;
+    // private OnListFragmentInteractionListener mListener;
 
     public FeedFragment() {
     }
@@ -59,31 +60,37 @@ public class FeedFragment extends Fragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            Cursor cursor;
-            if(fragmentMode == 0) {
-                cursor = getActivity().getContentResolver()
-                        .query(
-                                TransactionContract.Transaction.UNSETTLE_URI,
-                                null, null, null, null);
-            }
-            else{
-                cursor = getActivity().getContentResolver()
-                        .query(
-                                TransactionContract.Transaction.SETTLE_URI,
-                                null, null, null, null);
-            }
-            feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(),cursor,fragmentMode);
-            recyclerView.setAdapter(feedRecyclerViewAdapter);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        Cursor cursor;
+        if (fragmentMode == 0) {
+            cursor = getActivity().getContentResolver()
+                    .query(
+                            TransactionContract.Transaction.UNSETTLE_URI,
+                            null, null, null, null);
+        } else {
+            cursor = getActivity().getContentResolver()
+                    .query(
+                            TransactionContract.Transaction.SETTLE_URI,
+                            null, null, null, null);
         }
-        return view;
-    }
+        feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(), cursor, fragmentMode);
+        recyclerView.setAdapter(feedRecyclerViewAdapter);
+
+        final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AddSliderFragment fabBottomSheetDialogFragment = new AddSliderFragment();
+                fabBottomSheetDialogFragment.show(
+                        getActivity().getSupportFragmentManager(), fabBottomSheetDialogFragment.getTag());
+            }
+        });
+    return view;
+}
 
 
     @Override
@@ -114,15 +121,14 @@ public class FeedFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        if(fragmentMode == 0) {
+        if (fragmentMode == 0) {
             return new CursorLoader(getActivity(),
                     TransactionContract.Transaction.UNSETTLE_URI,
                     null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
                     null,
                     null,
                     null);
-        }
-        else{
+        } else {
             return new CursorLoader(getActivity(),
                     TransactionContract.Transaction.SETTLE_URI,
                     null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
@@ -154,8 +160,8 @@ public class FeedFragment extends Fragment
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      *
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
-    }*/
+     public interface OnListFragmentInteractionListener {
+     // TODO: Update argument type and name
+     void onListFragmentInteraction(DummyItem item);
+     }*/
 }
