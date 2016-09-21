@@ -5,6 +5,7 @@
     android:name="gj.udacity.capstone.hisab.FeedFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color1"
     tools:context="gj.udacity.capstone.hisab.fragment.FeedFragment">
 
     <android.support.design.widget.CoordinatorLayout

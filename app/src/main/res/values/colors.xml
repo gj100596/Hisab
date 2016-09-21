@@ -5,6 +5,7 @@
     <color name="Primary1Dark">#33669A</color>
     <color name="Primary1Accent">#F79C31</color> <!-- Awful -->
     <color name="Primary1Accent1">#E7445E</color> <!-- Dull -->
+    <color name="background_color1">#E0E0E0</color>
 
 
     <!-- Actually used colors -->
