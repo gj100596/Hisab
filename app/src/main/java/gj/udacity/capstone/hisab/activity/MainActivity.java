@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.SettingFragment;
 import gj.udacity.capstone.hisab.fragment.DetailFragment;
 import gj.udacity.capstone.hisab.fragment.FeedFragment;
 import gj.udacity.capstone.hisab.fragment.GraphFragment;
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 .commit();
                         actionBarDrawerToggle.onDrawerClosed(navigationView);
                         break;
-                    case R.id.menuSetting:
+                    case R.id.analysis:
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.feed, GraphFragment.newInstance())
@@ -175,6 +176,12 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.feed, FeedFragment.newInstance(1))
+                                .commit();
+                        break;
+                    case R.id.menuSetting:
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.feed, SettingFragment.newInstance())
                                 .commit();
                         break;
                 }

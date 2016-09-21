@@ -9,6 +9,11 @@
         android:title="@string/nav_drawer_settled"
         android:icon="@drawable/ic_done_black_36dp"/>
     <item
+        android:id="@+id/analysis"
+        android:title="@string/nav_drawer_analysis"
+        android:icon="@drawable/ic_settings_black_36dp"/>
+
+    <item
         android:id="@+id/menuSetting"
         android:title="@string/nav_drawer_setting"
         android:icon="@drawable/ic_settings_black_36dp"/>
