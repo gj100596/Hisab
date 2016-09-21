@@ -10,10 +10,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,6 +27,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -43,8 +44,6 @@ import gj.udacity.capstone.hisab.fragment.GraphFragment;
 import gj.udacity.capstone.hisab.fragment.UserEditSliderFragment;
 import gj.udacity.capstone.hisab.util.CircularImage;
 
-import static gj.udacity.capstone.hisab.R.id.fab;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int DP_IMAGE_INTENT_CODE = 100;
@@ -56,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     //private FloatingActionButton fab;
     public static Activity thisAct;
     public static boolean tabletDevice;
+    public InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +68,12 @@ public class MainActivity extends AppCompatActivity {
         thisAct = MainActivity.this;
 
         //Take Permission
-        if(
-            ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED
-            ||
-            ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED ) {
+        if (
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS)
+                        != PackageManager.PERMISSION_GRANTED
+                        ||
+                        ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.READ_CONTACTS,
                             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -83,11 +83,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // For tablet Layout
-        if(findViewById(R.id.detailInMain)!=null){
-            tabletDevice=true;
+        if (findViewById(R.id.detailInMain) != null) {
+            tabletDevice = true;
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.detailInMain, DetailFragment.newInstance("x_1",2,0))
+                    .replace(R.id.detailInMain, DetailFragment.newInstance("x_1", 2, 0))
                     .commit();
         }
 
@@ -124,6 +124,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         */
+
+        //Load Ad for future
+        mInterstitialAd = new InterstitialAd(MainActivity.this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+        AdRequest adRequest1 = new AdRequest.Builder()
+                .addTestDevice("396C375CF6E46B104E5089AC176E8A1B")//AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mInterstitialAd.loadAd(adRequest1);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+
+            }
+
+            @Override
+            public void onAdClosed() {
+                Toast.makeText(MainActivity.this,"Ad Closed",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 
         configureNavigationDrawer();
 
@@ -214,11 +236,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadDetail(View headerView) {
-        SharedPreferences detail = getSharedPreferences(getString(R.string.user_shared_preef),MODE_PRIVATE);
+        SharedPreferences detail = getSharedPreferences(getString(R.string.user_shared_preef), MODE_PRIVATE);
         TextView name = (TextView) headerView.findViewById(R.id.nav_name);
         TextView number = (TextView) headerView.findViewById(R.id.nav_number);
-        name.setText(detail.getString(getString(R.string.shared_pref_name),getString(R.string.default_username)));
-        number.setText(detail.getString(getString(R.string.shared_pref_number),getString(R.string.default_usernumber)));
+        name.setText(detail.getString(getString(R.string.shared_pref_name), getString(R.string.default_username)));
+        number.setText(detail.getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
     }
 
     private void loadDP() {
@@ -237,10 +259,11 @@ public class MainActivity extends AppCompatActivity {
                     .into(dp);
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        if(requestCode==1 && grantResults.length <1)
+        if (requestCode == 1 && grantResults.length < 1)
             Toast.makeText(MainActivity.this,
                     "Permission Denied! Few Feature might not work!", Toast.LENGTH_SHORT).show();
     }
@@ -265,12 +288,10 @@ public class MainActivity extends AppCompatActivity {
                         Uri.fromFile(new File(this.getExternalFilesDir(
                                 Environment.DIRECTORY_PICTURES), getString(R.string.dp_temp_name))));
                 startActivityForResult(cropIntent, CROP_INTENT_CODE);
-            }
-            else if (requestCode == CROP_INTENT_CODE) {
+            } else if (requestCode == CROP_INTENT_CODE) {
                 saveDPInFile(data);
                 loadDP();
-            }
-            else{
+            } else {
                 //Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.feed);
                 fabBottomSheetDialogFragment.onActivityResult(requestCode, resultCode, data);
             }
@@ -326,5 +347,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mInterstitialAd.isLoaded() && getSupportFragmentManager().getBackStackEntryCount()==0) {
+            mInterstitialAd.show();
+        }
     }
 }
