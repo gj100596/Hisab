@@ -44,6 +44,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,6 +79,15 @@ public class MainActivity extends AppCompatActivity {
     public static Activity thisAct;
     public static boolean tabletDevice;
     public InterstitialAd mInterstitialAd;
+
+
+    private final int COLUMN_NAME_INDEX = 0;
+    private final int COLUMN_NUMBER_INDEX = 1;
+    private final int COLUMN_SUM_INDEX = 2;
+
+    private final int COLUMN_REASON_INDEX = 1;
+    private final int COLUMN_DATE_INDEX = 2;
+    private final int COLUMN_AMOUNT_INDEX = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,22 +253,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reminderDialog() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Reminder");
         builder.setMessage("Select Contact To Send Pending Reminder");
         final Spinner spinner = new Spinner(builder.getContext());
 
         Cursor dbContact = getContentResolver()
-                .query(TransactionContract.Transaction.getNameNoUri(), null, null, null, null);
+                .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
         final ArrayList<String> phone = new ArrayList<>();
         while (dbContact.moveToNext())
         {
-            String contactName = dbContact.getString(0);
-            String contactNumber = dbContact.getString(1);
+            String contactName = dbContact.getString(COLUMN_NAME_INDEX);
+            String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
+            int amount = dbContact.getInt(COLUMN_SUM_INDEX);
             phone.add(
-                    contactName.split(" ")[0]+" "+contactNumber
+                    contactName.split(" ")[0]+" "+contactNumber+ "...Rs "+amount
             );
         }
 
@@ -273,14 +283,35 @@ public class MainActivity extends AppCompatActivity {
                 String url = Constant.url + "/hisab/reminder";
                 JSONObject param = new JSONObject();
                 try {
-                    param.put("SenderID","");
-                    param.put("TargetID","");
-                    param.put("Transaction","");
+                    SharedPreferences userDetail = MainActivity.thisAct.
+                            getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+                    param.put("SenderID",userDetail
+                            .getString(getString(R.string.shared_pref_number),getString(R.string.default_usernumber)));
+                    String selectedContact = phone.get(spinner.getSelectedItemPosition());
+                    String part[] = selectedContact.split(" ");
+                    String subpart[] = part[1].split("...Rs ");
+                    param.put("TargetID",subpart[0]);
+                    param.put("Amount",subpart[1]);
+
+                    JSONArray transaction = new JSONArray();
+                    Cursor particularTransaction = getContentResolver()
+                            .query(TransactionContract.Transaction.buildUnSettleDetailURI(subpart[0]),
+                                    null,null,null,null,null);
+                    while (particularTransaction.moveToNext())
+                    {
+                        JSONObject entry = new JSONObject();
+                        entry.put("Reason",particularTransaction.getString(COLUMN_REASON_INDEX));
+                        entry.put("Date",particularTransaction.getString(COLUMN_DATE_INDEX));
+                        entry.put("Amount",particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
+
+                        transaction.put(entry);
+                    }
+                    particularTransaction.close();
+                    param.put("Transaction",transaction);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
                 JsonObjectRequest reminderRequest = new JsonObjectRequest(Request.Method.POST, url, null,
                         new Response.Listener<JSONObject>() {
@@ -318,13 +349,13 @@ public class MainActivity extends AppCompatActivity {
         final Spinner spinner = new Spinner(builder.getContext());
 
         Cursor dbContact = getContentResolver()
-                .query(TransactionContract.Transaction.getNameNoUri(), null, null, null, null);
+                .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
         final ArrayList<String> phone = new ArrayList<>();
         while (dbContact.moveToNext())
         {
-            String contactName = dbContact.getString(0);
-            String contactNumber = dbContact.getString(1);
+            String contactName = dbContact.getString(COLUMN_NAME_INDEX);
+            String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
             phone.add(
                     contactName.split(" ")[0]+" "+contactNumber
             );
@@ -338,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Ask", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String url = Constant.url + "/hisab/askRequest";
+                String url = Constant.url + "/hisab/request";
                 StringRequest request = new StringRequest(Request.Method.POST, url,
                         new Response.Listener<String>() {
                             @Override
@@ -357,11 +388,11 @@ public class MainActivity extends AppCompatActivity {
                         Map<String, String> param = new HashMap<>();
                         SharedPreferences userDetail = MainActivity.thisAct.
                                 getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
-                        param.put("UserID",userDetail
+                        param.put("SenderID",userDetail
                                 .getString(getString(R.string.shared_pref_number),getString(R.string.default_usernumber)));
                         String selectedContact = phone.get(spinner.getSelectedItemPosition());
                         String part[] = selectedContact.split(" ");
-                        param.put("ReceiverID",part[1]);
+                        param.put("TargetID",part[1]);
                         return param;
                     }
                 };

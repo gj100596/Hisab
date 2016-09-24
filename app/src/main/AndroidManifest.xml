@@ -34,16 +34,18 @@
             </intent-filter>
         </activity>
 
+        <!-- ADD MEMBER GCM Receiver -->
+        <receiver android:name=".gcm.sendRequestResponseBroadcast">
+            <intent-filter>
+                <action android:name="gj.udacity.capstone.hisab.SEND_REQUEST_RESPONSE" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name=".database.DBContentProvider"
             android:authorities="gj.udacity.capstone.hisab" />
 
-        <!-- ADD MEMBER GCM Receiver -->
-        <receiver android:name=".gcm.sendRequestResponseBroadcast">
-            <intent-filter>
-                <action android:name="gj.fortentia.askit.ADD_MEMBER" />
-            </intent-filter>
-        </receiver>
+
         <!-- The Google Cloud Messaging receiver and services -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -94,12 +96,7 @@
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <!-- ADD MEMBER GCM Receiver -->
-        <receiver android:name=".gcm.sendRequestResponseBroadcast">
-            <intent-filter>
-                <action android:name="gj.udacity.capstone.hisab.SEND_REQUEST_RESPONSE" />
-            </intent-filter>
-        </receiver>
+
 
         <!-- Include the AdActivity configChanges and theme. -->
         <activity

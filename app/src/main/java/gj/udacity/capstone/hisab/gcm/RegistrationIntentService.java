@@ -74,7 +74,7 @@ public class RegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(final String token) {
-        String url = Constant.url+"/hisab/gcm";
+        String url = Constant.url+"/hisab/postid";
         StringRequest tokenRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override

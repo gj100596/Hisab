@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,20 +67,32 @@ public class GCMListener extends GcmListenerService {
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+            String type = message.getString("type");
+            String requestingUser = message.getString("req_user");
+            String amount = message.getString("amount");
+            JSONArray jsonData = message.getJSONArray("transaction");
+
             Intent notificationIntent = new Intent(this, MainActivity.class);
-            String messageTitle = message.getString("title");
+            Bundle reminder = new Bundle();
+            reminder.putString("Type",type);
+            reminder.putString("User",requestingUser);
+            reminder.putString("Amount",amount);
+            reminder.putString("data",jsonData.toString());
+            notificationIntent.putExtras(reminder);
 
             PendingIntent contentIntent =
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            String messageTitle = requestingUser + ": \"You Owe Me Buddy!\"";
+            String messageBody = requestingUser + " reminded that you have Rs " + amount + "pending." ;
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setLargeIcon(largeIcon)
                     .setContentTitle(messageTitle)
                     .setStyle(new NotificationCompat.BigTextStyle().
-                            bigText(message.getString("body").replace("grp:", " ")))
-                    .setContentText(message.getString("body").replace("grp:", " "))
+                            bigText(messageBody))
+                    .setContentText(messageBody)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true)
                     .setNumber(++NOTIFICATION_NUM);
@@ -94,38 +107,47 @@ public class GCMListener extends GcmListenerService {
         }
     }
 
-    private void handleRequestResponse(JSONObject jsonObject) {
-        /*
-        //getContentResolver().query()
-        String url = Constant.url + "/requestResponse";
-        JSONObject param = new JSONObject();
-        /*
+    private void handleRequestResponse(JSONObject message) {
         try {
-            param.put("UserID", FixedData.getUserID(getActivity()));
-            param.put("Password", newPass.getText().toString());
-            param.put("OldPassword", oldPass.getText().toString());
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+            String type = message.getString("type");
+            String requestingUser = message.getString("req_user");
+            JSONArray jsonData = message.getJSONArray("transaction");
+
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            Bundle reminder = new Bundle();
+            reminder.putString("Type",type);
+            reminder.putString("User",requestingUser);
+            reminder.putString("data",jsonData.toString());
+            notificationIntent.putExtras(reminder);
+
+            PendingIntent contentIntent =
+                    PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            String messageTitle = "Sync Result from : " +requestingUser;
+            String messageBody = requestingUser + " has shared their pending transactions.";
+            Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(largeIcon)
+                    .setContentTitle(messageTitle)
+                    .setStyle(new NotificationCompat.BigTextStyle().
+                            bigText(messageBody))
+                    .setContentText(messageBody)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setNumber(++NOTIFICATION_NUM);
+
+            mBuilder.setContentIntent(contentIntent);
+            mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("Notification error", e.toString());
         }
-        *
-        JsonObjectRequest change = new JsonObjectRequest(Request.Method.POST, url, param,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        );
-
-        ServerRequest.getInstance(getActivity()).getRequestQueue().add(change);
-        */
     }
 
     /**

@@ -185,7 +185,7 @@ public class SettingFragment extends Fragment {
     }
 
     private void deletAC() {
-        String url = Constant.url + "/hisab/removeID";
+        String url = Constant.url + "/hisab/removeid";
         StringRequest tokenRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
