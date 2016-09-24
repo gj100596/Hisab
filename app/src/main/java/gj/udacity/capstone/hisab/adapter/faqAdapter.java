@@ -1,4 +1,4 @@
-package gj.udacity.capstone.hisab;
+package gj.udacity.capstone.hisab.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import gj.udacity.capstone.hisab.R;
 
 public class faqAdapter extends ArrayAdapter<Integer> {
     String[] question, answer;

@@ -4,9 +4,7 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.transition.ChangeBounds;
 import android.transition.Slide;
-import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,6 +106,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                         detailFragment.setExitTransition(slide);
                     }
 
+                    /*
                     //Transition on Person Name...Shared Transition
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                         ChangeBounds changeBoundsTransition = (ChangeBounds) TransitionInflater.
@@ -115,6 +114,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                         detailFragment.setSharedElementEnterTransition(changeBoundsTransition);
 
                     }
+                    */
 
                     context.getSupportFragmentManager()
                             .beginTransaction()

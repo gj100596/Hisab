@@ -1,20 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menuHome"
-        android:title="@string/nav_drawer_pending"
-        android:icon="@drawable/ic_compare_arrows_black_36dp"/>
-    <item
-        android:id="@+id/menuSettled"
-        android:title="@string/nav_drawer_settled"
-        android:icon="@drawable/ic_done_black_36dp"/>
-    <item
-        android:id="@+id/analysis"
-        android:title="@string/nav_drawer_analysis"
-        android:icon="@drawable/ic_settings_black_36dp"/>
 
-    <item
-        android:id="@+id/menuSetting"
-        android:title="@string/nav_drawer_setting"
-        android:icon="@drawable/ic_settings_black_36dp"/>
+    <group
+        android:id="@+id/g1"
+        android:checkableBehavior="single">
+        <item android:title="Basic">
+            <menu>
+                <item
+                    android:id="@+id/menuHome"
+                    android:icon="@drawable/ic_compare_arrows_black_36dp"
+                    android:title="@string/nav_drawer_pending" />
+                <item
+                    android:id="@+id/menuSettled"
+                    android:icon="@drawable/ic_done_black_36dp"
+                    android:title="@string/nav_drawer_settled" />
+                <item
+                    android:id="@+id/menuSetting"
+                    android:icon="@drawable/ic_settings_black_36dp"
+                    android:title="@string/nav_drawer_setting" />
+            </menu>
+        </item>
+
+    </group>
+    <group
+        android:id="@+id/g2"
+        android:checkableBehavior="single">
+
+        <item android:title="Functionality">
+            <menu>
+
+                <item
+                    android:id="@+id/analysis"
+                    android:icon="@drawable/ic_settings_black_36dp"
+                    android:title="@string/nav_drawer_analysis" />
+
+                <item
+                    android:id="@+id/remind"
+                    android:icon="@drawable/ic_settings_black_36dp"
+                    android:title="@string/nav_drawer_send_reminder" />
+                <item
+                    android:id="@+id/request"
+                    android:icon="@drawable/ic_settings_black_36dp"
+                    android:title="@string/nav_drawer_sync_pending" />
+            </menu>
+        </item>
+    </group>
 </menu>

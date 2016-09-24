@@ -1,4 +1,4 @@
-package gj.udacity.capstone.hisab;
+package gj.udacity.capstone.hisab.fragment;
 
 
 import android.content.Context;
@@ -18,9 +18,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.activity.MainActivity;
 import gj.udacity.capstone.hisab.util.Constant;
 import gj.udacity.capstone.hisab.util.ServerRequest;
@@ -56,7 +63,7 @@ public class SettingFragment extends Fragment {
         notSound = (Switch) view.findViewById(R.id.notSound);
         notVibrate = (Switch) view.findViewById(R.id.notVibrate);
 
-      ptionPref = getActivity()
+      optionPref = getActivity()
                 .getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
 
         if (!optionPref.getBoolean(getString(R.string.pending_rem), true))
@@ -183,6 +190,12 @@ public class SettingFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        SharedPreferences.Editor editor = optionPref.edit();
+                        editor.clear();
+                        editor.commit();
+                        Intent intent = new Intent(getActivity(),MainActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
                     }
                 },
                 new Response.ErrorListener() {
@@ -201,7 +214,7 @@ public class SettingFragment extends Fragment {
                 return param;
             }
         };
-        ServerRequest.getInstance(this).getRequestQueue().add(tokenRequest);
+        ServerRequest.getInstance(getActivity()).getRequestQueue().add(tokenRequest);
     }
 
 }

@@ -31,24 +31,26 @@
     <string name="pending_rem">pendingRem</string>
     <string name="not_sound">notSound</string>
     <string name="not_vibrate">notVibrate</string>
+    <string name="nav_drawer_send_reminder">Send Reminder</string>
+    <string name="nav_drawer_sync_pending">Sync Pending</string>
+    <string name="gcm_rec_req_bunlde_userid">UserID</string>
+    <string name="gcm_rec_req_bunlde_type">type</string>
+    <string name="gcm_rec_req_bunlde_accept">RequestAccepted</string>
 
 
     <!-- FAQ -->
 
     <string-array name="faq_question">
-        <item>What is Ask it?</item>
-        <item>What are the 3 categories show at First Screen</item>
-        <item>What is shown in Feed Section</item>
-        <item>What is shown in Trending Section</item>
-        <item>What is shown in Personal Section</item>
-        <item>How to post a question?</item>
-        <item>Type of question Based on Target</item>
-        <item>What is General question?</item>
-        <item>What is Private question?</item>
-        <item>How to ask a Private question?</item>
-        <item>What does Category means for a Question?</item>
-        <item>How can I delete a Question</item>
-        <item>How can I report a question</item>
+        <item>What is Hisab?</item>
+        <item>What is shown in the First Screen</item>
+        <item>What are the options in Navigation Menu</item>
+        <item>What is shown in Pending Section</item>
+        <item>What is shown in Settled Section</item>
+        <item>What is shown in Analysis Section</item>
+        <item>What is Send Reminder?</item>
+        <item>What is Sync Pending?</item>
+        <item>Does My Transactions are visible to anyone?</item>
+        <item>How to add new Transaction</item>
         <item>Where Can I see My Profile?</item>
         <item>How Do I change my DP?</item>
         <item>How Do I edit my Account detail?</item>

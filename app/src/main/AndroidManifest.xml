@@ -39,7 +39,7 @@
             android:authorities="gj.udacity.capstone.hisab" />
 
         <!-- ADD MEMBER GCM Receiver -->
-        <receiver android:name=".gcm.accountReportNotification">
+        <receiver android:name=".gcm.sendRequestResponseBroadcast">
             <intent-filter>
                 <action android:name="gj.fortentia.askit.ADD_MEMBER" />
             </intent-filter>
@@ -93,6 +93,13 @@
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <!-- ADD MEMBER GCM Receiver -->
+        <receiver android:name=".gcm.sendRequestResponseBroadcast">
+            <intent-filter>
+                <action android:name="gj.udacity.capstone.hisab.SEND_REQUEST_RESPONSE" />
+            </intent-filter>
+        </receiver>
 
         <!-- Include the AdActivity configChanges and theme. -->
         <activity

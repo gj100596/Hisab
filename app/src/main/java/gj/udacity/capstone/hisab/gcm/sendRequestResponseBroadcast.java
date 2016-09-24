@@ -10,14 +10,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.util.Constant;
 
-public class accountReportNotification extends BroadcastReceiver {
+
+public class sendRequestResponseBroadcast extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         Log.e("Receiver","received");
         Bundle arg = intent.getExtras();
+        String requestingUserName = arg.getString(context.getString(R.string.gcm_rec_req_bunlde_userid));
+        Boolean sendData = arg.getBoolean(context.getString(R.string.gcm_rec_req_bunlde_accept));
 
-        String url  = "/group/adduser";
+        String url  = Constant.url + "/hisab/requestResponse";
         JSONObject param = new JSONObject();
         try {
             JSONArray mem = new JSONArray();
