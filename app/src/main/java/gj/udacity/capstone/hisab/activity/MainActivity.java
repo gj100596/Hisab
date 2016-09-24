@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -124,9 +125,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Bundle notificationBundle = getIntent().getExtras();
-        if(notificationBundle!=null){
+        if(notificationBundle!=null && notificationBundle.getString("Type")!=null){
             // App started from notification
             DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle) ;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.feed, detailFragment)
+                    .commit();
         }
         else {
             // Normal Start of app
@@ -287,13 +292,15 @@ public class MainActivity extends AppCompatActivity {
                     String part[] = selectedContact.split(" ");
                     String subpart[] = part[1].split("...Rs");
                     param.put("TargetID",subpart[0]);
-                    param.put("Amount",part[2]);
+                    param.put("Amount",Integer.parseInt(part[2]));
 
                     JSONArray transaction = new JSONArray();
                     Cursor particularTransaction = getContentResolver()
-                            .query(TransactionContract.Transaction.buildUnSettleDetailURI(subpart[0]),
+                            .query(TransactionContract.Transaction.buildUnSettleDetailURI(
+                                    part[0]+"_"+subpart[0]),
                                     null,null,null,null,null);
-                    while (particularTransaction.moveToNext())
+                    particularTransaction.moveToFirst();
+                    do
                     {
                         JSONObject entry = new JSONObject();
                         entry.put("Reason",particularTransaction.getString(COLUMN_REASON_INDEX));
@@ -301,9 +308,10 @@ public class MainActivity extends AppCompatActivity {
                         entry.put("Amount",particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
 
                         transaction.put(entry);
-                    }
+                    }while (particularTransaction.moveToNext());
                     particularTransaction.close();
                     param.put("Transaction",transaction);
+                    Log.e("Sent_data",param.toString());
 
                 } catch (JSONException e) {
                     e.printStackTrace();

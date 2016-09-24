@@ -69,14 +69,14 @@ public class GCMListener extends GcmListenerService {
 
             String type = message.getString("type");
             String requestingUser = message.getString("req_user");
-            String amount = message.getString("amount");
+            int amount = message.getInt("amount");
             JSONArray jsonData = message.getJSONArray("transaction");
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
             Bundle reminder = new Bundle();
             reminder.putString("Type",type);
             reminder.putString("User",requestingUser);
-            reminder.putString("Amount",amount);
+            reminder.putInt("Sum",amount);
             reminder.putString("data",jsonData.toString());
             notificationIntent.putExtras(reminder);
 
@@ -115,12 +115,14 @@ public class GCMListener extends GcmListenerService {
             String type = message.getString("type");
             String requestingUser = message.getString("req_user");
             JSONArray jsonData = message.getJSONArray("transaction");
+            int amount = message.getInt("amount");
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
             Bundle reminder = new Bundle();
             reminder.putString("Type",type);
             reminder.putString("User",requestingUser);
             reminder.putString("data",jsonData.toString());
+            reminder.putInt("Sum",amount);
             notificationIntent.putExtras(reminder);
 
             PendingIntent contentIntent =

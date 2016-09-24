@@ -79,7 +79,7 @@ public class DetailFragment extends Fragment
                 notificationBundle = getArguments();
                 userName = notificationBundle.getString("User");
                 userNumber = notificationBundle.getString("User");
-                totalAmount = 0;
+                totalAmount = notificationBundle.getInt("Sum");
             }
         }
     }
@@ -122,7 +122,7 @@ public class DetailFragment extends Fragment
             try {
                 JSONArray array = new JSONArray(notificationBundle.getString("data"));
                 DetailViewNotificationAdapter detailViewNotificationAdapter = new DetailViewNotificationAdapter(array);
-                historyList.setAdapter(detailRecyclerViewAdapter);
+                historyList.setAdapter(detailViewNotificationAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

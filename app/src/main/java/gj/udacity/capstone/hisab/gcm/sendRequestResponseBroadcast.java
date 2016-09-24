@@ -49,21 +49,23 @@ public class sendRequestResponseBroadcast extends BroadcastReceiver {
             Cursor particularTransaction = context.getContentResolver()
                     .query(TransactionContract.Transaction.buildUnSettleDetailURI(requestingUserName),
                             null,null,null,null,null);
+            int sum=0;
             while (particularTransaction.moveToNext())
             {
                 JSONObject entry = new JSONObject();
                 entry.put("Reason",particularTransaction.getString(COLUMN_REASON_INDEX));
                 entry.put("Date",particularTransaction.getString(COLUMN_DATE_INDEX));
                 entry.put("Amount",particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
-
+                sum+=particularTransaction.getInt(COLUMN_AMOUNT_INDEX);
                 transaction.put(entry);
             }
             particularTransaction.close();
             param.put("Transaction",transaction);
+            param.put("Amount",sum);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        JsonObjectRequest responseRequest = new JsonObjectRequest(Request.Method.POST, url, null,
+        JsonObjectRequest responseRequest = new JsonObjectRequest(Request.Method.POST, url, param,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

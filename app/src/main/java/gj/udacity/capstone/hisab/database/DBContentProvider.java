@@ -213,18 +213,27 @@ public class DBContentProvider extends ContentProvider {
                 Transaction.COLUMN_AMOUNT,
         };
 
-        String selectionString =
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=?"
-                        + " AND "+
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=?"
-                        + " AND "+
-                Transaction.TABLE_NAME + "." + Transaction.COLUMN_SETTLED + "="+settlementMode;
+        String[] split = uriInfo.split("_");
+        String selectionString;
+        if(split.length==2) {
+            selectionString =
+                    Transaction.TABLE_NAME + "." + Transaction.COLUMN_NAME + "=?"
+                            + " AND " +
+                            Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=?"
+                            + " AND " +
+                            Transaction.TABLE_NAME + "." + Transaction.COLUMN_SETTLED + "=" + settlementMode;
+        }else{
+            selectionString =
+                            Transaction.TABLE_NAME + "." + Transaction.COLUMN_NUMBER + "=?"
+                            + " AND " +
+                            Transaction.TABLE_NAME + "." + Transaction.COLUMN_SETTLED + "=" + settlementMode;
+        }
 
         Cursor cursor =  mOpenHelper.getReadableDatabase().query(
                 Transaction.TABLE_NAME,
                 projection,
                 selectionString,
-                uriInfo.split("_"),
+                split,
                 null,
                 null,
                 sortOrder
