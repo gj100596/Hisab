@@ -123,39 +123,35 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
+        Bundle notificationBundle = getIntent().getExtras();
+        if(notificationBundle!=null){
+            // App started from notification
+            DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle) ;
+        }
+        else {
+            // Normal Start of app
+            FeedFragment feedFragment = FeedFragment.newInstance(0);
 
-        FeedFragment feedFragment = FeedFragment.newInstance(0);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Slide slide = new Slide(Gravity.LEFT);
+                slide.addTarget(R.id.cardLayoutList);
+                slide.setInterpolator(AnimationUtils
+                        .loadInterpolator(
+                                MainActivity.this,
+                                android.R.interpolator.linear_out_slow_in
+                        ));
+                slide.setDuration(1000);
+                feedFragment.setExitTransition(slide);
+            }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Slide slide = new Slide(Gravity.LEFT);
-            slide.addTarget(R.id.cardLayoutList);
-            slide.setInterpolator(AnimationUtils
-                    .loadInterpolator(
-                            MainActivity.this,
-                            android.R.interpolator.linear_out_slow_in
-                    ));
-            slide.setDuration(1000);
-            feedFragment.setExitTransition(slide);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.feed, feedFragment)
+                    .commit();
+
         }
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.feed, feedFragment)
-                .commit();
 
-
-
-        /*
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fabBottomSheetDialogFragment = new AddSliderFragment();
-                fabBottomSheetDialogFragment.show(getSupportFragmentManager(), fabBottomSheetDialogFragment.getTag());
-            }
-        });
-        */
 
         //Load Ad for future
         mInterstitialAd = new InterstitialAd(MainActivity.this);
@@ -289,9 +285,9 @@ public class MainActivity extends AppCompatActivity {
                             .getString(getString(R.string.shared_pref_number),getString(R.string.default_usernumber)));
                     String selectedContact = phone.get(spinner.getSelectedItemPosition());
                     String part[] = selectedContact.split(" ");
-                    String subpart[] = part[1].split("...Rs ");
+                    String subpart[] = part[1].split("...Rs");
                     param.put("TargetID",subpart[0]);
-                    param.put("Amount",subpart[1]);
+                    param.put("Amount",part[2]);
 
                     JSONArray transaction = new JSONArray();
                     Cursor particularTransaction = getContentResolver()
@@ -313,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                JsonObjectRequest reminderRequest = new JsonObjectRequest(Request.Method.POST, url, null,
+                JsonObjectRequest reminderRequest = new JsonObjectRequest(Request.Method.POST, url, param,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {

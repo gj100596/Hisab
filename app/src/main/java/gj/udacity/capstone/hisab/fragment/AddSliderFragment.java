@@ -138,6 +138,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                         categoryArray);
         categorySpinner.setAdapter(categoryAdapter);
 
+
         // Transaction Type
         transactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

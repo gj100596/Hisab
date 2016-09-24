@@ -19,8 +19,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.adapter.DetailRecyclerViewAdapter;
+import gj.udacity.capstone.hisab.adapter.DetailViewNotificationAdapter;
 import gj.udacity.capstone.hisab.database.TransactionContract;
 
 public class DetailFragment extends Fragment
@@ -34,6 +38,8 @@ public class DetailFragment extends Fragment
     private String userString, userName, userNumber;
     //fragmentMode has 2 value: 0 for Unsettle Transaction and 1 for settled transaction
     private int fragmentMode,totalAmount;
+    //If this is null then a normal start otherwise it will have data from notification
+    private Bundle notificationBundle = null;
 
     private DetailRecyclerViewAdapter detailRecyclerViewAdapter;
 
@@ -51,16 +57,30 @@ public class DetailFragment extends Fragment
         return fragment;
     }
 
+    public static DetailFragment newInstance(Bundle args){
+        DetailFragment fragment = new DetailFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userString = getArguments().getString(ARG_1);
-            String[] split = userString.split("_");
-            userName = split[0];
-            userNumber = split[1];
-            fragmentMode = getArguments().getInt(ARG_2);
-            totalAmount = getArguments().getInt(ARG_3);
+            if( getArguments().getString("Type")==null) {
+                userString = getArguments().getString(ARG_1);
+                String[] split = userString.split("_");
+                userName = split[0];
+                userNumber = split[1];
+                fragmentMode = getArguments().getInt(ARG_2);
+                totalAmount = getArguments().getInt(ARG_3);
+            }
+            else{
+                notificationBundle = getArguments();
+                userName = notificationBundle.getString("User");
+                userNumber = notificationBundle.getString("User");
+                totalAmount = 0;
+            }
         }
     }
 
@@ -92,15 +112,30 @@ public class DetailFragment extends Fragment
                             TransactionContract.Transaction.buildSettleDetailURI(userString),
                             null, null, null, null);
         }
-        detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(getActivity(), cursor, userName,userNumber,fragmentMode);
-        historyList.setAdapter(detailRecyclerViewAdapter);
+        if(notificationBundle == null) {
+            detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(
+                    getActivity(), cursor, userName, userNumber, fragmentMode);
+            historyList.setAdapter(detailRecyclerViewAdapter);
+
+        }
+        else {
+            try {
+                JSONArray array = new JSONArray(notificationBundle.getString("data"));
+                DetailViewNotificationAdapter detailViewNotificationAdapter = new DetailViewNotificationAdapter(array);
+                historyList.setAdapter(detailRecyclerViewAdapter);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.detail_fragment_menu, menu);
+        if(notificationBundle==null)
+            inflater.inflate(R.menu.detail_fragment_menu, menu);
     }
 
 
