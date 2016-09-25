@@ -1,4 +1,4 @@
-package gj.udacity.capstone.hisab;
+package gj.udacity.capstone.hisab.util;
 
 import android.content.Context;
 import android.util.AttributeSet;

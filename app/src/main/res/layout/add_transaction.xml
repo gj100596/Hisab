@@ -5,36 +5,24 @@
     android:layout_margin="10dp"
     android:orientation="vertical">
 
-    <gj.udacity.capstone.hisab.FlowLayout
-        android:orientation="horizontal"
-        android:padding="5dp"
+    <gj.udacity.capstone.hisab.util.FlowLayout
         android:id="@+id/selectedContact"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="5">
+        android:padding="5dp"
+        android:layout_marginBottom="5dp"/>
 
-        <MultiAutoCompleteTextView
-            android:id="@+id/add_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="4"
-            android:ems="10"
-            android:hint="Name"
-            android:inputType="textPersonName" />
+    <MultiAutoCompleteTextView
+        android:id="@+id/add_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="4"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="textPersonName" />
 
-        <ImageView
-            android:id="@+id/add_contact"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_contact_phone_black_36dp" />
-    </LinearLayout>
 
     <EditText
         android:id="@+id/add_number"
@@ -64,10 +52,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:textColor="@android:color/holo_green_light"
             android:ems="10"
             android:hint="Amount"
-            android:inputType="number" />
+            android:inputType="number"
+            android:textColor="@android:color/holo_green_light" />
 
         <RadioGroup
             android:id="@+id/radioGroup"
@@ -80,15 +68,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Given"/>
+                android:text="Given" />
+
             <RadioButton
                 android:id="@+id/takenRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Taken"/>
+                android:text="Taken" />
 
         </RadioGroup>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -117,5 +107,8 @@
         android:id="@+id/add_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
         android:text="Add" />
 </LinearLayout>

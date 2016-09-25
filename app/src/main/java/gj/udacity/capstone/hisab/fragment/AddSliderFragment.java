@@ -4,10 +4,8 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -31,12 +29,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import gj.udacity.capstone.hisab.FlowLayout;
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.util.FlowLayout;
 
 import static android.view.View.inflate;
 import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
 import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
+import static java.lang.Integer.parseInt;
 
 public class AddSliderFragment extends BottomSheetDialogFragment {
 
@@ -44,21 +43,23 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
 
     private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback =
             new BottomSheetBehavior.BottomSheetCallback() {
-        @Override
-        public void onStateChanged(@NonNull View bottomSheet, int newState) {
-            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                dismiss();
-            }
-        }
-        @Override
-        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-        }
-    };
+                @Override
+                public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        dismiss();
+                    }
+                }
+
+                @Override
+                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                }
+            };
 
     private MultiAutoCompleteTextView nameEditText;
-    private EditText numberEditText,reasonEditText,amountEditText;
+    private EditText numberEditText, reasonEditText, amountEditText;
     private String[] categoryArray;
-    private int selectedCount;
+    private FlowLayout selectedContact;
+    private ArrayAdapter<String> adapter;
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
@@ -71,19 +72,17 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         reasonEditText = (EditText) contentView.findViewById(R.id.add_reason);
         amountEditText = (EditText) contentView.findViewById(R.id.add_amount);
         final Spinner categorySpinner = (Spinner) contentView.findViewById(R.id.add_category);
-        final ImageView contactImageView = (ImageView) contentView.findViewById(R.id.add_contact);
         final RadioGroup transactionType = (RadioGroup) contentView.findViewById(R.id.radioGroup);
-        selectedCount = 0;
 
         final ArrayList<String> phone = new ArrayList<String>();
 
         ContentResolver cr = getActivity().getContentResolver();
-        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.READ_CONTACTS},
                     1);
-        }else{
+        } else {
             // Get The Contact List for suggestions
             Cursor contactCursor = cr
                     .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
@@ -93,9 +92,14 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                         contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String contactNumber = contactCursor.getString(
                         contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                phone.add(
-                        contactName.split(" ")[0] + " " + contactNumber
-                );
+                String newNo = contactNumber.replace(" ", "");
+                if (newNo.length() > 9) {
+                    newNo = newNo.substring(newNo.length() - 10);
+
+                    String concat = contactName.split(" ")[0] + " " + newNo;
+                    if (!phone.contains(concat))
+                        phone.add(concat);
+                }
             }
             contactCursor.close();
         }
@@ -103,19 +107,17 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         Cursor dbContact = cr
                 .query(Transaction.getNameNoUri(), null, null, null, null);
 
-        while (dbContact.moveToNext())
-        {
+        while (dbContact.moveToNext()) {
             String contactName = dbContact.getString(0);
             String contactNumber = dbContact.getString(1);
-            phone.add(
-                    contactName.split(" ")[0]+" "+contactNumber
-            );
+            String concat = contactName.split(" ")[0] + " " + contactNumber;
+            if (!phone.contains(concat))
+                phone.add(concat);
         }
 
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, phone);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, phone);
 
-        final FlowLayout selectedContact = (FlowLayout) contentView.findViewById(R.id.selectedContact);
+        selectedContact = (FlowLayout) contentView.findViewById(R.id.selectedContact);
 
         nameEditText.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         nameEditText.setAdapter(adapter);
@@ -123,47 +125,44 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String part[] = ((TextView)view).getText().toString().split(" ",2);
-
-                String alreadyName = nameEditText.getText().toString();
-                String alreadyNo = numberEditText.getText().toString();
-               // nameEditText.setText(alreadyName+","+part[0]);
-                String newNo = part[1].replace(" ","");
-                newNo = newNo.substring(newNo.length()-10);
+                String text = ((TextView) view).getText().toString();
+                String part[] = text.split(" ", 2);
 
                 View tag = View.inflate(getContext(), R.layout.view_sample_tag, null);
-                tag.setTag(alreadyName+"_"+alreadyNo);
+
                 ViewGroup.MarginLayoutParams m = new ViewGroup.MarginLayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                m.setMargins(5,5,5,5);
+                m.setMargins(5, 5, 5, 5);
 
                 tag.setLayoutParams(m);
                 TextView name = (TextView) tag.findViewById(R.id.name);
                 TextView no = (TextView) tag.findViewById(R.id.no);
                 ImageView close = (ImageView) tag.findViewById(R.id.close);
-                close.setTag(tag);
+                close.setTag(text);
 
                 name.setText(part[0]);
-                no.setText(newNo);
+                no.setText(part[1]);
                 selectedContact.addView(tag);
+
+                int index = phone.indexOf(text);
+                if(index!=-1)
+                    phone.remove(index);
+                adapter = null;
+                adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, phone);
+                nameEditText.setAdapter(adapter);
 
                 close.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        selectedContact.removeView((View) v.getTag());
+                        selectedContact.removeView((View) v.getParent());
+                        phone.add(v.getTag().toString());
+                        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, phone);
+                        adapter.notifyDataSetChanged();
+                        nameEditText.setAdapter(adapter);
                     }
                 });
                 nameEditText.setText("");
 
-            }
-        });
-
-        contactImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-                startActivityForResult(intent, CONTACT_INTENT_CODE);
             }
         });
 
@@ -180,16 +179,15 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         transactionType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(amountEditText.getText().toString().isEmpty()){
+                if (amountEditText.getText().toString().isEmpty()) {
                     amountEditText.setTextColor(getResources().getColor(R.color.sliderOptionBG));
                     amountEditText.setText("-");
-                }
-                else {
+                } else {
                     int amountVal = 0;
                     try {
-                        amountVal = Integer.parseInt(amountEditText.getText().toString());
-                    }catch(Exception e){
-                        Toast.makeText(getActivity(),"Make Sure Amount Value is Integer",Toast.LENGTH_SHORT).show();
+                        amountVal = parseInt(amountEditText.getText().toString());
+                    } catch (Exception e) {
+                        Toast.makeText(getActivity(), "Make Sure Amount Value is Integer", Toast.LENGTH_SHORT).show();
                     }
                     if (checkedId == R.id.takenRadio) {
                         if (amountVal > 0)
@@ -212,24 +210,39 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-                if(checkForEmpty()) {
-
-                    ContentValues values = new ContentValues();
-                    values.put(Transaction.COLUMN_NAME, nameEditText.getText().toString());
-                    values.put(Transaction.COLUMN_NUMBER, numberEditText.getText().toString());
-                    values.put(Transaction.COLUMN_REASON, reasonEditText.getText().toString());
-                    values.put(Transaction.COLUMN_AMOUNT, Integer.parseInt(amountEditText.getText().toString()));
-                    values.put(Transaction.COLUMN_SETTLED, 0);
-                    values.put(Transaction.COLUMN_CATEGORY, categoryArray[categorySpinner.getSelectedItemPosition()]);
+                if (checkForEmpty()) {
+                    String reason = reasonEditText.getText().toString();
+                    int amount = Integer.parseInt(amountEditText.getText().toString());
+                    String category = categoryArray[categorySpinner.getSelectedItemPosition()];
                     Calendar instance = Calendar.getInstance();
                     int month = instance.get(Calendar.MONTH);
                     String monthString = month < 10 ? ("0" + month) : (month + "");
+                    int dayOfMonth = instance.get(Calendar.DAY_OF_MONTH);
+                    String dayString = dayOfMonth<10?("0"+dayOfMonth):(""+dayOfMonth);
                     String date = instance.get(Calendar.YEAR) + "-"
                             + monthString + "-"
-                            + instance.get(Calendar.DAY_OF_MONTH);
-                    values.put(Transaction.COLUMN_DATE, date);
+                            + dayOfMonth;
+                    int totalChild = selectedContact.getChildCount();
+                    amount/=totalChild;
 
-                    getActivity().getContentResolver().insert(BASE_URI, values);
+                    for(int i=0;i<totalChild;i++) {
+                        View view = selectedContact.getChildAt(i);
+                        TextView name = (TextView) view.findViewById(R.id.name);
+                        TextView no = (TextView) view.findViewById(R.id.no);
+
+                        ContentValues values = new ContentValues();
+                        values.put(Transaction.COLUMN_NAME, name.getText().toString());
+                        values.put(Transaction.COLUMN_NUMBER, no.getText().toString());
+                        values.put(Transaction.COLUMN_REASON, reason);
+                        values.put(Transaction.COLUMN_AMOUNT, amount);
+                        values.put(Transaction.COLUMN_SETTLED, 0);
+                        values.put(Transaction.COLUMN_CATEGORY, category);
+
+                        values.put(Transaction.COLUMN_DATE, date);
+
+                        getActivity().getContentResolver().insert(BASE_URI, values);
+                    }
+
                     AddSliderFragment.this.dismiss();
                 }
             }
@@ -239,46 +252,26 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                 (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
 
-        if( behavior != null && behavior instanceof BottomSheetBehavior ) {
+        if (behavior != null && behavior instanceof BottomSheetBehavior) {
             ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
     }
 
     private boolean checkForEmpty() {
-        if(nameEditText.getText().toString().isEmpty()){
-            Toast.makeText(getActivity(),"Please Enter Name",Toast.LENGTH_SHORT).show();
+
+        if (selectedContact.getChildCount()== 0) {
+            Toast.makeText(getActivity(), "Please Enter Name and Number", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(numberEditText.getText().toString().isEmpty()){
-            Toast.makeText(getActivity(),"Please Enter Mobile Number of Person",Toast.LENGTH_SHORT).show();
+        if (reasonEditText.getText().toString().isEmpty()) {
+            Toast.makeText(getActivity(), "Please Enter Reason", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(reasonEditText.getText().toString().isEmpty()){
-            Toast.makeText(getActivity(),"Please Enter Reason",Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(amountEditText.getText().toString().isEmpty()){
-            Toast.makeText(getActivity(),"Please Enter Amount",Toast.LENGTH_SHORT).show();
+        if (amountEditText.getText().toString().isEmpty()) {
+            Toast.makeText(getActivity(), "Please Enter Amount", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         return true;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == getActivity().RESULT_OK){ // && requestCode == CONTACT_INTENT_CODE){
-            Uri contactData = data.getData();
-
-            Cursor cursor =  getActivity().getContentResolver().query(contactData, null, null, null, null);
-            cursor.moveToFirst();
-
-            numberEditText.setText(
-                    cursor
-                        .getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                        .split(" ")[0]);
-            nameEditText.setText(cursor.
-                    getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)));
-        }
     }
 }

@@ -19,6 +19,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.database.TransactionContract;
@@ -49,9 +50,15 @@ public class GraphFragment extends Fragment {
         endDate = (EditText) view.findViewById(R.id.endDate);
         expensePie = (PieChart) view.findViewById(R.id.expensePie);
 
+
         ImageView startCalendar = (ImageView) view.findViewById(R.id.startCalendar);
         final ImageView endCalendar = (ImageView) view.findViewById(R.id.endCalendar);
         Button go = (Button) view.findViewById(R.id.dateQuery);
+
+        Calendar instance = Calendar.getInstance();
+        final int month = instance.get(Calendar.MONTH);
+        final int day = instance.get(Calendar.DAY_OF_MONTH);
+        final int year = instance.get(Calendar.YEAR);
 
         startCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +70,7 @@ public class GraphFragment extends Fragment {
                         String day = dayOfMonth<10?("0"+dayOfMonth):(""+dayOfMonth);
                         startDate.setText(year+"-"+month+"-"+day);
                     }
-                },2016,5,10).show();
+                },year,month,day).show();
             }
         });
         endCalendar.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +83,34 @@ public class GraphFragment extends Fragment {
                         String day = dayOfMonth<10?("0"+dayOfMonth):(""+dayOfMonth);
                         endDate.setText(year+"-"+month+"-"+day);
                     }
-                },2016,5,10).show();
+                },year,month,day).show();
+            }
+        });
+
+        startDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        String month = monthOfYear<10?("0"+monthOfYear):(""+monthOfYear);
+                        String day = dayOfMonth<10?("0"+dayOfMonth):(""+dayOfMonth);
+                        startDate.setText(year+"-"+month+"-"+day);
+                    }
+                },year,month,day).show();
+            }
+        });
+        endDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        String month = monthOfYear<10?("0"+monthOfYear):(""+monthOfYear);
+                        String day = dayOfMonth<10?("0"+dayOfMonth):(""+dayOfMonth);
+                        endDate.setText(year+"-"+month+"-"+day);
+                    }
+                },year,month,day).show();
             }
         });
         go.setOnClickListener(new View.OnClickListener() {
