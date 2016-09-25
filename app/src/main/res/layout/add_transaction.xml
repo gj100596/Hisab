@@ -5,13 +5,20 @@
     android:layout_margin="10dp"
     android:orientation="vertical">
 
+    <gj.udacity.capstone.hisab.FlowLayout
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:id="@+id/selectedContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="5">
 
-        <AutoCompleteTextView
+        <MultiAutoCompleteTextView
             android:id="@+id/add_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -26,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@android:drawable/sym_contact_card" />
+            android:src="@drawable/ic_contact_phone_black_36dp" />
     </LinearLayout>
 
     <EditText
@@ -46,30 +53,6 @@
         android:ems="10"
         android:hint="Reason"
         android:inputType="textPersonName" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingRight="15dp"
-            android:text="@string/category"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <Spinner
-            android:id="@+id/add_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible" />
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -105,6 +88,29 @@
                 android:text="Taken"/>
 
         </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="15dp"
+            android:text="@string/category"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <Spinner
+            android:id="@+id/add_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <Button

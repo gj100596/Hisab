@@ -40,7 +40,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.squareup.picasso.Picasso;
@@ -80,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     public static Activity thisAct;
     public static boolean tabletDevice;
     public InterstitialAd mInterstitialAd;
+    private NavigationView navigationView;
+    private DrawerLayout drawerLayout;
 
 
     private final int COLUMN_NAME_INDEX = 0;
@@ -156,8 +157,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
-
         //Load Ad for future
         mInterstitialAd = new InterstitialAd(MainActivity.this);
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
@@ -166,26 +165,12 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mInterstitialAd.loadAd(adRequest1);
 
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-
-            }
-
-            @Override
-            public void onAdClosed() {
-                Toast.makeText(MainActivity.this,"Ad Closed",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-
         configureNavigationDrawer();
 
     }
 
     private void configureNavigationDrawer() {
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
+        navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -196,31 +181,36 @@ public class MainActivity extends AppCompatActivity {
                                 .beginTransaction()
                                 .replace(R.id.feed, FeedFragment.newInstance(0))
                                 .commit();
-                        actionBarDrawerToggle.onDrawerClosed(navigationView);
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.analysis:
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.feed, GraphFragment.newInstance())
                                 .commit();
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.menuSettled:
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.feed, FeedFragment.newInstance(1))
                                 .commit();
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.menuSetting:
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.feed, SettingFragment.newInstance())
                                 .commit();
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.remind:
                         reminderDialog();
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.request:
                         requestDialog();
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                 }
                 return false;
@@ -230,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         configureNavigationHeader(navigationView.getHeaderView(0));
 
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -423,6 +413,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 BottomSheetDialogFragment bottomSheetDialogFragment = new UserEditSliderFragment();
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+                navigationView.invalidate();
             }
         });
 

@@ -13,7 +13,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="10dp"
-        android:src="@android:drawable/ic_menu_edit"
+        android:src="@drawable/ic_edit_white_24dp"
         android:contentDescription="@string/nav_header_edit" />
 
     <LinearLayout
@@ -27,14 +27,15 @@
             android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/ic_person_black_48dp" />
 
         <TextView
             android:id="@+id/nav_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Gaurav"
+            android:textAlignment="center"
+            android:text="XYZ"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -43,7 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="(+91) 7359939225"
+            android:textAlignment="center"
+            android:text="0123456789"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </LinearLayout>

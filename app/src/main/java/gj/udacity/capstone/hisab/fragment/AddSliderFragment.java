@@ -16,12 +16,13 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,8 +31,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import gj.udacity.capstone.hisab.FlowLayout;
 import gj.udacity.capstone.hisab.R;
 
+import static android.view.View.inflate;
 import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
 import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
 
@@ -52,23 +55,25 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         }
     };
 
-    private AutoCompleteTextView nameEditText;
+    private MultiAutoCompleteTextView nameEditText;
     private EditText numberEditText,reasonEditText,amountEditText;
     private String[] categoryArray;
+    private int selectedCount;
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
         super.setupDialog(dialog, style);
-        View contentView = View.inflate(getContext(), R.layout.add_transaction, null);
+        View contentView = inflate(getContext(), R.layout.add_transaction, null);
         dialog.setContentView(contentView);
 
-        nameEditText = (AutoCompleteTextView) contentView.findViewById(R.id.add_name);
+        nameEditText = (MultiAutoCompleteTextView) contentView.findViewById(R.id.add_name);
         numberEditText = (EditText) contentView.findViewById(R.id.add_number);
         reasonEditText = (EditText) contentView.findViewById(R.id.add_reason);
         amountEditText = (EditText) contentView.findViewById(R.id.add_amount);
         final Spinner categorySpinner = (Spinner) contentView.findViewById(R.id.add_category);
         final ImageView contactImageView = (ImageView) contentView.findViewById(R.id.add_contact);
         final RadioGroup transactionType = (RadioGroup) contentView.findViewById(R.id.radioGroup);
+        selectedCount = 0;
 
         final ArrayList<String> phone = new ArrayList<String>();
 
@@ -110,14 +115,46 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line, phone);
 
+        final FlowLayout selectedContact = (FlowLayout) contentView.findViewById(R.id.selectedContact);
+
+        nameEditText.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         nameEditText.setAdapter(adapter);
         nameEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 String part[] = ((TextView)view).getText().toString().split(" ",2);
 
-                nameEditText.setText(part[0]);
-                numberEditText.setText((part[1]).replace(" ",""));
+                String alreadyName = nameEditText.getText().toString();
+                String alreadyNo = numberEditText.getText().toString();
+               // nameEditText.setText(alreadyName+","+part[0]);
+                String newNo = part[1].replace(" ","");
+                newNo = newNo.substring(newNo.length()-10);
+
+                View tag = View.inflate(getContext(), R.layout.view_sample_tag, null);
+                tag.setTag(alreadyName+"_"+alreadyNo);
+                ViewGroup.MarginLayoutParams m = new ViewGroup.MarginLayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                m.setMargins(5,5,5,5);
+
+                tag.setLayoutParams(m);
+                TextView name = (TextView) tag.findViewById(R.id.name);
+                TextView no = (TextView) tag.findViewById(R.id.no);
+                ImageView close = (ImageView) tag.findViewById(R.id.close);
+                close.setTag(tag);
+
+                name.setText(part[0]);
+                no.setText(newNo);
+                selectedContact.addView(tag);
+
+                close.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectedContact.removeView((View) v.getTag());
+                    }
+                });
+                nameEditText.setText("");
+
             }
         });
 
