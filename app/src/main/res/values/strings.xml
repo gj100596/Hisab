@@ -49,116 +49,74 @@
         <item>What is shown in Analysis Section</item>
         <item>What is Send Reminder?</item>
         <item>What is Sync Pending?</item>
-        <item>Does My Transactions are visible to anyone?</item>
-        <item>How to add new Transaction</item>
+        <item>Are My Transactions visible to anyone?</item>
+        <item>Does My DP and number visible to anyone?</item>
         <item>Where Can I see My Profile?</item>
         <item>How Do I change my DP?</item>
         <item>How Do I edit my Account detail?</item>
-        <item>What is this Points</item>
-        <item>What is Group?</item>
-        <item>How to Create a Group?</item>
-        <item>Type Of Group?</item>
-        <item>How can I add new member in Group</item>
-        <item>How can I delete a member from a Group</item>
-        <item>How can I delete a Group</item>
-        <item>How can I assign a new Admin to Group</item>
-        <item>What are the admin\'s right?</item>
-        <item>Who can see my question?</item>
-        <item>Can I answer any questions?</item>
-        <item>How Many Time can I answer a Question?</item>
-
+        <item>How to add new Transaction</item>
+        <item>What happen when multiple User are added in one Transaction?</item>
+        <item>How to delete one particular entry from one transaction?</item>
+        <item>How to delete transactions permanently</item>
     </string-array>
 
     <string-array name="faq_answer">
-        <item>Ask It is social platform which allows it user to ask for opinions of people around the globe
-            \nIt also provide way to ask questions to yours friends
-            \nAsk It gives a platform to its users to share their opinions on questions asked by people all around globe.
+        <item>
+            Hisab is an android app which allow its user to maintain their pending transactions with their
+            friends.\n It allow user to send reminder to your friends about pending transaction, in case
+            they forgot it[and even if they are ignoring it ;)]
         </item>
-        <item>The 3 category on main screen categorizes the type of question you can see.
-            \nRead the subsequent questions to know what they mean.
+        <item>
+            The Starting screen show list of all pending transactions. If you have not added any it will be blank.
         </item>
-        <item>Feed Section shows the question asked by the people you follow.
-            \nNote that if a person whom you follow asks a private question( Wait! what is a private question? It is explained below) then it won\'t be visible in feeds
-            \nbut that question an be visible in Personal section if that question is asked to you.
-            \nOne more thing Question in Feed Section are in Chronological Order.
+        <item>
+            There are many option in navigation menu, like:
+            \n Pending: For showing all pending transaction, similarly settled for settled transactions.
+            \n E-Analysis stands for Expense Analysis. It shows a graph of how much you spend on what things.
+            \n Send Reminder and Sync Pending are explained below.
         </item>
-        <item>Trending Section shows the most discussed question in the community.
-            \nIt is sorted based on the number of votes and the time it was asked
+        <item>
+            Shows all Pending transaction.
         </item>
-        <item>Personal Section include private question asked for you.
-            \nThese questions will never will shown either in Feed or Trending section
+        <item>
+            Shows all Settled transaction.
         </item>
-        <item>User just simply need to click on (+) button  to ask a question.
-            \nThere are several steps once you click the button, they are:
-            \n1) Select type of question.(Types are explained below)
-            \n2) Write your question and give suitable options. At least 2 options are needed.
-            \n3) Select Category of question
-            \n4) Enter User-Id or select group if you want to make the question private. Otherwise leave it blank.
+        <item>
+            E-Analysis stands for Expense Analysis. It shows a graph of how much you spend on what things.
+            \n You can also see graph for a particular period of time.
         </item>
-        <item>Based on people who should see your question, questions are of two type described below</item>
-        <item>General Question is one which is not for a specific user or group of user.
-            \nThis question can be viewed by anyone in community and any one can answer it
+        <item>
+            Send Reminder feature allows you to send reminder of pending transaction to your friend.
         </item>
-        <item>Private question are the one which are for a specific user or a group of users.
-            \nThis question can be viewed by only  those people whom you choose while posting question.
+        <item>
+            Sync Pending is for asking your friend to share hi/her transaction details with you.
         </item>
-        <item>Just enter the User-Id(s) or select a group in private section while posting question to make it private.</item>
-        <item>Category is just to show your voters in which context is this question asked.
-            \nIt is optional as well as multiple category can be selected.
+        <item>
+            No. Your transactions are only visible to you. But your friend can ask you to share
+            it using sync pending feature.
         </item>
-        <item>Long press the Question to delete it</item>
-        <item>Long press the Question to report it
-            \nAfter reporting our team will check it and if question does not satisfy our terms it would be deleted.
+        <item>
+            No. Neither yoy DP nor your number is visible to anyone.
         </item>
-        <item>To view your profile follow the step:
-            \n1) Click the menu button(3 dots) on Main Screen
-            \n2) Click on the First Option(Showing your user id) to see your profile.
+        <item>
+            Just by opening navigation menu(three bar symbol) to see your profile.
         </item>
         <item>By clicking on the existing DP</item>
         <item>By clicking edit button</item>
-        <item>Points shows how active you are in community. More Point More Active!
-            \nYou get 2 Points for a question
-            \n And 1 Point for answer.
-        </item>
-        <item>Group is a collection of user id.
-            \nMaking group helps you to add many people as target for your question without typing their user id again.
-        </item>
-        <item>to Create group, go through following steps:
-            \n1) Go to your profile
-            \n2) Click on Groups
-            \n3) The first option there , "New Group" , will help you to make group.
-            \n4) Once you click that button, you need to enter Group Name, User- ID of member and type of group.
-        </item>
-        <item>There are 3 type of groups:
-            \n1) Default Group: In such group, any user can send request to join your group, but only admin will have right to add the user.
-            \n2) Strict Group: No user can send a join request.
-            \n3) Open Group: Any user can join group without admin\'s permission
+        <item>
+            Click on + Symbol on pending screen to add new transactions.
         </item>
         <item>
-            You can only add new member if You are a admin of that Group.
-            \n To add a member long click on the group name and a pop upp will prompt you to add member
+            The total amount is divided into all the users equally.
         </item>
         <item>
-            You can only delete a member if You are a admin of that Group.
-            \n To delete a member click on the group name.
-            \n In the group member list long click on the user name and a pop upp will prompt you to delete that member
+            By Swiping right on one particular transaction in detail page, a delete button becomes visible.
+            \n Press that button to delete that transaction.
         </item>
         <item>
-            You can only delete a group only if You are a admin of that Group.
-            \n To delete your group long click on the group name and a pop upp will prompt you to delete group
-            \nIf you are not admin but you want to leave group click the leave button
+            If yu delete transaction from pending section, it will go in settled section.
+            \n But if you delete transaction from settled section it will get deleted from your mobile.
         </item>
-        <item>
-            You can assign a new admin only if You are a admin of that Group.
-            \n To assign a admin click on the group name.
-            \n In the group member list long click on the user name and a pop upp will prompt you to make that member admin
-        </item>
-        <item>
-            Admin can add member, remove member and make new Admin
-        </item>
-        <item>If the question is private, It can only be viewed by targeted user, otherwise it will be viewed by all</item>
-        <item>You can answer any question visible to you</item>
-        <item>One user can answer a question only once</item>
     </string-array>
 
 </resources>
