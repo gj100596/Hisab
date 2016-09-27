@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import java.util.Calendar;
+
 import static gj.udacity.capstone.hisab.database.TransactionContract.CONTENT_AUTHORITY;
 import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
 import static gj.udacity.capstone.hisab.database.TransactionContract.URI_PATH;
@@ -333,6 +335,7 @@ public class DBContentProvider extends ContentProvider {
 
         ContentValues values = new ContentValues();
         values.put(Transaction.COLUMN_SETTLED,1);
+        values.put(Transaction.COLUMN_DATE,getTodayDate());
 
         int rowDeleted  = mOpenHelper.getWritableDatabase().update(Transaction.TABLE_NAME,values
                 ,conditionString,args.split("_"));
@@ -350,6 +353,7 @@ public class DBContentProvider extends ContentProvider {
 
         ContentValues values = new ContentValues();
         values.put(Transaction.COLUMN_SETTLED,1);
+        values.put(Transaction.COLUMN_DATE,getTodayDate());
 
         int rowDeleted  = mOpenHelper.getWritableDatabase().update(Transaction.TABLE_NAME,values
                 ,conditionString,args.split("_"));
@@ -392,6 +396,17 @@ public class DBContentProvider extends ContentProvider {
         if(rowDeleted != 0)
             getContext().getContentResolver().notifyChange(uri, null);
         return rowDeleted;
+    }
+
+    public String getTodayDate(){
+        Calendar instance = Calendar.getInstance();
+        int month = instance.get(Calendar.MONTH);
+        String monthString = month < 10 ? ("0" + month) : (month + "");
+        int dayOfMonth = instance.get(Calendar.DAY_OF_MONTH);
+        String dayString = dayOfMonth<10?("0"+dayOfMonth):(""+dayOfMonth);
+        return instance.get(Calendar.YEAR) + "-"
+                + monthString + "-"
+                + dayOfMonth;
     }
 
     @Override

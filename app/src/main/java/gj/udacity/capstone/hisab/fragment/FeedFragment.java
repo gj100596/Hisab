@@ -60,7 +60,7 @@ public class FeedFragment extends Fragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
 
-
+        final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -79,7 +79,23 @@ public class FeedFragment extends Fragment
         feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(), cursor, fragmentMode);
         recyclerView.setAdapter(feedRecyclerViewAdapter);
 
-        final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                    fab.show();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dy>0 || (dy<0 && fab.isShown()))
+                    fab.setVisibility(View.INVISIBLE);
+            }
+        });
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

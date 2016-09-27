@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -236,6 +237,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+               // loadDetail(((NavigationView) drawerView).getHeaderView(0));
+                //loadDP();
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                loadDetail(((NavigationView) drawerView).getHeaderView(0));
+                loadDP();
+
             }
         };
 
@@ -411,6 +422,7 @@ public class MainActivity extends AppCompatActivity {
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                drawerLayout.closeDrawer(Gravity.LEFT);
                 BottomSheetDialogFragment bottomSheetDialogFragment = new UserEditSliderFragment();
                 bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
                 navigationView.invalidate();
@@ -422,6 +434,7 @@ public class MainActivity extends AppCompatActivity {
         dp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                drawerLayout.closeDrawer(Gravity.LEFT);
                 Intent imageIntent = new Intent();
                 imageIntent.setType("image/*");
                 imageIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -497,24 +510,33 @@ public class MainActivity extends AppCompatActivity {
     private void saveDPInFile(Intent data) {
         if (data != null) {
             try {
-                InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                tempFile = new File(this.getExternalFilesDir(
-                        Environment.DIRECTORY_PICTURES), getString(R.string.dp_temp_uncrop_name));
-                if (tempFile.exists()) {
-                    tempFile.delete();
+                if(data.getAction() == null) {
+                    InputStream inputStream = getContentResolver().openInputStream(data.getData());
                     tempFile = new File(this.getExternalFilesDir(
                             Environment.DIRECTORY_PICTURES), getString(R.string.dp_temp_uncrop_name));
+                    if (tempFile.exists()) {
+                        tempFile.delete();
+                        tempFile = new File(this.getExternalFilesDir(
+                                Environment.DIRECTORY_PICTURES), getString(R.string.dp_temp_uncrop_name));
 
+                    }
+                    FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        fileOutputStream.write(buffer, 0, bytesRead);
+                    }
+                    buffer = null;
+                    fileOutputStream.close();
+                    inputStream.close();
+                }else{
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    dp.setImageBitmap(bitmap);
+                    FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
                 }
-                FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer, 0, bytesRead);
-                }
-                buffer = null;
-                fileOutputStream.close();
-                inputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

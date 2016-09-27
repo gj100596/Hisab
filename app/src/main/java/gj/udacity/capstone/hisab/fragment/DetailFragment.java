@@ -95,10 +95,26 @@ public class DetailFragment extends Fragment
         RecyclerView historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        LinearLayout bottomBar = (LinearLayout) view.findViewById(R.id.bottomBar);
+        final LinearLayout bottomBar = (LinearLayout) view.findViewById(R.id.bottomBar);
         TextView bottomTotalAmount = (TextView) view.findViewById(R.id.bottomAmount);
         bottomTotalAmount.setText(""+totalAmount);
 
+        historyList.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                    bottomBar.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dy>0 || (dy<0 && bottomBar.getVisibility() == View.VISIBLE))
+                    bottomBar.setVisibility(View.INVISIBLE);
+            }
+        });
         Cursor cursor;
         if(fragmentMode == 0) {
             cursor = getActivity().getContentResolver()

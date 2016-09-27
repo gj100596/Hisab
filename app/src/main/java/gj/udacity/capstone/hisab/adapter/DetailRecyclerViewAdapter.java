@@ -67,7 +67,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
             holder.mAmount.setTextColor(Color.GREEN);
         holder.mReason.setText(cursor.getString(COLUMN_REASON_INDEX));//mValues.get(position).content);
         holder.mDelete.setTag(cursor.getInt(COLUMN_ID_INDEX));//mValues.get(position).content);
-        holder.mDate.setText(cursor.getString(COLUMN_DATE_INDEX));
+        if(fragmentMode == 0)
+            holder.mDate.setText("Created On: "+cursor.getString(COLUMN_DATE_INDEX));
+        else
+            holder.mDate.setText("Settled On: "+cursor.getString(COLUMN_DATE_INDEX));
+
     }
 
     public Cursor getCursor() {
@@ -123,6 +127,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
                                 context.getContentResolver().delete(
                                         TransactionContract.Transaction.buildOneSettleDeleteURI(args),
                                         null, null);
+                                notifyDataSetChanged();
                             }
                         });
                     }else{

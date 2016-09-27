@@ -177,7 +177,7 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://sites.google.com/site/fortentiaaskit/"));
+                        Uri.parse("https://sites.google.com/site/fortentiahisab/"));
                 startActivity(i);
             }
         });

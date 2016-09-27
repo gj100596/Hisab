@@ -13,6 +13,8 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -163,6 +165,51 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                 });
                 nameEditText.setText("");
 
+            }
+        });
+
+        // Add New person's detail
+        numberEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String inp = numberEditText.getText().toString();
+                if(inp.length() == 10){
+                    View tag = View.inflate(getContext(), R.layout.view_sample_tag, null);
+                    String nameString = nameEditText.getText().toString();
+                    String noString = numberEditText.getText().toString();
+
+                    ViewGroup.MarginLayoutParams m = new ViewGroup.MarginLayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    m.setMargins(5, 5, 5, 5);
+
+                    tag.setLayoutParams(m);
+                    TextView name = (TextView) tag.findViewById(R.id.name);
+                    TextView no = (TextView) tag.findViewById(R.id.no);
+                    ImageView close = (ImageView) tag.findViewById(R.id.close);
+
+                    name.setText(nameString);
+                    no.setText(noString);
+                    close.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            selectedContact.removeView((View) v.getParent());
+                        }
+                    });
+
+                    selectedContact.addView(tag);
+                    nameEditText.setText("");
+                    numberEditText.setText("");
+                }
             }
         });
 
