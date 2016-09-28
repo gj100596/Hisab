@@ -586,23 +586,5 @@ public class MainActivity extends AppCompatActivity {
             if (mInterstitialAd.isLoaded())
                 mInterstitialAd.show();
         }
-        else if(getSupportFragmentManager().getBackStackEntryAt(0).getName().equalsIgnoreCase("Notification")){
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage("Do you Want to Save This Transactions?");
-            builder.setTitle("Save");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.show();
-        }
     }
 }

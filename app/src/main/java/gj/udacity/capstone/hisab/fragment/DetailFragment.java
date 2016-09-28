@@ -1,5 +1,6 @@
 package gj.udacity.capstone.hisab.fragment;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,11 +26,15 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.activity.MainActivity;
 import gj.udacity.capstone.hisab.adapter.DetailRecyclerViewAdapter;
 import gj.udacity.capstone.hisab.adapter.DetailViewNotificationAdapter;
 import gj.udacity.capstone.hisab.database.TransactionContract;
+
+import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
 
 public class DetailFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -42,7 +47,7 @@ public class DetailFragment extends Fragment
     //Combination of name and number of particular friend
     private String userString, userName, userNumber;
     //fragmentMode has 2 value: 0 for Unsettle Transaction and 1 for settled transaction
-    private int fragmentMode,totalAmount;
+    private int fragmentMode, totalAmount;
     //If this is null then a normal start otherwise it will have data from notification
     private Bundle notificationBundle = null;
 
@@ -52,22 +57,23 @@ public class DetailFragment extends Fragment
     public static TextView detailMsg1;
     public static ImageView detailEmptyImage;
     public static CardView detailCardView;
+    Cursor cursor;
 
     public DetailFragment() {
         // Required empty public constructor
     }
 
-    public static DetailFragment newInstance(String id,int totalAmount, int mode) {
+    public static DetailFragment newInstance(String id, int totalAmount, int mode) {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_1, id);
         args.putInt(ARG_2, mode);
-        args.putInt(ARG_3,totalAmount);
+        args.putInt(ARG_3, totalAmount);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static DetailFragment newInstance(Bundle args){
+    public static DetailFragment newInstance(Bundle args) {
         DetailFragment fragment = new DetailFragment();
         fragment.setArguments(args);
         return fragment;
@@ -77,15 +83,14 @@ public class DetailFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            if( getArguments().getString("Type")==null) {
+            if (getArguments().getString("Type") == null) {
                 userString = getArguments().getString(ARG_1);
                 String[] split = userString.split("_");
                 userName = split[0];
                 userNumber = split[1];
                 fragmentMode = getArguments().getInt(ARG_2);
                 totalAmount = getArguments().getInt(ARG_3);
-            }
-            else{
+            } else {
                 notificationBundle = getArguments();
                 userName = notificationBundle.getString("User");
                 userNumber = notificationBundle.getString("User");
@@ -107,7 +112,7 @@ public class DetailFragment extends Fragment
 
         final RelativeLayout bottomBar = (RelativeLayout) view.findViewById(R.id.bottomBar);
         bottomTotalAmount = (TextView) view.findViewById(R.id.bottomAmount);
-        bottomTotalAmount.setText(""+totalAmount);
+        bottomTotalAmount.setText("" + totalAmount);
 
         detailMsg1 = (TextView) view.findViewById(R.id.msg1);
         detailEmptyImage = (ImageView) view.findViewById(R.id.emptyImage);
@@ -118,7 +123,7 @@ public class DetailFragment extends Fragment
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     bottomBar.setVisibility(View.VISIBLE);
                 }
             }
@@ -126,34 +131,31 @@ public class DetailFragment extends Fragment
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(dy>0 || (dy<0 && bottomBar.getVisibility() == View.VISIBLE))
+                if (dy > 0 || (dy < 0 && bottomBar.getVisibility() == View.VISIBLE))
                     bottomBar.setVisibility(View.INVISIBLE);
             }
         });
-        Cursor cursor;
         Uri uri;
-        if(fragmentMode == 0) {
+        if (fragmentMode == 0) {
             uri = TransactionContract.Transaction.UNSETTLE_URI;
             cursor = getActivity().getContentResolver()
                     .query(
                             TransactionContract.Transaction.buildUnSettleDetailURI(userString),
                             null, null, null, null);
-        }
-        else{
+        } else {
             uri = TransactionContract.Transaction.SETTLE_URI;
             cursor = getActivity().getContentResolver()
                     .query(
                             TransactionContract.Transaction.buildSettleDetailURI(userString),
                             null, null, null, null);
         }
-        cursor.setNotificationUri(getActivity().getContentResolver(),uri);
-        if(notificationBundle == null) {
+        cursor.setNotificationUri(getActivity().getContentResolver(), uri);
+        if (notificationBundle == null) {
             detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(
-                    getActivity(), cursor, userName, userNumber, fragmentMode,bottomTotalAmount);
+                    getActivity(), cursor, userName, userNumber, fragmentMode, bottomTotalAmount);
             historyList.setAdapter(detailRecyclerViewAdapter);
 
-        }
-        else {
+        } else {
             try {
                 JSONArray array = new JSONArray(notificationBundle.getString("data"));
                 DetailViewNotificationAdapter detailViewNotificationAdapter = new DetailViewNotificationAdapter(array);
@@ -169,21 +171,58 @@ public class DetailFragment extends Fragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if(notificationBundle==null)
+        if (notificationBundle == null)
             inflater.inflate(R.menu.detail_fragment_menu, menu);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(notificationBundle != null){
+        if (notificationBundle != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Do you Want to Save This Transactions?");
             builder.setTitle("Save");
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        JSONArray array = new JSONArray(notificationBundle.getString("data"));
 
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject jsonObject = array.getJSONObject(i);
+                            String reason = jsonObject.getString("Reason");
+                            String date = jsonObject.getString("Date");
+                            int amount = jsonObject.getInt("Amount");
+
+                            cursor.moveToFirst();
+                            boolean already = false;
+                            for(int j=0;j<cursor.getCount();j++) {
+                                cursor.move(j);
+                                if (cursor.getString(2).equalsIgnoreCase(date)
+                                        &&
+                                        cursor.getInt(3) == amount) {
+                                    already=true;
+                                    break;
+                                }
+                            }
+                            if(!already) {
+                                amount *= -1;
+
+                                ContentValues values = new ContentValues();
+                                values.put(TransactionContract.Transaction.COLUMN_NAME, userName);
+                                values.put(TransactionContract.Transaction.COLUMN_NUMBER, userNumber);
+                                values.put(TransactionContract.Transaction.COLUMN_REASON, reason);
+                                values.put(TransactionContract.Transaction.COLUMN_AMOUNT, amount);
+                                values.put(TransactionContract.Transaction.COLUMN_SETTLED, 0);
+                                values.put(TransactionContract.Transaction.COLUMN_CATEGORY, "Misc");
+                                values.put(TransactionContract.Transaction.COLUMN_DATE, date);
+
+                                MainActivity.thisAct.getContentResolver().insert(BASE_URI, values);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -205,7 +244,7 @@ public class DetailFragment extends Fragment
 
         if (id == R.id.settleTransaction) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            if(fragmentMode == 0) {
+            if (fragmentMode == 0) {
                 builder.setMessage("Do You want to settle Complete Transaction?");
                 builder.setTitle("Settle?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -219,8 +258,7 @@ public class DetailFragment extends Fragment
                         getActivity().onBackPressed();
                     }
                 });
-            }
-            else{
+            } else {
                 builder.setMessage("Do You want to Delete Complete Transaction Permanently?");
                 builder.setTitle("Delete?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -248,22 +286,21 @@ public class DetailFragment extends Fragment
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        if(notificationBundle == null)
+        if (notificationBundle == null)
             getLoaderManager().initLoader(CURSORLOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(fragmentMode == 0) {
+        if (fragmentMode == 0) {
             return new CursorLoader(getActivity(),
                     TransactionContract.Transaction.buildUnSettleDetailURI(userString),
                     null,
                     null,
                     null,
                     null);
-        }
-        else{
+        } else {
             return new CursorLoader(getActivity(),
                     TransactionContract.Transaction.buildSettleDetailURI(userString),
                     null,
