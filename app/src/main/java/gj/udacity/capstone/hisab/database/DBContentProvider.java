@@ -360,7 +360,7 @@ public class DBContentProvider extends ContentProvider {
         int rowDeleted  = mOpenHelper.getWritableDatabase().update(Transaction.TABLE_NAME,values
                 ,conditionString,args.split("_"));
         if(rowDeleted != 0)
-            getContext().getContentResolver().notifyChange(Transaction.SETTLE_URI, null);
+            getContext().getContentResolver().notifyChange(Transaction.UNSETTLE_URI, null);
         return rowDeleted;
     }
 
@@ -374,7 +374,8 @@ public class DBContentProvider extends ContentProvider {
 
         String[] finalArg = new String[3];
         int i=0;
-        for(String x:uri.getPathSegments().get(2).split(" "))
+
+        for(String x:uri.getPathSegments().get(2).split("_"))
             finalArg[i++]=x;
         finalArg[i]="1";
         int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
@@ -395,8 +396,10 @@ public class DBContentProvider extends ContentProvider {
 
         int rowDeleted  = mOpenHelper.getWritableDatabase().delete(Transaction.TABLE_NAME
                 ,conditionString,args.split("_"));
-        if(rowDeleted != 0)
+        if(rowDeleted != 0) {
             getContext().getContentResolver().notifyChange(Transaction.SETTLE_URI, null);
+            getContext().getContentResolver().notifyChange(Transaction.buildSettleDetailURI(args),null);
+        }
         return rowDeleted;
     }
 

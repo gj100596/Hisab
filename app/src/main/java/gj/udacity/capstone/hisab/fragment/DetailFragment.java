@@ -20,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -105,7 +105,7 @@ public class DetailFragment extends Fragment
         historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        final LinearLayout bottomBar = (LinearLayout) view.findViewById(R.id.bottomBar);
+        final RelativeLayout bottomBar = (RelativeLayout) view.findViewById(R.id.bottomBar);
         bottomTotalAmount = (TextView) view.findViewById(R.id.bottomAmount);
         bottomTotalAmount.setText(""+totalAmount);
 
@@ -173,6 +173,28 @@ public class DetailFragment extends Fragment
             inflater.inflate(R.menu.detail_fragment_menu, menu);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(notificationBundle != null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Do you Want to Save This Transactions?");
+            builder.setTitle("Save");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.show();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -184,7 +206,7 @@ public class DetailFragment extends Fragment
         if (id == R.id.settleTransaction) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             if(fragmentMode == 0) {
-                builder.setMessage("Do You want to settle Whole Transaction?");
+                builder.setMessage("Do You want to settle Complete Transaction?");
                 builder.setTitle("Settle?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
@@ -199,13 +221,12 @@ public class DetailFragment extends Fragment
                 });
             }
             else{
-                builder.setMessage("Do You want to Delete Whole Transaction Permanently?");
+                builder.setMessage("Do You want to Delete Complete Transaction Permanently?");
                 builder.setTitle("Delete?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String args = userName + "_" + userNumber;
-
                         getActivity().getContentResolver().delete(
                                 TransactionContract.Transaction.buildAllPermanentDeleteURI(args),
                                 null, null);
@@ -227,7 +248,8 @@ public class DetailFragment extends Fragment
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getLoaderManager().initLoader(CURSORLOADER_ID, null, this);
+        if(notificationBundle == null)
+            getLoaderManager().initLoader(CURSORLOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 

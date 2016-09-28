@@ -64,39 +64,37 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/x"
-        android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         android:elevation="15dp"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:paddingLeft="15dp"
             android:paddingTop="5dp"
             android:text="Total"
+            android:layout_alignParentLeft="true"
             android:textAppearance="@android:style/TextAppearance.Material.Display2"
             android:textColor="#FFFFFF" />
 
         <TextView
             android:id="@+id/bottomAmount"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
             android:paddingLeft="15dp"
             android:paddingRight="5dp"
             android:paddingTop="5dp"
             android:text="500"
             android:textAlignment="textEnd"
+            android:layout_alignParentRight="true"
             android:textAppearance="@android:style/TextAppearance.Material.Display2"
             android:textColor="#FFFFFF" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

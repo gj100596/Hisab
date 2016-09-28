@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.feed, detailFragment)
+                    .addToBackStack("Notification")
                     .commit();
 
         } else {
@@ -290,58 +291,60 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String url = Constant.url + "/hisab/reminder";
-                JSONObject param = new JSONObject();
-                try {
-                    SharedPreferences userDetail = MainActivity.thisAct.
-                            getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
-                    param.put("SenderID", userDetail
-                            .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
-                    String selectedContact = phone.get(spinner.getSelectedItemPosition());
-                    String part[] = selectedContact.split(" ");
-                    String subpart[] = part[1].split("...Rs");
-                    param.put("TargetID", subpart[0]);
-                    param.put("Amount", Integer.parseInt(part[2]));
+                if(!phone.isEmpty()) {
+                    String url = Constant.url + "/hisab/reminder";
+                    JSONObject param = new JSONObject();
+                    try {
+                        SharedPreferences userDetail = MainActivity.thisAct.
+                                getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+                        param.put("SenderID", userDetail
+                                .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
+                        String selectedContact = phone.get(spinner.getSelectedItemPosition());
+                        String part[] = selectedContact.split(" ");
+                        String subpart[] = part[1].split("...Rs");
+                        param.put("TargetID", subpart[0]);
+                        param.put("Amount", Integer.parseInt(part[2]));
 
-                    JSONArray transaction = new JSONArray();
-                    Cursor particularTransaction = getContentResolver()
-                            .query(TransactionContract.Transaction.buildUnSettleDetailURI(
-                                    part[0] + "_" + subpart[0]),
-                                    null, null, null, null, null);
-                    particularTransaction.moveToFirst();
-                    do {
-                        JSONObject entry = new JSONObject();
-                        entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
-                        entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
-                        entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
+                        JSONArray transaction = new JSONArray();
+                        Cursor particularTransaction = getContentResolver()
+                                .query(TransactionContract.Transaction.buildUnSettleDetailURI(
+                                        part[0] + "_" + subpart[0]),
+                                        null, null, null, null, null);
+                        particularTransaction.moveToFirst();
+                        do {
+                            JSONObject entry = new JSONObject();
+                            entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
+                            entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
+                            entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
 
-                        transaction.put(entry);
-                    } while (particularTransaction.moveToNext());
-                    particularTransaction.close();
-                    param.put("Transaction", transaction);
-                    Log.e("Sent_data", param.toString());
+                            transaction.put(entry);
+                        } while (particularTransaction.moveToNext());
+                        particularTransaction.close();
+                        param.put("Transaction", transaction);
+                        Log.e("Sent_data", param.toString());
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JsonObjectRequest reminderRequest = new JsonObjectRequest(Request.Method.POST, url, param,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Toast.makeText(MainActivity.this,
+                                            "Request Sent. You will get Notified when Response Comes.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+
+                                }
+                            }
+                    );
+                    ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(reminderRequest);
                 }
-
-                JsonObjectRequest reminderRequest = new JsonObjectRequest(Request.Method.POST, url, param,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Toast.makeText(MainActivity.this,
-                                        "Request Sent. You will get Notified when Response Comes.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-
-                            }
-                        }
-                );
-                ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(reminderRequest);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -380,35 +383,37 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("Ask", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String url = Constant.url + "/hisab/request";
-                StringRequest request = new StringRequest(Request.Method.POST, url,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                Toast.makeText(MainActivity.this, "Reminder Sent", Toast.LENGTH_SHORT).show();
+                if(!phone.isEmpty()) {
+                    String url = Constant.url + "/hisab/request";
+                    StringRequest request = new StringRequest(Request.Method.POST, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    Toast.makeText(MainActivity.this, "Reminder Sent", Toast.LENGTH_SHORT).show();
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                }
                             }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                            }
+                    ) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> param = new HashMap<>();
+                            SharedPreferences userDetail = MainActivity.thisAct.
+                                    getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+                            param.put("SenderID", userDetail
+                                    .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
+                            String selectedContact = phone.get(spinner.getSelectedItemPosition());
+                            String part[] = selectedContact.split(" ");
+                            param.put("TargetID", part[1]);
+                            return param;
                         }
-                ) {
-                    @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String, String> param = new HashMap<>();
-                        SharedPreferences userDetail = MainActivity.thisAct.
-                                getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
-                        param.put("SenderID", userDetail
-                                .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
-                        String selectedContact = phone.get(spinner.getSelectedItemPosition());
-                        String part[] = selectedContact.split(" ");
-                        param.put("TargetID", part[1]);
-                        return param;
-                    }
-                };
+                    };
 
-                ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(request);
+                    ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(request);
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -576,8 +581,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (mInterstitialAd.isLoaded() && getSupportFragmentManager().getBackStackEntryCount() == 0) {
-            mInterstitialAd.show();
+
+        if(getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            if (mInterstitialAd.isLoaded())
+                mInterstitialAd.show();
+        }
+        else if(getSupportFragmentManager().getBackStackEntryAt(0).getName().equalsIgnoreCase("Notification")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("Do you Want to Save This Transactions?");
+            builder.setTitle("Save");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.show();
         }
     }
 }
