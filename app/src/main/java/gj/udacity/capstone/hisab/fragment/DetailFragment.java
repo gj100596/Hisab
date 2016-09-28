@@ -2,7 +2,9 @@ package gj.udacity.capstone.hisab.fragment;
 
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -33,6 +35,7 @@ public class DetailFragment extends Fragment
     private static final String ARG_1 = "userString";
     private static final String ARG_2 = "mode";
     private static final String ARG_3 = "totalAmount";
+    private static final int CURSORLOADER_ID = 750;
 
     //Combination of name and number of particular friend
     private String userString, userName, userNumber;
@@ -42,6 +45,9 @@ public class DetailFragment extends Fragment
     private Bundle notificationBundle = null;
 
     private DetailRecyclerViewAdapter detailRecyclerViewAdapter;
+    private RecyclerView historyList;
+    public static TextView bottomTotalAmount;
+
 
     public DetailFragment() {
         // Required empty public constructor
@@ -92,11 +98,11 @@ public class DetailFragment extends Fragment
         TextView nameTextView = (TextView) view.findViewById(R.id.history_name);
         nameTextView.setText(userName);
 
-        RecyclerView historyList = (RecyclerView) view.findViewById(R.id.history_list);
+        historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         final LinearLayout bottomBar = (LinearLayout) view.findViewById(R.id.bottomBar);
-        TextView bottomTotalAmount = (TextView) view.findViewById(R.id.bottomAmount);
+        bottomTotalAmount = (TextView) view.findViewById(R.id.bottomAmount);
         bottomTotalAmount.setText(""+totalAmount);
 
         historyList.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -116,21 +122,25 @@ public class DetailFragment extends Fragment
             }
         });
         Cursor cursor;
+        Uri uri;
         if(fragmentMode == 0) {
+            uri = TransactionContract.Transaction.UNSETTLE_URI;
             cursor = getActivity().getContentResolver()
                     .query(
                             TransactionContract.Transaction.buildUnSettleDetailURI(userString),
                             null, null, null, null);
         }
         else{
+            uri = TransactionContract.Transaction.SETTLE_URI;
             cursor = getActivity().getContentResolver()
                     .query(
                             TransactionContract.Transaction.buildSettleDetailURI(userString),
                             null, null, null, null);
         }
+        cursor.setNotificationUri(getActivity().getContentResolver(),uri);
         if(notificationBundle == null) {
             detailRecyclerViewAdapter = new DetailRecyclerViewAdapter(
-                    getActivity(), cursor, userName, userNumber, fragmentMode);
+                    getActivity(), cursor, userName, userNumber, fragmentMode,bottomTotalAmount);
             historyList.setAdapter(detailRecyclerViewAdapter);
 
         }
@@ -206,22 +216,26 @@ public class DetailFragment extends Fragment
 
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(CURSORLOADER_ID, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
         if(fragmentMode == 0) {
             return new CursorLoader(getActivity(),
-                    TransactionContract.Transaction.UNSETTLE_URI,
-                    null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                    TransactionContract.Transaction.buildUnSettleDetailURI(userString),
+                    null,
                     null,
                     null,
                     null);
         }
         else{
             return new CursorLoader(getActivity(),
-                    TransactionContract.Transaction.SETTLE_URI,
-                    null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                    TransactionContract.Transaction.buildSettleDetailURI(userString),
+                    null,
                     null,
                     null,
                     null);
@@ -232,6 +246,7 @@ public class DetailFragment extends Fragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         detailRecyclerViewAdapter.swapCursor(data);
         detailRecyclerViewAdapter.notifyDataSetChanged();
+
     }
 
     @Override

@@ -19,6 +19,8 @@ import android.widget.TextView;
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.database.TransactionContract;
 
+import static gj.udacity.capstone.hisab.R.id.amount;
+
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecyclerViewAdapter.ViewHolder> {
 
     private FragmentActivity context;
@@ -27,14 +29,16 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     private boolean dataValid;
     private DataSetObserver dataSetObserver;
     private int fragmentMode;
+    private TextView bottomTotalAmount;
+    private int sumValue;
 
     private final int COLUMN_ID_INDEX = 0;
     private final int COLUMN_REASON_INDEX = 1;
     private final int COLUMN_DATE_INDEX = 2;
     private final int COLUMN_AMOUNT_INDEX = 3;
 
-    public DetailRecyclerViewAdapter (FragmentActivity context, Cursor cursor,String name,
-                                      String number, int fragmentMode){
+    public DetailRecyclerViewAdapter(FragmentActivity context, Cursor cursor, String name,
+                                     String number, int fragmentMode, TextView bottomTotalAmount){
         this.context = context;
         this.cursor = cursor;
         this.fragmentMode = fragmentMode;
@@ -45,7 +49,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
         }
         this.name = name;
         this.number = number;
-
+        this.bottomTotalAmount = bottomTotalAmount;
     }
 
     @Override
@@ -59,8 +63,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         cursor.moveToPosition(position);
+        if(position == 0)
+            sumValue = 0;
         Integer amount = Integer.parseInt(cursor.getString(COLUMN_AMOUNT_INDEX));
         holder.mAmount.setText(""+amount);//mValues.get(position).id);
+        sumValue+=amount;
         if(amount<0)
             holder.mAmount.setTextColor(Color.RED);
         else
@@ -71,7 +78,9 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
             holder.mDate.setText("Created On: "+cursor.getString(COLUMN_DATE_INDEX));
         else
             holder.mDate.setText("Settled On: "+cursor.getString(COLUMN_DATE_INDEX));
-
+        holder.mDelete.setVisibility(View.INVISIBLE);
+        holder.mAmount.setVisibility(View.VISIBLE);
+        bottomTotalAmount.setText(""+sumValue);
     }
 
     public Cursor getCursor() {
@@ -104,7 +113,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
             super(view);
             mView = view;
             mReason = (TextView) view.findViewById(R.id.reason);
-            mAmount = (TextView) view.findViewById(R.id.amount);
+            mAmount = (TextView) view.findViewById(amount);
             mDate = (TextView) view.findViewById(R.id.date);
             //mSlidePanel = (LinearLayout) view.findViewById(R.id.sidePane);
             //mMainLinear = (LinearLayout) view.findViewById(R.id.mainLinear);

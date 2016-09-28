@@ -19,12 +19,6 @@ import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.adapter.FeedRecyclerViewAdapter;
 import gj.udacity.capstone.hisab.database.TransactionContract;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@k OnListFragmentInteractionListener}
- * interface.
- */
 public class FeedFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -33,9 +27,6 @@ public class FeedFragment extends Fragment
 
     private static final String ARG = "mode";
     private int fragmentMode;
-
-
-    // private OnListFragmentInteractionListener mListener;
 
     public FeedFragment() {
     }
@@ -118,20 +109,11 @@ public class FeedFragment extends Fragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        /*
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-        */
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        //mListener = null;
     }
 
     @Override
@@ -140,14 +122,14 @@ public class FeedFragment extends Fragment
         if (fragmentMode == 0) {
             return new CursorLoader(getActivity(),
                     TransactionContract.Transaction.UNSETTLE_URI,
-                    null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                    null,
                     null,
                     null,
                     null);
         } else {
             return new CursorLoader(getActivity(),
                     TransactionContract.Transaction.SETTLE_URI,
-                    null,   //new String[]{DBContract.MovieEntry.COLUMN_IMAGE_URL},
+                    null,
                     null,
                     null,
                     null);

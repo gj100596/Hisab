@@ -36,6 +36,7 @@
     <string name="gcm_rec_req_bunlde_userid">UserID</string>
     <string name="gcm_rec_req_bunlde_type">type</string>
     <string name="gcm_rec_req_bunlde_accept">RequestAccepted</string>
+    <string name="shared_pref_first_time">FirstTime</string>
 
 
     <!-- FAQ -->
