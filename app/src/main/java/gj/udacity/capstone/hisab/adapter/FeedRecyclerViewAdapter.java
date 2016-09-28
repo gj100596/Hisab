@@ -17,6 +17,12 @@ import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.activity.MainActivity;
 import gj.udacity.capstone.hisab.fragment.DetailFragment;
 
+import static gj.udacity.capstone.hisab.fragment.FeedFragment.arrow;
+import static gj.udacity.capstone.hisab.fragment.FeedFragment.emptyImage;
+import static gj.udacity.capstone.hisab.fragment.FeedFragment.msg1;
+import static gj.udacity.capstone.hisab.fragment.FeedFragment.msg2;
+import static gj.udacity.capstone.hisab.fragment.FeedFragment.recyclerView;
+
 public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerViewAdapter.ViewHolder> {
 
     private FragmentActivity context;
@@ -134,6 +140,29 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     @Override
     public int getItemCount() {
         if (dataValid && cursor != null) {
+            if(cursor.getCount() == 0){
+                msg1.setVisibility(View.VISIBLE);
+                msg2.setVisibility(View.VISIBLE);
+                arrow.setVisibility(View.VISIBLE);
+                emptyImage.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+
+                if(fragmentMode == 0){
+                    msg1.setText(context.getString(R.string.msg1_unsettle));
+                    msg2.setText(context.getString(R.string.msg2_unsettle));
+                }
+                else{
+                    msg1.setText(context.getString(R.string.msg1_settle));
+                    msg2.setText(context.getString(R.string.msg2_settle));
+                }
+            }
+            else{
+                msg1.setVisibility(View.INVISIBLE);
+                msg2.setVisibility(View.INVISIBLE);
+                arrow.setVisibility(View.INVISIBLE);
+                emptyImage.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
             return cursor.getCount();
         }
         return 0;

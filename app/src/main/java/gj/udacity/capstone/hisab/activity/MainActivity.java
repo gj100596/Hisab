@@ -117,25 +117,34 @@ public class MainActivity extends AppCompatActivity {
                     1);
         }
 
+        Bundle notificationBundle = getIntent().getExtras();
         // For tablet Layout
         if (findViewById(R.id.detailInMain) != null) {
             tabletDevice = true;
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.detailInMain, DetailFragment.newInstance("x_1", 2, 0))
-                    .commit();
+            if (notificationBundle != null && notificationBundle.getString("Type") != null) {
+                DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detailInMain, detailFragment)
+                        .commit();
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detailInMain, DetailFragment.newInstance(" _ ", 0, 0))
+                        .commit();
+            }
         }
 
-        Bundle notificationBundle = getIntent().getExtras();
-        if(notificationBundle!=null && notificationBundle.getString("Type")!=null){
+
+        if (!tabletDevice && notificationBundle != null && notificationBundle.getString("Type") != null) {
             // App started from notification
-            DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle) ;
+            DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.feed, detailFragment)
                     .commit();
-        }
-        else {
+
+        } else {
             // Normal Start of app
             FeedFragment feedFragment = FeedFragment.newInstance(0);
 
@@ -237,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-               // loadDetail(((NavigationView) drawerView).getHeaderView(0));
+                // loadDetail(((NavigationView) drawerView).getHeaderView(0));
                 //loadDP();
             }
 
@@ -264,18 +273,17 @@ public class MainActivity extends AppCompatActivity {
                 .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
         final ArrayList<String> phone = new ArrayList<>();
-        while (dbContact.moveToNext())
-        {
+        while (dbContact.moveToNext()) {
             String contactName = dbContact.getString(COLUMN_NAME_INDEX);
             String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
             int amount = dbContact.getInt(COLUMN_SUM_INDEX);
             phone.add(
-                    contactName.split(" ")[0]+" "+contactNumber+ "...Rs "+amount
+                    contactName.split(" ")[0] + " " + contactNumber + "...Rs " + amount
             );
         }
 
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line, phone);
+                new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, phone);
 
         spinner.setAdapter(adapter);
         builder.setView(spinner);
@@ -287,32 +295,31 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     SharedPreferences userDetail = MainActivity.thisAct.
                             getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
-                    param.put("SenderID",userDetail
-                            .getString(getString(R.string.shared_pref_number),getString(R.string.default_usernumber)));
+                    param.put("SenderID", userDetail
+                            .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
                     String selectedContact = phone.get(spinner.getSelectedItemPosition());
                     String part[] = selectedContact.split(" ");
                     String subpart[] = part[1].split("...Rs");
-                    param.put("TargetID",subpart[0]);
-                    param.put("Amount",Integer.parseInt(part[2]));
+                    param.put("TargetID", subpart[0]);
+                    param.put("Amount", Integer.parseInt(part[2]));
 
                     JSONArray transaction = new JSONArray();
                     Cursor particularTransaction = getContentResolver()
                             .query(TransactionContract.Transaction.buildUnSettleDetailURI(
-                                    part[0]+"_"+subpart[0]),
-                                    null,null,null,null,null);
+                                    part[0] + "_" + subpart[0]),
+                                    null, null, null, null, null);
                     particularTransaction.moveToFirst();
-                    do
-                    {
+                    do {
                         JSONObject entry = new JSONObject();
-                        entry.put("Reason",particularTransaction.getString(COLUMN_REASON_INDEX));
-                        entry.put("Date",particularTransaction.getString(COLUMN_DATE_INDEX));
-                        entry.put("Amount",particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
+                        entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
+                        entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
+                        entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
 
                         transaction.put(entry);
-                    }while (particularTransaction.moveToNext());
+                    } while (particularTransaction.moveToNext());
                     particularTransaction.close();
-                    param.put("Transaction",transaction);
-                    Log.e("Sent_data",param.toString());
+                    param.put("Transaction", transaction);
+                    Log.e("Sent_data", param.toString());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -357,17 +364,16 @@ public class MainActivity extends AppCompatActivity {
                 .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
         final ArrayList<String> phone = new ArrayList<>();
-        while (dbContact.moveToNext())
-        {
+        while (dbContact.moveToNext()) {
             String contactName = dbContact.getString(COLUMN_NAME_INDEX);
             String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
             phone.add(
-                    contactName.split(" ")[0]+" "+contactNumber
+                    contactName.split(" ")[0] + " " + contactNumber
             );
         }
 
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this,android.R.layout.simple_dropdown_item_1line, phone);
+                new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, phone);
 
         spinner.setAdapter(adapter);
         builder.setView(spinner);
@@ -379,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Toast.makeText(MainActivity.this,"Reminder Sent",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Reminder Sent", Toast.LENGTH_SHORT).show();
                             }
                         },
                         new Response.ErrorListener() {
@@ -393,11 +399,11 @@ public class MainActivity extends AppCompatActivity {
                         Map<String, String> param = new HashMap<>();
                         SharedPreferences userDetail = MainActivity.thisAct.
                                 getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
-                        param.put("SenderID",userDetail
-                                .getString(getString(R.string.shared_pref_number),getString(R.string.default_usernumber)));
+                        param.put("SenderID", userDetail
+                                .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
                         String selectedContact = phone.get(spinner.getSelectedItemPosition());
                         String part[] = selectedContact.split(" ");
-                        param.put("TargetID",part[1]);
+                        param.put("TargetID", part[1]);
                         return param;
                     }
                 };
@@ -510,7 +516,7 @@ public class MainActivity extends AppCompatActivity {
     private void saveDPInFile(Intent data) {
         if (data != null) {
             try {
-                if(data.getAction() == null) {
+                if (data.getAction() == null) {
                     InputStream inputStream = getContentResolver().openInputStream(data.getData());
                     tempFile = new File(this.getExternalFilesDir(
                             Environment.DIRECTORY_PICTURES), getString(R.string.dp_temp_uncrop_name));
@@ -529,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
                     buffer = null;
                     fileOutputStream.close();
                     inputStream.close();
-                }else{
+                } else {
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                     dp.setImageBitmap(bitmap);
                     FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
@@ -570,7 +576,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (mInterstitialAd.isLoaded() && getSupportFragmentManager().getBackStackEntryCount()==0) {
+        if (mInterstitialAd.isLoaded() && getSupportFragmentManager().getBackStackEntryCount() == 0) {
             mInterstitialAd.show();
         }
     }

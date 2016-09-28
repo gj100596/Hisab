@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -47,7 +49,9 @@ public class DetailFragment extends Fragment
     private DetailRecyclerViewAdapter detailRecyclerViewAdapter;
     private RecyclerView historyList;
     public static TextView bottomTotalAmount;
-
+    public static TextView detailMsg1;
+    public static ImageView detailEmptyImage;
+    public static CardView detailCardView;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -104,6 +108,11 @@ public class DetailFragment extends Fragment
         final LinearLayout bottomBar = (LinearLayout) view.findViewById(R.id.bottomBar);
         bottomTotalAmount = (TextView) view.findViewById(R.id.bottomAmount);
         bottomTotalAmount.setText(""+totalAmount);
+
+        detailMsg1 = (TextView) view.findViewById(R.id.msg1);
+        detailEmptyImage = (ImageView) view.findViewById(R.id.emptyImage);
+        detailCardView = (CardView) view.findViewById(R.id.detailCardView);
+
 
         historyList.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

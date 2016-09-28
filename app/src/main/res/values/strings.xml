@@ -18,6 +18,14 @@
     <string name="nav_drawer_analysis">E-Analysis</string>
     <string name="shared_transition_person_name">sharedPersonName</string>
 
+    <string name="msg1_unsettle">Seems Like You don\'t have transaction yet.</string>
+    <string name="msg2_unsettle">Press add button to add one</string>
+    <string name="msg1_settle">You None Transactions are Settled yet.</string>
+    <string name="msg2_settle">Press add button to add new transactions</string>
+
+    <string name="msg_unsettle">Everything Settled!</string>
+    <string name="msg_settle">Nothing Left!</string>
+
     <string-array name="category_list">
         <item>Food</item>
         <item>Education</item>

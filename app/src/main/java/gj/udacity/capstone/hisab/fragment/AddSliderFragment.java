@@ -94,6 +94,10 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                         contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String contactNumber = contactCursor.getString(
                         contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                //Remove any non numeric character like - or ( or )
+                contactNumber.replaceAll("[^\\d.]", "");
+
                 String newNo = contactNumber.replace(" ", "");
                 if (newNo.length() > 9) {
                     newNo = newNo.substring(newNo.length() - 10);

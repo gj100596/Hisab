@@ -20,6 +20,9 @@ import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.database.TransactionContract;
 
 import static gj.udacity.capstone.hisab.R.id.amount;
+import static gj.udacity.capstone.hisab.fragment.DetailFragment.detailCardView;
+import static gj.udacity.capstone.hisab.fragment.DetailFragment.detailEmptyImage;
+import static gj.udacity.capstone.hisab.fragment.DetailFragment.detailMsg1;
 
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecyclerViewAdapter.ViewHolder> {
 
@@ -90,6 +93,24 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
     @Override
     public int getItemCount() {
         if (dataValid && cursor != null) {
+            if(cursor.getCount() == 0) {
+                    detailMsg1.setVisibility(View.VISIBLE);
+                    detailEmptyImage.setVisibility(View.VISIBLE);
+                    detailCardView.setVisibility(View.INVISIBLE);
+
+                    if(fragmentMode == 0)
+                        detailMsg1.setText(context.getString(R.string.msg_settle));
+                    else
+                        detailMsg1.setText(context.getString(R.string.msg_unsettle));
+
+                sumValue = 0;
+                bottomTotalAmount.setText(""+sumValue);
+            }
+            else{
+                detailMsg1.setVisibility(View.INVISIBLE);
+                detailEmptyImage.setVisibility(View.INVISIBLE);
+                detailCardView.setVisibility(View.VISIBLE);
+            }
             return cursor.getCount();
         }
         return 0;

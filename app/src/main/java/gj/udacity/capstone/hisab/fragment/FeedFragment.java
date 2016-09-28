@@ -14,10 +14,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.activity.MainActivity;
 import gj.udacity.capstone.hisab.adapter.FeedRecyclerViewAdapter;
 import gj.udacity.capstone.hisab.database.TransactionContract;
+
+import static gj.udacity.capstone.hisab.R.id.amount;
 
 public class FeedFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -27,6 +32,10 @@ public class FeedFragment extends Fragment
 
     private static final String ARG = "mode";
     private int fragmentMode;
+
+    public static TextView msg1,msg2;
+    public static ImageView arrow,emptyImage;
+    public static RecyclerView recyclerView;
 
     public FeedFragment() {
     }
@@ -52,8 +61,14 @@ public class FeedFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
 
         final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        msg1 = (TextView) view.findViewById(R.id.msg1);
+        msg2 = (TextView) view.findViewById(R.id.msg2);
+        arrow = (ImageView) view.findViewById(R.id.arrow);
+        emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
+
 
         Cursor cursor;
         if (fragmentMode == 0) {
@@ -70,11 +85,27 @@ public class FeedFragment extends Fragment
         feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(), cursor, fragmentMode);
         recyclerView.setAdapter(feedRecyclerViewAdapter);
 
+        if (MainActivity.tabletDevice) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                DetailFragment detailFragment = DetailFragment.newInstance(
+                        cursor.getString(0) + "_" + cursor.getString(1),
+                        amount,
+                        fragmentMode);
+                detailFragment.setHasOptionsMenu(true);
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.detailInMain, detailFragment)
+                        .addToBackStack("Details")
+                        .commit();
+            }
+        }
+
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     fab.show();
                 }
             }
@@ -82,7 +113,7 @@ public class FeedFragment extends Fragment
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(dy>0 || (dy<0 && fab.isShown()))
+                if (dy > 0 || (dy < 0 && fab.isShown()))
                     fab.setVisibility(View.INVISIBLE);
             }
         });
@@ -96,8 +127,8 @@ public class FeedFragment extends Fragment
                         getActivity().getSupportFragmentManager(), fabBottomSheetDialogFragment.getTag());
             }
         });
-    return view;
-}
+        return view;
+    }
 
 
     @Override
@@ -147,19 +178,4 @@ public class FeedFragment extends Fragment
         feedRecyclerViewAdapter.swapCursor(null);
         feedRecyclerViewAdapter.notifyDataSetChanged();
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     *
-     public interface OnListFragmentInteractionListener {
-     // TODO: Update argument type and name
-     void onListFragmentInteraction(DummyItem item);
-     }*/
 }
