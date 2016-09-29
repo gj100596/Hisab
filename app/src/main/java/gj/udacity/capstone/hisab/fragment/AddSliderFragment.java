@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +75,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         numberEditText = (EditText) contentView.findViewById(R.id.add_number);
         reasonEditText = (EditText) contentView.findViewById(R.id.add_reason);
         amountEditText = (EditText) contentView.findViewById(R.id.add_amount);
+        final Switch meInGroupSwitch = (Switch) contentView.findViewById(R.id.meInGroup);
         final Spinner categorySpinner = (Spinner) contentView.findViewById(R.id.add_category);
         final RadioGroup transactionType = (RadioGroup) contentView.findViewById(R.id.radioGroup);
 
@@ -105,6 +108,9 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                     String concat = contactName.split(" ")[0] + " " + newNo;
                     if (!phone.contains(concat))
                         phone.add(concat);
+                }
+                else{
+                    Log.e("HLOG","Number less than 10 digit");
                 }
             }
             contactCursor.close();
@@ -149,20 +155,34 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                 name.setText(part[0]);
                 no.setText(part[1]);
                 selectedContact.addView(tag);
+                if(selectedContact.getChildCount()>1){
+                    meInGroupSwitch.setVisibility(View.VISIBLE);
+                }
+                else{
+                    meInGroupSwitch.setVisibility(View.GONE);
+                }
 
                 int index = phone.indexOf(text);
                 if(index!=-1)
                     phone.remove(index);
                 adapter = null;
-                adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, phone);
+                adapter = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, phone);
                 nameEditText.setAdapter(adapter);
 
                 close.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         selectedContact.removeView((View) v.getParent());
+                        if(selectedContact.getChildCount()>1){
+                            meInGroupSwitch.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            meInGroupSwitch.setVisibility(View.GONE);
+                        }
                         phone.add(v.getTag().toString());
-                        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, phone);
+                        adapter = new ArrayAdapter<String>(getActivity(),
+                                android.R.layout.simple_dropdown_item_1line, phone);
                         adapter.notifyDataSetChanged();
                         nameEditText.setAdapter(adapter);
                     }
@@ -207,10 +227,22 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                         @Override
                         public void onClick(View v) {
                             selectedContact.removeView((View) v.getParent());
+                            if(selectedContact.getChildCount()>1){
+                                meInGroupSwitch.setVisibility(View.VISIBLE);
+                            }
+                            else{
+                                meInGroupSwitch.setVisibility(View.GONE);
+                            }
                         }
                     });
 
                     selectedContact.addView(tag);
+                    if(selectedContact.getChildCount()>1){
+                        meInGroupSwitch.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        meInGroupSwitch.setVisibility(View.GONE);
+                    }
                     nameEditText.setText("");
                     numberEditText.setText("");
                 }
@@ -238,7 +270,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                     try {
                         amountVal = parseInt(amountEditText.getText().toString());
                     } catch (Exception e) {
-                        Toast.makeText(getActivity(), "Make Sure Amount Value is Integer", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.warning, Toast.LENGTH_SHORT).show();
                     }
                     if (checkedId == R.id.takenRadio) {
                         if (amountVal > 0)
@@ -274,9 +306,11 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                             + monthString + "-"
                             + dayOfMonth;
                     int totalChild = selectedContact.getChildCount();
+                    if(meInGroupSwitch.isChecked())
+                        totalChild++;
                     amount/=totalChild;
 
-                    for(int i=0;i<totalChild;i++) {
+                    for(int i=0;i<selectedContact.getChildCount();i++) {
                         View view = selectedContact.getChildAt(i);
                         TextView name = (TextView) view.findViewById(R.id.name);
                         TextView no = (TextView) view.findViewById(R.id.no);
@@ -311,15 +345,15 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
     private boolean checkForEmpty() {
 
         if (selectedContact.getChildCount()== 0) {
-            Toast.makeText(getActivity(), "Please Enter Name and Number", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.name_no_warning, Toast.LENGTH_SHORT).show();
             return false;
         }
         if (reasonEditText.getText().toString().isEmpty()) {
-            Toast.makeText(getActivity(), "Please Enter Reason", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.reason_warning, Toast.LENGTH_SHORT).show();
             return false;
         }
         if (amountEditText.getText().toString().isEmpty()) {
-            Toast.makeText(getActivity(), "Please Enter Amount", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.amount_warning, Toast.LENGTH_SHORT).show();
             return false;
         }
 

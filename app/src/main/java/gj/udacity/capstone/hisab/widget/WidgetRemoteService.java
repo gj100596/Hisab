@@ -31,7 +31,7 @@ public class WidgetRemoteService extends RemoteViewsService {
                 data = getContentResolver()
                         .query(
                                 TransactionContract.Transaction.UNSETTLE_URI,
-                                null, null, null, null);
+                                null, null, null, null,null);
                 Binder.restoreCallingIdentity(identityToken);
             }
 
@@ -73,7 +73,7 @@ public class WidgetRemoteService extends RemoteViewsService {
                     views.setInt(R.id.amount,"setTextColor", getResources().getColor(R.color.sliderOptionBG));
 
                 } else {
-                    views.setInt(R.id.amount, "setBackgroundResource", getResources().getColor(R.color.materialGreen));
+                    views.setInt(R.id.amount, "setTextColor", getResources().getColor(R.color.materialGreen));
                 }
 
                 views.setTextViewText(R.id.amount, ""+amount);

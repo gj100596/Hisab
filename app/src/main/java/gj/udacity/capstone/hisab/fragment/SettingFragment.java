@@ -78,17 +78,17 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Stop Reminders?");
-                    builder.setMessage("By Stopping Reminders, you won't be allowed to send Reminders also!");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    builder.setTitle(getString(R.string.stop_reminder_title));
+                    builder.setMessage(getString(R.string.stop_reminder_msg));
+                    builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             SharedPreferences.Editor editor = optionPref.edit();
                             editor.putBoolean(getString(R.string.pending_rem), false);
-                            editor.commit();
+                            editor.apply();
                         }
                     });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             pendingRem.setChecked(true);
@@ -99,7 +99,7 @@ public class SettingFragment extends Fragment {
                 else{
                     SharedPreferences.Editor editor = optionPref.edit();
                     editor.putBoolean(getString(R.string.pending_rem), true);
-                    editor.commit();
+                    editor.apply();
                 }
             }
         });
@@ -114,7 +114,7 @@ public class SettingFragment extends Fragment {
                 else
                     editor.putBoolean(getString(R.string.not_sound), true);
 
-                editor.commit();
+                editor.apply();
             }
         });
 
@@ -154,18 +154,18 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Delete Account");
-                builder.setMessage("Do you really want to delete Account. You won't be able to retrieve it back");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setTitle(getString(R.string.delete_title));
+                builder.setMessage(getString(R.string.delete_msg));
+                builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         deletAC();
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getActivity(), "Thank You!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.nice_choice, Toast.LENGTH_SHORT).show();
                     }
                 });
                 builder.show();

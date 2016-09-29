@@ -145,9 +145,9 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
                 public void onClick(final View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     if(fragmentMode == 0) {
-                        builder.setMessage("Do You want to Settle this Transaction?");
-                        builder.setTitle("Settle?");
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        builder.setMessage(context.getString(R.string.settle_one_msg));
+                        builder.setTitle(context.getString(R.string.settle_one_title));
+                        builder.setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String args = v.getTag().toString() + "_" +
@@ -161,9 +161,9 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
                             }
                         });
                     }else{
-                        builder.setMessage("Do You want to Delete this Transaction Permanently?");
-                        builder.setTitle("Delete?");
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        builder.setMessage(context.getString(R.string.delete_one_msg));
+                        builder.setTitle(context.getString(R.string.delete_one_title));
+                        builder.setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String args = v.getTag().toString() + "_" +
@@ -176,7 +176,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
                             }
                         });
                     }
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         }

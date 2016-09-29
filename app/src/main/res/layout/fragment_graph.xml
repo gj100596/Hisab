@@ -16,23 +16,25 @@
             android:id="@+id/startCalendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_my_calendar"/>
+            android:src="@android:drawable/ic_menu_my_calendar"
+            android:contentDescription="@string/start_date" />
         <TextView
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Start Date"/>
+            android:text="@string/start_date"/>
 
         <ImageView
             android:id="@+id/endCalendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_my_calendar"/>
+            android:src="@android:drawable/ic_menu_my_calendar"
+            android:contentDescription="@string/end_date" />
         <TextView
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="End Date"/>
+            android:text="@string/end_date"/>
 
     </LinearLayout>
     <LinearLayout
@@ -62,7 +64,7 @@
             android:id="@+id/dateQuery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Go"/>
+            android:text="@string/go"/>
 
     </LinearLayout>
 

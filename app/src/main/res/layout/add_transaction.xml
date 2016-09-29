@@ -2,44 +2,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="@dimen/standard_10"
     android:orientation="vertical">
 
     <gj.udacity.capstone.hisab.util.FlowLayout
         android:id="@+id/selectedContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/standard_5"
         android:orientation="horizontal"
-        android:padding="5dp"
-        android:layout_marginBottom="5dp"/>
+        android:padding="@dimen/standard_5" />
 
     <MultiAutoCompleteTextView
         android:id="@+id/add_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_weight="4"
+        android:layout_marginBottom="@dimen/standard_5"
         android:ems="10"
-        android:hint="Name"
+        android:hint="@string/add_hint_name"
         android:inputType="textPersonName" />
-
 
     <EditText
         android:id="@+id/add_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="@dimen/standard_5"
         android:ems="10"
-        android:hint="Mobile Number"
+        android:hint="@string/add_hint_mobile_number"
         android:inputType="phone" />
+
+    <Switch
+        android:visibility="gone"
+        android:id="@+id/meInGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/add_switch_margin_bottom"
+        android:layout_marginLeft="@dimen/add_switch_margin_left"
+        android:layout_marginStart="@dimen/add_switch_margin_left"
+        android:checked="true"
+        android:text="@string/include_me_while_dividing_amount"
+        android:textColor="#6b6b6b"
+        android:textSize="@dimen/add_switch_text_size" />
 
     <EditText
         android:id="@+id/add_reason"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="@dimen/standard_5"
         android:ems="10"
-        android:hint="Reason"
+        android:hint="@string/add_hint_reason"
         android:inputType="textPersonName" />
 
     <LinearLayout
@@ -51,9 +62,9 @@
             android:id="@+id/add_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="@dimen/standard_5"
             android:ems="10"
-            android:hint="Amount"
+            android:hint="@string/add_hint_amount"
             android:inputType="number"
             android:textColor="@android:color/holo_green_light" />
 
@@ -68,13 +79,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Given" />
+                android:text="@string/add_hint_given" />
 
             <RadioButton
                 android:id="@+id/takenRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Taken" />
+                android:text="@string/add_hint_taken" />
 
         </RadioGroup>
     </LinearLayout>
@@ -82,13 +93,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="@dimen/standard_5"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="15dp"
+            android:paddingRight="@dimen/standard_15"
+            android:paddingEnd="@dimen/standard_15"
             android:text="@string/category"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -108,7 +120,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:text="Add" />
+        android:text="@string/add_hint_add"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 </LinearLayout>

@@ -100,8 +100,8 @@ public class GCMListener extends GcmListenerService {
             PendingIntent contentIntent =
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String messageTitle = name + ": \"You Owe Me Buddy!\"";
-            String messageBody = name + " reminded that you have Rs " + amount + "pending.";
+            String messageTitle = name + getString(R.string.owe_me);
+            String messageBody = name + getString(R.string.reminded_msg_1) + amount + getString(R.string.reminded_msg_2);
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -147,8 +147,8 @@ public class GCMListener extends GcmListenerService {
             PendingIntent contentIntent =
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String messageTitle = "Sync Result from : " + name;
-            String messageBody = name + " has shared their pending transactions.";
+            String messageTitle = getString(R.string.sync_result) + name;
+            String messageBody = name + getString(R.string.sync_result_msg);
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -200,8 +200,8 @@ public class GCMListener extends GcmListenerService {
                     PendingIntent.getActivity(this, 2, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             // Create Notification Builder
-            String messageTitle = senderName + " Asking";
-            String messageBody = senderName + " has asked for Syncing Transaction With you.";
+            String messageTitle = senderName + getString(R.string.asking);
+            String messageBody = senderName + getString(R.string.asking_msg);
 
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)

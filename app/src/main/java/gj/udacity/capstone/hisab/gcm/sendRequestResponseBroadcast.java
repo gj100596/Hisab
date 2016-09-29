@@ -68,7 +68,6 @@ public class sendRequestResponseBroadcast extends BroadcastReceiver {
                 particularTransaction.close();
                 param.put("Transaction", transaction);
                 param.put("Amount", sum);
-                Log.e("RESPONSE_PARAM", param.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

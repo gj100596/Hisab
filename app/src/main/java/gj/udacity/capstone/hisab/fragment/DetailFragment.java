@@ -180,9 +180,9 @@ public class DetailFragment extends Fragment
         super.onDestroy();
         if (notificationBundle != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Do you Want to Save This Transactions?");
-            builder.setTitle("Save");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            builder.setMessage(getString(R.string.save_tran_msg));
+            builder.setTitle(getString(R.string.save_tran_title));
+            builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     try {
@@ -227,7 +227,7 @@ public class DetailFragment extends Fragment
                     }
                 }
             });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -247,9 +247,9 @@ public class DetailFragment extends Fragment
         if (id == R.id.settleTransaction) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             if (fragmentMode == 0) {
-                builder.setMessage("Do You want to settle Complete Transaction?");
-                builder.setTitle("Settle?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setMessage(getString(R.string.settle_complete));
+                builder.setTitle(getString(R.string.settle_complete_title));
+                builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String args = userName + "_" + userNumber;
@@ -261,9 +261,9 @@ public class DetailFragment extends Fragment
                     }
                 });
             } else {
-                builder.setMessage("Do You want to Delete Complete Transaction Permanently?");
-                builder.setTitle("Delete?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setMessage(getString(R.string.delete_complete_msg));
+                builder.setTitle(getString(R.string.delete_complete_title));
+                builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String args = userName + "_" + userNumber;
@@ -274,7 +274,7 @@ public class DetailFragment extends Fragment
                     }
                 });
             }
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                 }

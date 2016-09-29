@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private ImageView dp;
     private BottomSheetDialogFragment fabBottomSheetDialogFragment;
-    //private FloatingActionButton fab;
     public static Activity thisAct;
     public static boolean tabletDevice;
     public InterstitialAd mInterstitialAd;
@@ -267,21 +266,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void reminderDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Reminder");
-        builder.setMessage("Select Contact To Send Pending Reminder");
+        builder.setTitle(getString(R.string.reminder_dialogue_title));
+        builder.setMessage(getString(R.string.reminder_dialogue_msg));
         final Spinner spinner = new Spinner(builder.getContext());
 
         Cursor dbContact = getContentResolver()
                 .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
         final ArrayList<String> phone = new ArrayList<>();
-        while (dbContact.moveToNext()) {
-            String contactName = dbContact.getString(COLUMN_NAME_INDEX);
-            String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
-            int amount = dbContact.getInt(COLUMN_SUM_INDEX);
-            phone.add(
-                    contactName.split(" ")[0] + " " + contactNumber + "...Rs " + amount
-            );
+        dbContact.moveToFirst();
+        if(dbContact.getCount()>0) {
+            do {
+                String contactName = dbContact.getString(COLUMN_NAME_INDEX);
+                String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
+                int amount = dbContact.getInt(COLUMN_SUM_INDEX);
+                phone.add(
+                        contactName.split(" ")[0] + " " + contactNumber + "...Rs " + amount
+                );
+            }while (dbContact.moveToNext());
         }
 
         ArrayAdapter<String> adapter =
@@ -289,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
 
         spinner.setAdapter(adapter);
         builder.setView(spinner);
-        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.request_dialogue_send), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(!phone.isEmpty()) {
@@ -313,14 +315,16 @@ public class MainActivity extends AppCompatActivity {
                                         part[0] + "_" + subpart[0]),
                                         null, null, null, null, null);
                         particularTransaction.moveToFirst();
-                        do {
-                            JSONObject entry = new JSONObject();
-                            entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
-                            entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
-                            entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
+                        if(particularTransaction.getCount()>0) {
+                            do {
+                                JSONObject entry = new JSONObject();
+                                entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
+                                entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
+                                entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
 
-                            transaction.put(entry);
-                        } while (particularTransaction.moveToNext());
+                                transaction.put(entry);
+                            } while (particularTransaction.moveToNext());
+                        }
                         particularTransaction.close();
                         param.put("Transaction", transaction);
                         Log.e("Sent_data", param.toString());
@@ -334,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     Toast.makeText(MainActivity.this,
-                                            "Request Sent. You will get Notified when Response Comes.",
+                                            R.string.reminder_dialogue_result,
                                             Toast.LENGTH_SHORT).show();
                                 }
                             },
@@ -349,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.reminder_dialogue_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -361,20 +365,23 @@ public class MainActivity extends AppCompatActivity {
     private void requestDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Sync Request");
-        builder.setMessage("Select Contact To Ask Pending Transactions");
+        builder.setTitle(getString(R.string.request_dialogue_title));
+        builder.setMessage(getString(R.string.request_dialogue_msg));
         final Spinner spinner = new Spinner(builder.getContext());
 
         Cursor dbContact = getContentResolver()
                 .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
         final ArrayList<String> phone = new ArrayList<>();
-        while (dbContact.moveToNext()) {
-            String contactName = dbContact.getString(COLUMN_NAME_INDEX);
-            String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
-            phone.add(
-                    contactName.split(" ")[0] + " " + contactNumber
-            );
+        dbContact.moveToFirst();
+        if(dbContact.getCount()>0) {
+            do{
+                String contactName = dbContact.getString(COLUMN_NAME_INDEX);
+                String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
+                phone.add(
+                        contactName.split(" ")[0] + " " + contactNumber
+                );
+            }while (dbContact.moveToNext());
         }
 
         ArrayAdapter<String> adapter =
@@ -382,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
         spinner.setAdapter(adapter);
         builder.setView(spinner);
-        builder.setPositiveButton("Ask", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.request_dialogue_ask), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(!phone.isEmpty()) {
@@ -391,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    Toast.makeText(MainActivity.this, "Reminder Sent", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, R.string.request_dialogue_result, Toast.LENGTH_SHORT).show();
                                 }
                             },
                             new Response.ErrorListener() {
@@ -421,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.request_dialogue_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -490,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         if (requestCode == 1 && grantResults.length < 1)
             Toast.makeText(MainActivity.this,
-                    "Permission Denied! Few Feature might not work!", Toast.LENGTH_SHORT).show();
+                    R.string.permission_denied_msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

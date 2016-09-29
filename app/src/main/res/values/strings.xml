@@ -1,28 +1,37 @@
 <resources>
     <string name="app_name">Hisab</string>
     <string name="action_settings">Settings</string>
-    <string name="nav_header_edit">Edit</string>
+
+    <!-- Shared Prefrences -->
     <string name="user_shared_preef">user_detail</string>
     <string name="shared_pref_name">User_name</string>
     <string name="default_username">User</string>
     <string name="shared_pref_number">User_number</string>
     <string name="default_usernumber">1234567890</string>
+
+    <!-- USer Detail -->
     <string name="dp_temp_name">dp_crop.jpg</string>
     <string name="dp_temp_uncrop_name">dp.jpg</string>
     <string name="user_number_info">Number won\'t be shared. It will only be used when friend shares account status.</string>
 
     <string name="category">Category</string>
+
+    <!-- Navigation Drawer -->
+    <string name="nav_header_edit">Edit</string>
     <string name="nav_drawer_pending">Pending</string>
     <string name="nav_drawer_settled">Settled</string>
     <string name="nav_drawer_setting">Setting</string>
     <string name="nav_drawer_analysis">E-Analysis</string>
+    <string name="nav_drawer_send_reminder">Send Reminder</string>
+    <string name="nav_drawer_sync_pending">Sync Pending</string>
+
     <string name="shared_transition_person_name">sharedPersonName</string>
 
+    <!-- Introduction Screen -->
     <string name="msg1_unsettle">Seems Like You don\'t have transaction yet.</string>
     <string name="msg2_unsettle">Press add button to add one</string>
     <string name="msg1_settle">Your None Transactions are Settled yet.</string>
     <string name="msg2_settle">Press add button to add new transactions</string>
-
     <string name="msg_unsettle">Everything Settled!</string>
     <string name="msg_settle">Nothing Left!</string>
 
@@ -34,18 +43,109 @@
         <item>Misc</item>
     </string-array>
 
-    <string name="SENT_TOKEN_TO_SERVER">token_done</string>
+    <!-- Setting Fragment -->
     <string name="title_activity_settings">Settings</string>
     <string name="pending_rem">pendingRem</string>
     <string name="not_sound">notSound</string>
     <string name="not_vibrate">notVibrate</string>
-    <string name="nav_drawer_send_reminder">Send Reminder</string>
-    <string name="nav_drawer_sync_pending">Sync Pending</string>
+
+    <!-- GCM Parameter -->
+    <string name="SENT_TOKEN_TO_SERVER">token_done</string>
     <string name="gcm_rec_req_bunlde_userid">UserID</string>
     <string name="gcm_rec_req_bunlde_type">type</string>
     <string name="gcm_rec_req_bunlde_accept">RequestAccepted</string>
     <string name="shared_pref_first_time">FirstTime</string>
     <string name="gcm_rec_req_bunlde_username">Name</string>
+
+    <!-- AddSliderFragment -->
+    <string name="include_me_while_dividing_amount">Include Me while Dividing Amount</string>
+    <string name="add_hint_name">Name</string>
+    <string name="add_hint_mobile_number">Mobile Number</string>
+    <string name="add_hint_reason">Reason</string>
+    <string name="add_hint_amount">Amount</string>
+    <string name="add_hint_given">Given</string>
+    <string name="add_hint_taken">Taken</string>
+    <string name="add_hint_add">Add</string>
+
+    <!-- Graph Fragment -->
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="go">Go</string>
+
+    <!-- Setting Fragment -->
+    <string name="notification">NOTIFICATION</string>
+    <string name="pending_reminder">Pending Reminder</string>
+    <string name="notification_sound">Notification Sound</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="about">ABOUT</string>
+    <string name="faq">FAQ</string>
+    <string name="feedback">Feedback</string>
+    <string name="the_end">THE END</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="terms_and_condition">Terms And Condition</string>
+
+    <!-- User Detail Dialog -->
+    <string name="user_hint_name">Name</string>
+    <string name="user_hint_mobile_no">Mobile No</string>
+    <string name="save">Save</string>
+
+    <!-- Content Description -->
+    <string name="amount_to_be_taken_card">Amount To be taken card</string>
+    <string name="empty_detail">Empty Detail</string>
+    <string name="empty_feed">Empty Feed</string>
+    <string name="click_add">Click Add</string>
+    <string name="delete_entry">Delete Entry</string>
+
+    <!-- Main Activity -->
+    <string name="reminder_dialogue_title">Reminder</string>
+    <string name="reminder_dialogue_msg">Select Contact To Send Pending Reminder</string>
+    <string name="reminder_dialogue_result">Request Sent. You will get Notified when Response Comes.</string>
+    <string name="request_dialogue_title">Sync Request</string>
+    <string name="request_dialogue_msg">Select Contact To Ask Pending Transactions</string>
+    <string name="request_dialogue_result">Reminder Sent</string>
+    <string name="request_dialogue_ask">Ask</string>
+    <string name="request_dialogue_cancel">Cancel</string>
+    <string name="request_dialogue_send">Send</string>
+    <string name="reminder_dialogue_cancel">Cancel</string>
+    <string name="permission_denied_msg">Permission Denied! Few Feature might not work!</string>
+
+    <!-- Detail recycler View -->
+    <string name="settle_one_msg">Do You want to Settle this Transaction?</string>
+    <string name="settle_one_title">Settle?</string>
+    <string name="yes">Yes</string>
+    <string name="delete_one_msg">Do You want to Delete this Transaction Permanently?</string>
+    <string name="delete_one_title">Delete?</string>
+    <string name="no">No</string>
+
+    <!-- GCM Listener -->
+    <string name="owe_me">: \"You Owe Me Buddy!\"</string>
+    <string name="reminded_msg_1">" reminded that you have Rs "</string>
+    <string name="reminded_msg_2">pending.</string>
+    <string name="sync_result">"Sync Result from : "</string>
+    <string name="sync_result_msg">" has shared their pending transactions."</string>
+    <string name="asking">" Asking"</string>
+    <string name="asking_msg">" has asked for Syncing Transaction With you."</string>
+
+    <!-- Detail Fragment -->
+    <string name="save_tran_msg">Do you Want to Save This Transactions?</string>
+    <string name="save_tran_title">Save</string>
+    <string name="delete_complete_msg">Do You want to Delete Complete Transaction Permanently?</string>
+    <string name="delete_complete_title">Delete?</string>
+    <string name="settle_complete">Do You want to settle Complete Transaction?</string>
+    <string name="settle_complete_title">Settle?</string>
+    <string name="warning">Make Sure Amount Value is Integer</string>
+
+    <!-- Add Slider -->
+    <string name="name_no_warning">Please Enter Name and Number</string>
+    <string name="reason_warning">Please Enter Reason</string>
+    <string name="amount_warning">Please Enter Amount</string>
+
+    <!-- Setting Fragment -->
+    <string name="stop_reminder_title">Stop Reminders?</string>
+    <string name="stop_reminder_msg">By Stopping Reminders, you won\'t be allowed to send Reminders also!</string>
+    <string name="delete_title">Delete Account</string>
+    <string name="delete_msg">Do you really want to delete Account. You won\'t be able to retrieve it back</string>
+    <string name="nice_choice">Nice Choice!</string>
 
 
     <!-- FAQ -->

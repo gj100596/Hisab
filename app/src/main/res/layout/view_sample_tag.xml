@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="32dp"
+    android:layout_height="@dimen/tag_height"
     android:orientation="horizontal"
-    android:layout_margin="5dp"
+    android:layout_margin="@dimen/standard_5"
     android:background="@color/colorPrimary">
 
     <LinearLayout
@@ -11,30 +11,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="12dp"
-        android:paddingRight="4dp">
+        android:paddingLeft="@dimen/tag_padding_left"
+        android:paddingStart="@dimen/tag_padding_left"
+        android:paddingRight="@dimen/tag_padding_right"
+        android:paddingEnd="@dimen/tag_padding_right">
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="XYZ"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1234567890"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginLeft="@dimen/tag_cross"
+        android:layout_marginRight="@dimen/tag_cross"
         android:layout_gravity="center"
         android:src="@drawable/ic_cancel_white_24dp" />
 

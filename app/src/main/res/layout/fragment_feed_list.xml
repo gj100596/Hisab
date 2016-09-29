@@ -29,28 +29,30 @@
             <ImageView
                 android:id="@+id/emptyImage"
                 android:src="@drawable/list"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="120dp"
+                android:layout_width="@dimen/detail_intro_image_dim"
+                android:layout_height="@dimen/detail_intro_image_dim"
+                android:layout_marginTop="@dimen/feed_intro_image_margin"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/empty_feed" />
 
             <ImageView
                 android:id="@+id/arrow"
-                android:layout_width="118dp"
-                android:layout_height="185dp"
+                android:layout_width="@dimen/feed_arrow_width"
+                android:layout_height="@dimen/feed_arrow_height"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginBottom="33dp"
-                android:layout_marginEnd="57dp"
-                android:src="@drawable/arrow" />
+                android:layout_marginBottom="@dimen/feed_arrow_margin_bottom"
+                android:layout_marginEnd="@dimen/feed_arrow_margin_end"
+                android:src="@drawable/arrow"
+                android:contentDescription="@string/click_add" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/arrow"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="@dimen/standard_15"
                 android:textAlignment="center"
                 android:id="@+id/msg2" />
 
