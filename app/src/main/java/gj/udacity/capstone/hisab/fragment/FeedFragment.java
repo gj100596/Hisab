@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -76,11 +77,13 @@ public class FeedFragment extends Fragment
                     .query(
                             TransactionContract.Transaction.UNSETTLE_URI,
                             null, null, null, null);
+            ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
         } else {
             cursor = getActivity().getContentResolver()
                     .query(
                             TransactionContract.Transaction.SETTLE_URI,
                             null, null, null, null);
+            ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.settle);
         }
         feedRecyclerViewAdapter = new FeedRecyclerViewAdapter(getActivity(), cursor, fragmentMode);
         recyclerView.setAdapter(feedRecyclerViewAdapter);

@@ -146,10 +146,11 @@
     <string name="delete_title">Delete Account</string>
     <string name="delete_msg">Do you really want to delete Account. You won\'t be able to retrieve it back</string>
     <string name="nice_choice">Nice Choice!</string>
+    <string name="pending">Pending</string>
+    <string name="settle">Settle</string>
 
 
     <!-- FAQ -->
-
     <string-array name="faq_question">
         <item>What is Hisab?</item>
         <item>What is shown in the First Screen</item>

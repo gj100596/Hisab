@@ -306,7 +306,7 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
                             + monthString + "-"
                             + dayOfMonth;
                     int totalChild = selectedContact.getChildCount();
-                    if(meInGroupSwitch.isChecked())
+                    if(totalChild>1 && meInGroupSwitch.isChecked())
                         totalChild++;
                     amount/=totalChild;
 

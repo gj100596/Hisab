@@ -192,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                                 .beginTransaction()
                                 .replace(R.id.feed, FeedFragment.newInstance(0))
                                 .commit();
+                        ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.analysis:
@@ -206,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                                 .beginTransaction()
                                 .replace(R.id.feed, FeedFragment.newInstance(1))
                                 .commit();
+                        ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.settle);
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.menuSetting:
@@ -249,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onDrawerOpened(drawerView);
                 // loadDetail(((NavigationView) drawerView).getHeaderView(0));
                 //loadDP();
+                getSupportActionBar().setTitle(R.string.app_name);
             }
 
             @Override
@@ -256,7 +259,6 @@ public class MainActivity extends AppCompatActivity {
                 super.onDrawerSlide(drawerView, slideOffset);
                 loadDetail(((NavigationView) drawerView).getHeaderView(0));
                 loadDP();
-
             }
         };
 
@@ -481,12 +483,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (tempFile.exists()) {
             Picasso.with(MainActivity.this)
+                    .invalidate(tempFile);
+            Picasso.with(MainActivity.this)
                     .load(tempFile)
                     .transform(new CircularImage())
                     .into(dp);
         } else {
             Picasso.with(MainActivity.this)
-                    .load(android.R.drawable.ic_btn_speak_now)
+                    .load(R.drawable.ic_person_black_48dp)
                     .transform(new CircularImage())
                     .into(dp);
         }
