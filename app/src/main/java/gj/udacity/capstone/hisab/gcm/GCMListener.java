@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -19,12 +20,14 @@ import org.json.JSONObject;
 
 import gj.udacity.capstone.hisab.R;
 import gj.udacity.capstone.hisab.activity.MainActivity;
+import gj.udacity.capstone.hisab.database.TransactionContract;
 
 public class GCMListener extends GcmListenerService {
     private static final String TAG = "MyGcmListenerService";
 
     public static final int NOTIFICATION_ID = 1;
     public static final int NOTIFICATION_ID_REMINDER = 2;
+    private static final int NOTIFICATION_REQUST = 3;
 
     public static int NOTIFICATION_NUM = 0;
 
@@ -71,20 +74,34 @@ public class GCMListener extends GcmListenerService {
             String requestingUser = message.getString("req_user");
             int amount = message.getInt("amount");
             JSONArray jsonData = message.getJSONArray("transaction");
+            String name = message.getString("name");
+
+            Cursor cursor = getContentResolver().query(TransactionContract.Transaction.getNameNoUri(),
+                    null, null, null, null, null);
+            cursor.moveToFirst();
+            if(cursor.getCount()>0) {
+                do {
+                    if (requestingUser.equalsIgnoreCase(cursor.getString(1))) {
+                        name = cursor.getString(0);
+                        break;
+                    }
+                } while (cursor.moveToNext());
+            }
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
             Bundle reminder = new Bundle();
-            reminder.putString("Type",type);
-            reminder.putString("User",requestingUser);
-            reminder.putInt("Sum",amount);
-            reminder.putString("data",jsonData.toString());
+            reminder.putString("Type", type);
+            reminder.putString("User", requestingUser);
+            reminder.putString("Name", name);
+            reminder.putInt("Sum", amount);
+            reminder.putString("data", jsonData.toString());
             notificationIntent.putExtras(reminder);
 
             PendingIntent contentIntent =
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String messageTitle = requestingUser + ": \"You Owe Me Buddy!\"";
-            String messageBody = requestingUser + " reminded that you have Rs " + amount + "pending." ;
+            String messageTitle = name + ": \"You Owe Me Buddy!\"";
+            String messageBody = name + " reminded that you have Rs " + amount + "pending.";
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -116,20 +133,22 @@ public class GCMListener extends GcmListenerService {
             String requestingUser = message.getString("req_user");
             JSONArray jsonData = message.getJSONArray("transaction");
             int amount = message.getInt("amount");
+            String name = message.getString("name");
 
             Intent notificationIntent = new Intent(this, MainActivity.class);
             Bundle reminder = new Bundle();
-            reminder.putString("Type",type);
-            reminder.putString("User",requestingUser);
-            reminder.putString("data",jsonData.toString());
-            reminder.putInt("Sum",amount);
+            reminder.putString("Type", type);
+            reminder.putString("User", requestingUser);
+            reminder.putString("data", jsonData.toString());
+            reminder.putInt("Sum", amount);
+            reminder.putString("Name", name);
             notificationIntent.putExtras(reminder);
 
             PendingIntent contentIntent =
                     PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String messageTitle = "Sync Result from : " +requestingUser;
-            String messageBody = requestingUser + " has shared their pending transactions.";
+            String messageTitle = "Sync Result from : " + name;
+            String messageBody = name + " has shared their pending transactions.";
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -145,7 +164,7 @@ public class GCMListener extends GcmListenerService {
             mBuilder.setContentIntent(contentIntent);
             mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
 
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            mNotificationManager.notify(NOTIFICATION_REQUST, mBuilder.build());
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("Notification error", e.toString());
@@ -165,21 +184,24 @@ public class GCMListener extends GcmListenerService {
 
             String type = message.getString("type");
             String requestingUser = message.getString("req_user");
+            String name = message.getString("name");
+            String senderName = message.getString("sender_name");
+
 
             // Intent to go to app
             Intent notificationIntent = null;
             Bundle arg = new Bundle();
             arg.putString(getString(R.string.gcm_rec_req_bunlde_type), type);
-            arg.putString(getString(R.string.gcm_rec_req_bunlde_userid),requestingUser);
+            arg.putString(getString(R.string.gcm_rec_req_bunlde_userid), requestingUser);
             notificationIntent = new Intent(this, MainActivity.class);
             Log.e("Request_received", "true");
             notificationIntent.putExtras(arg);
             PendingIntent contentIntent =
-                    PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.getActivity(this, 2, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             // Create Notification Builder
-            String messageTitle = requestingUser + " Asking";
-            String messageBody = requestingUser + "has asked for Syncing Transaction With you.";
+            String messageTitle = senderName + " Asking";
+            String messageBody = senderName + " has asked for Syncing Transaction With you.";
 
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
@@ -193,40 +215,42 @@ public class GCMListener extends GcmListenerService {
                     .setAutoCancel(true)
                     .setNumber(++NOTIFICATION_NUM);
 
-            mBuilder.setContentIntent(contentIntent);
+            //mBuilder.setContentIntent(contentIntent);
 
             // Intent for actions.
             // When User wants to send the response with data
             Intent yesIntent = new Intent();
             Bundle yesArg = new Bundle();
             yesArg.putString(getString(R.string.gcm_rec_req_bunlde_userid), requestingUser);
-            yesArg.putBoolean(getString(R.string.gcm_rec_req_bunlde_accept),true);
+            yesArg.putBoolean(getString(R.string.gcm_rec_req_bunlde_accept), true);
+            yesArg.putString(getString(R.string.gcm_rec_req_bunlde_username), name);
             yesIntent.setAction("gj.udacity.capstone.hisab.SEND_REQUEST_RESPONSE");
-            yesIntent.putExtras(arg);
+            yesIntent.putExtras(yesArg);
 
             PendingIntent yesPendingIntent =
-                    PendingIntent.getBroadcast(this, 0, yesIntent, 0);
-            mBuilder.addAction(R.drawable.ic_done_black_36dp,"Send",yesPendingIntent);
+                    PendingIntent.getBroadcast(this, 0, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            mBuilder.addAction(R.drawable.ic_done_black_36dp, "Send", yesPendingIntent);
 
             // When User does not wants to sync
+
             Intent noIntent = new Intent();
             Bundle noArg = new Bundle();
             noArg.putString(getString(R.string.gcm_rec_req_bunlde_userid), requestingUser);
-            noArg.putBoolean(getString(R.string.gcm_rec_req_bunlde_accept),false);
+            noArg.putBoolean(getString(R.string.gcm_rec_req_bunlde_accept), false);
+            noArg.putString(getString(R.string.gcm_rec_req_bunlde_username), name);
+
             noIntent.setAction("gj.udacity.capstone.hisab.SEND_REQUEST_RESPONSE");
-            noIntent.putExtras(arg);
+            noIntent.putExtras(noArg);
 
             PendingIntent noPendingIntent =
-                    PendingIntent.getBroadcast(this, 0, noIntent, 0);
-            mBuilder.addAction(R.drawable.ic_clear_black_36dp,"Cancel",noPendingIntent);
+                    PendingIntent.getBroadcast(this, 1, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.addAction(R.drawable.ic_clear_black_36dp, "Cancel", noPendingIntent);
 
             // Publish Notification
             mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
 
-            if (type.equalsIgnoreCase(NOTIFICATION_TYPE_REMINDER))
-                mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-            else
-                mNotificationManager.notify(NOTIFICATION_ID_REMINDER, mBuilder.build());
+            mNotificationManager.notify(NOTIFICATION_ID_REMINDER, mBuilder.build());
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("Notification error", e.toString());

@@ -92,7 +92,7 @@ public class DetailFragment extends Fragment
                 totalAmount = getArguments().getInt(ARG_3);
             } else {
                 notificationBundle = getArguments();
-                userName = notificationBundle.getString("User");
+                userName = notificationBundle.getString("Name");
                 userNumber = notificationBundle.getString("User");
                 totalAmount = notificationBundle.getInt("Sum");
             }
@@ -193,21 +193,21 @@ public class DetailFragment extends Fragment
                             String reason = jsonObject.getString("Reason");
                             String date = jsonObject.getString("Date");
                             int amount = jsonObject.getInt("Amount");
+                            amount *= -1;
 
                             cursor.moveToFirst();
                             boolean already = false;
-                            for(int j=0;j<cursor.getCount();j++) {
-                                cursor.move(j);
-                                if (cursor.getString(2).equalsIgnoreCase(date)
-                                        &&
-                                        cursor.getInt(3) == amount) {
-                                    already=true;
-                                    break;
-                                }
+                            if(cursor.getCount()>0) {
+                                do {
+                                    if (cursor.getString(2).equalsIgnoreCase(date)
+                                            &&
+                                            cursor.getInt(3) == amount) {
+                                        already = true;
+                                        break;
+                                    }
+                                } while (cursor.moveToNext());
                             }
                             if(!already) {
-                                amount *= -1;
-
                                 ContentValues values = new ContentValues();
                                 values.put(TransactionContract.Transaction.COLUMN_NAME, userName);
                                 values.put(TransactionContract.Transaction.COLUMN_NUMBER, userNumber);
@@ -220,6 +220,8 @@ public class DetailFragment extends Fragment
                                 MainActivity.thisAct.getContentResolver().insert(BASE_URI, values);
                             }
                         }
+                        //getActivity().onBackPressed();
+                        MainActivity.thisAct.onBackPressed();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

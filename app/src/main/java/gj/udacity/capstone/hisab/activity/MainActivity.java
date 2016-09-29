@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         thisAct = MainActivity.this;
+        tabletDevice=false;
 
         //Take Permission
         if (
@@ -301,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
                                 .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
                         String selectedContact = phone.get(spinner.getSelectedItemPosition());
                         String part[] = selectedContact.split(" ");
+                        param.put("Name",part[0]);
                         String subpart[] = part[1].split("...Rs");
                         param.put("TargetID", subpart[0]);
                         param.put("Amount", Integer.parseInt(part[2]));
@@ -405,9 +407,12 @@ public class MainActivity extends AppCompatActivity {
                                     getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
                             param.put("SenderID", userDetail
                                     .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
+                            param.put("SenderName",userDetail.
+                                    getString(getString(R.string.shared_pref_name), getString(R.string.default_username)));
                             String selectedContact = phone.get(spinner.getSelectedItemPosition());
                             String part[] = selectedContact.split(" ");
                             param.put("TargetID", part[1]);
+                            param.put("Name",part[0]);
                             return param;
                         }
                     };
