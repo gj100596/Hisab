@@ -36,6 +36,7 @@ public class sendRequestResponseBroadcast extends BroadcastReceiver {
         Bundle arg = intent.getExtras();
         String requestingUserNumber = arg.getString(context.getString(R.string.gcm_rec_req_bunlde_userid));
         String requestingUserName = arg.getString(context.getString(R.string.gcm_rec_req_bunlde_username));
+        String senderName = arg.getString("SenderName");
         Boolean sendData = arg.getBoolean(context.getString(R.string.gcm_rec_req_bunlde_accept));
 
         NotificationManager mNotificationManager =
@@ -54,20 +55,24 @@ public class sendRequestResponseBroadcast extends BroadcastReceiver {
                 param.put("Name", requestingUserName);
                 JSONArray transaction = new JSONArray();
                 Cursor particularTransaction = context.getContentResolver()
-                        .query(TransactionContract.Transaction.buildUnSettleDetailURI(requestingUserNumber),
+                        .query(TransactionContract.Transaction.buildUnSettleDetailURI(
+                                senderName+"_"+requestingUserNumber),
                                 null, null, null, null, null);
                 int sum = 0;
-                while (particularTransaction.moveToNext()) {
-                    JSONObject entry = new JSONObject();
-                    entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
-                    entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
-                    entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
-                    sum += particularTransaction.getInt(COLUMN_AMOUNT_INDEX);
-                    transaction.put(entry);
+                if(particularTransaction.getCount()>0) {
+                     do{
+                        JSONObject entry = new JSONObject();
+                        entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
+                        entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
+                        entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
+                        sum += particularTransaction.getInt(COLUMN_AMOUNT_INDEX);
+                        transaction.put(entry);
+                    }while (particularTransaction.moveToNext());
                 }
                 particularTransaction.close();
                 param.put("Transaction", transaction);
                 param.put("Amount", sum);
+                Log.e("Pram_log",param.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

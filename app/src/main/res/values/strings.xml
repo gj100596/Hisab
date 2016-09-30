@@ -120,7 +120,7 @@
     <!-- GCM Listener -->
     <string name="owe_me">: \"You Owe Me Buddy!\"</string>
     <string name="reminded_msg_1">" reminded that you have Rs "</string>
-    <string name="reminded_msg_2">pending.</string>
+    <string name="reminded_msg_2"> pending.</string>
     <string name="sync_result">"Sync Result from : "</string>
     <string name="sync_result_msg">" has shared their pending transactions."</string>
     <string name="asking">" Asking"</string>

@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -115,7 +116,20 @@ public class GCMListener extends GcmListenerService {
                     .setNumber(++NOTIFICATION_NUM);
 
             mBuilder.setContentIntent(contentIntent);
-            mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            SharedPreferences userDetail =
+                    getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+            Boolean sound = userDetail.getBoolean(getString(R.string.not_sound), true);
+            Boolean vibrate = userDetail.getBoolean(getString(R.string.not_vibrate), true);
+
+            if(sound && vibrate)
+                mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            else if(sound)
+                mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS );
+            else if(vibrate)
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            else
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+
 
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
         } catch (JSONException e) {
@@ -162,7 +176,21 @@ public class GCMListener extends GcmListenerService {
                     .setNumber(++NOTIFICATION_NUM);
 
             mBuilder.setContentIntent(contentIntent);
-            mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+
+            SharedPreferences userDetail =
+                    getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+            Boolean sound = userDetail.getBoolean(getString(R.string.not_sound), true);
+            Boolean vibrate = userDetail.getBoolean(getString(R.string.not_vibrate), true);
+
+            if(sound && vibrate)
+                mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            else if(sound)
+                mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS );
+            else if(vibrate)
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            else
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+
 
             mNotificationManager.notify(NOTIFICATION_REQUST, mBuilder.build());
         } catch (JSONException e) {
@@ -223,7 +251,8 @@ public class GCMListener extends GcmListenerService {
             Bundle yesArg = new Bundle();
             yesArg.putString(getString(R.string.gcm_rec_req_bunlde_userid), requestingUser);
             yesArg.putBoolean(getString(R.string.gcm_rec_req_bunlde_accept), true);
-            yesArg.putString(getString(R.string.gcm_rec_req_bunlde_username), name);
+            yesArg.putString("Name",name);
+            yesArg.putString("SenderName", senderName);
             yesIntent.setAction("gj.udacity.capstone.hisab.SEND_REQUEST_RESPONSE");
             yesIntent.putExtras(yesArg);
 
@@ -248,7 +277,19 @@ public class GCMListener extends GcmListenerService {
             mBuilder.addAction(R.drawable.ic_clear_black_36dp, "Cancel", noPendingIntent);
 
             // Publish Notification
-            mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            SharedPreferences userDetail =
+                    getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+            Boolean sound = userDetail.getBoolean(getString(R.string.not_sound), true);
+            Boolean vibrate = userDetail.getBoolean(getString(R.string.not_vibrate), true);
+
+            if(sound && vibrate)
+                mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            else if(sound)
+                mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS );
+            else if(vibrate)
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            else
+                mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
 
             mNotificationManager.notify(NOTIFICATION_ID_REMINDER, mBuilder.build());
         } catch (JSONException e) {

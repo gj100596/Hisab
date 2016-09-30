@@ -195,54 +195,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    /*
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        String fragmentType = savedInstanceState.getString("Fragment");
-        switch (fragmentType){
-            case "Feed":
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.feed, FeedFragment.newInstance(0),"Feed")
-                        .commit();
-                ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
-                break;
-            case "Graph":
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.feed, GraphFragment.newInstance(),"Graph")
-                        .commit();
-                break;
-            case "Settle":
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.feed, FeedFragment.newInstance(1),"Settle")
-                        .commit();
-                break;
-            case "Setting":
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.feed, SettingFragment.newInstance(),"Setting")
-                        .commit();
-                break;
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        if(!tabletDevice) {
-            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.feed);
-            outState.putString("Fragment",currentFragment.getTag());
-        }
-        else{
-            outState.getString("Fragment");
-        }
-    }
-    */
     private void configureNavigationDrawer() {
         navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
 
@@ -253,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menuHome:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, FeedFragment.newInstance(0), "Feed")
+                                .replace(R.id.feed, FeedFragment.newInstance(0))
                                 .commit();
                         ((AppCompatActivity) MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
                         drawerLayout.closeDrawer(Gravity.LEFT);
@@ -261,14 +213,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.analysis:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, GraphFragment.newInstance(), "Graph")
+                                .replace(R.id.feed, GraphFragment.newInstance())
                                 .commit();
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.menuSettled:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, FeedFragment.newInstance(1), "Settle")
+                                .replace(R.id.feed, FeedFragment.newInstance(1))
                                 .commit();
                         ((AppCompatActivity) MainActivity.thisAct).getSupportActionBar().setTitle(R.string.settle);
                         drawerLayout.closeDrawer(Gravity.LEFT);
@@ -276,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menuSetting:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, SettingFragment.newInstance(), "Setting")
+                                .replace(R.id.feed, SettingFragment.newInstance())
                                 .commit();
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
@@ -333,7 +285,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (!Constant.CheckConnectivity(this)) {
             Toast.makeText(this, "Please Connect To Internet.", Toast.LENGTH_LONG).show();
-        } else if (checkMyDetail()) {
+        }
+        else if(!isReminderStopped()){
+            Toast.makeText(this, "Please Turn On Reminder From Settings", Toast.LENGTH_LONG).show();
+        }
+        else if (checkMyDetail()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.reminder_dialogue_title));
             builder.setMessage(getString(R.string.reminder_dialogue_msg));
@@ -373,7 +329,8 @@ public class MainActivity extends AppCompatActivity {
                                     .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
                             String selectedContact = phone.get(spinner.getSelectedItemPosition());
                             String part[] = selectedContact.split(" ");
-                            param.put("Name", part[0]);
+                            param.put("Name", userDetail
+                                    .getString(getString(R.string.shared_pref_name), getString(R.string.default_username)));
                             String subpart[] = part[1].split("...Rs");
                             param.put("TargetID", subpart[0]);
                             param.put("Amount", Integer.parseInt(part[2]));
@@ -430,6 +387,12 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
         }
+    }
+
+    private boolean isReminderStopped() {
+        SharedPreferences userDetail =
+                getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+        return userDetail.getBoolean(getString(R.string.pending_rem), true);
     }
 
     private boolean checkMyDetail() {

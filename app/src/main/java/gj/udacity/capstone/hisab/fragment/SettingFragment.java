@@ -69,9 +69,9 @@ public class SettingFragment extends Fragment {
         if (!optionPref.getBoolean(getString(R.string.pending_rem), true))
             pendingRem.setChecked(false);
         if (!optionPref.getBoolean(getString(R.string.not_sound), true))
-            pendingRem.setChecked(false);
+            notSound.setChecked(false);
         if (!optionPref.getBoolean(getString(R.string.not_vibrate), true))
-            pendingRem.setChecked(false);
+            notVibrate.setChecked(false);
 
         pendingRem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -92,6 +92,9 @@ public class SettingFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             pendingRem.setChecked(true);
+                            SharedPreferences.Editor editor = optionPref.edit();
+                            editor.putBoolean(getString(R.string.pending_rem), true);
+                            editor.apply();
                         }
                     });
                     builder.show();
@@ -126,7 +129,7 @@ public class SettingFragment extends Fragment {
                     editor.putBoolean(getString(R.string.not_vibrate), false);
                 else
                     editor.putBoolean(getString(R.string.not_vibrate), true);
-                editor.commit();
+                editor.apply();
             }
         });
 

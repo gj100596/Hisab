@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "251058369015",
+    "project_id": "hisabgcm"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251058369015:android:845c7efa7c19c7cb",
+        "android_client_info": {
+          "package_name": "gj.udacity.capstone.hisab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJNqbjjSf4v9xsFLran03ppuPvDadhq2w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
