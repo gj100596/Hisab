@@ -2,11 +2,12 @@ package gj.udacity.capstone.hisab.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
@@ -17,19 +18,23 @@ import gj.udacity.capstone.hisab.R;
 public class IntroActivity extends AppIntro {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
 
-        // Add your slide fragments here.
-        // AppIntro will automatically generate the dots indicator and buttons.
-        //addSlide(firstFragment);
-       // addSlide(secondFragment);
-       // addSlide(thirdFragment);
-        //addSlide(fourthFragment);
-
-        // Instead of fragments, you can also use our default slide
-        // Just set a title, description, background and image. AppIntro will do the rest.
-        addSlide(AppIntroFragment.newInstance("Hello World", "Hey",
-                R.drawable.ic_edit_black_36dp, Color.parseColor("#2CABE2")));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.intro_0_title), getString(R.string.intro_0_msg),
+                R.drawable.blank_logo, Color.parseColor("#E7445E")));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.intr1_0_title),
+                getString(R.string.intro_1_msg),
+                R.drawable.intro1, Color.parseColor("#2CABE2")));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.intro_2_title),
+                getString(R.string.intro_2_msg),
+                R.drawable.intro2, Color.parseColor("#4CE0B3")));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.intro_3_title),
+                getString(R.string.intro_3_msg),
+                R.drawable.intro3
+                , Color.parseColor("#7DCE82")));
 
         askForPermissions(new String[]{Manifest.permission.CAMERA}, 1);
 
@@ -44,10 +49,7 @@ public class IntroActivity extends AppIntro {
     @Override
     public void onDonePressed(Fragment currentFragment) {
         super.onDonePressed(currentFragment);
-        SharedPreferences preferences = getSharedPreferences(getString(R.string.user_shared_preef),MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(getString(R.string.shared_pref_first_time),true);
-        editor.apply();
+
 
         Intent intent = new Intent(IntroActivity.this,MainActivity.class);
         startActivity(intent);

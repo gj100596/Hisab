@@ -2,75 +2,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layout_margin="15dp"
+    android:orientation="vertical"
     tools:context="gj.udacity.capstone.hisab.fragment.GraphFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="2"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="2">
 
         <ImageView
             android:id="@+id/startCalendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_my_calendar"
-            android:contentDescription="@string/start_date" />
+            android:contentDescription="@string/start_date"
+            android:src="@android:drawable/ic_menu_my_calendar" />
+
         <TextView
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/start_date"/>
+            android:layout_weight="1"
+            android:text="@string/start_date" />
 
         <ImageView
             android:id="@+id/endCalendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_my_calendar"
-            android:contentDescription="@string/end_date" />
+            android:contentDescription="@string/end_date"
+            android:src="@android:drawable/ic_menu_my_calendar" />
+
         <TextView
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/end_date"/>
+            android:layout_weight="1"
+            android:text="@string/end_date" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="2"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="2">
 
         <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:inputType="date"
-            android:ems="10"
             android:id="@+id/startDate"
-            android:focusable="false"
-            android:layout_weight="1" />
-
-        <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="date"
+            android:layout_weight="1"
             android:ems="10"
-            android:id="@+id/endDate"
             android:focusable="false"
-            android:layout_weight="1" />
+            android:inputType="date" />
+
+        <EditText
+            android:id="@+id/endDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:focusable="false"
+            android:inputType="date" />
+
         <Button
             android:id="@+id/dateQuery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/go"/>
+            android:text="@string/go" />
 
     </LinearLayout>
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/expensePie"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/noChartData"
+            android:visibility="gone"
+            android:contentDescription="@string/no_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/no_data"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/expensePie"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
 
 </LinearLayout>

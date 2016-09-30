@@ -50,19 +50,21 @@ public class UserEditSliderFragment extends BottomSheetDialogFragment {
         final SharedPreferences userDetail = getActivity().
                 getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
 
-        name.setText(userDetail.getString(getString(R.string.shared_pref_name),getString(R.string.default_username)));
-        number.setText(userDetail.getString(getString(R.string.shared_pref_number),getString(R.string.default_usernumber)));
+        name.setText(userDetail.getString(getString(R.string.shared_pref_name),""));
+        number.setText(userDetail.getString(getString(R.string.shared_pref_number),""));
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = userDetail.edit();
-                editor.putString(getString(R.string.shared_pref_name),name.getText().toString());
-                editor.putString(getString(R.string.shared_pref_number),number.getText().toString());
-                editor.apply();
+                if(!name.getText().toString().isEmpty() && !number.getText().toString().isEmpty()) {
+                    SharedPreferences.Editor editor = userDetail.edit();
+                    editor.putString(getString(R.string.shared_pref_name), name.getText().toString());
+                    editor.putString(getString(R.string.shared_pref_number), number.getText().toString());
+                    editor.apply();
 
-                Intent gcmToken = new Intent(MainActivity.thisAct, RegistrationIntentService.class);
-                getActivity().startService(gcmToken);
+                    Intent gcmToken = new Intent(MainActivity.thisAct, RegistrationIntentService.class);
+                    getActivity().startService(gcmToken);
+                }
 
                 UserEditSliderFragment.this.dismiss();
             }

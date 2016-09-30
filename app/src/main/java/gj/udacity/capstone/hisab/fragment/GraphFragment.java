@@ -28,6 +28,7 @@ public class GraphFragment extends Fragment {
 
     EditText startDate,endDate;
     PieChart expensePie;
+    ImageView noChartData;
 
 
     public GraphFragment() {
@@ -54,6 +55,7 @@ public class GraphFragment extends Fragment {
         ImageView startCalendar = (ImageView) view.findViewById(R.id.startCalendar);
         final ImageView endCalendar = (ImageView) view.findViewById(R.id.endCalendar);
         Button go = (Button) view.findViewById(R.id.dateQuery);
+        noChartData = (ImageView) view.findViewById(R.id.noChartData);
 
         Calendar instance = Calendar.getInstance();
         final int month = instance.get(Calendar.MONTH);
@@ -145,14 +147,22 @@ public class GraphFragment extends Fragment {
             cursor.moveToPosition(i);
             voteEntries.add(new Entry((float) cursor.getInt(1)/cursor.getCount(),i));
         }
+        if(voteEntries.isEmpty()){
+            noChartData.setVisibility(View.VISIBLE);
+            expensePie.setVisibility(View.GONE);
+        }
+        else {
+            noChartData.setVisibility(View.GONE);
+            expensePie.setVisibility(View.VISIBLE);
 
-        PieDataSet dataset = new PieDataSet(voteEntries,"Category");
-        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
+            PieDataSet dataset = new PieDataSet(voteEntries, "Category");
+            dataset.setColors(ColorTemplate.JOYFUL_COLORS);
 
-        //PieData data
-        PieData resultForPie = new PieData(labels, dataset);
-        expensePie.setData(resultForPie);
-        expensePie.setDescription("");
-        expensePie.animateY(1000);
+            //PieData data
+            PieData resultForPie = new PieData(labels, dataset);
+            expensePie.setData(resultForPie);
+            expensePie.setDescription("");
+            expensePie.animateY(1000);
+        }
     }
 }

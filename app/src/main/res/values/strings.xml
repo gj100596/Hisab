@@ -148,6 +148,16 @@
     <string name="nice_choice">Nice Choice!</string>
     <string name="pending">Pending</string>
     <string name="settle">Settle</string>
+    <string name="first_drawer_text">Why Don\'t You Introduce Yourself. Click The Edit Button!</string>
+    <string name="intro_0_title">Welcome to Hiasb</string>
+    <string name="intro_0_msg">All your Money Related Transaction At One Place</string>
+    <string name="intr1_0_title">Get Ur Transactions Organized</string>
+    <string name="intro_1_msg">Hisab helps you to keep track of all your transactions!</string>
+    <string name="intro_2_title">Send Reminders!</string>
+    <string name="intro_2_msg">Remind your friends about the money they owe to you</string>
+    <string name="intro_3_title">Get Expense Analysis</string>
+    <string name="intro_3_msg">Keep track of on which things you spent most of your money.</string>
+    <string name="no_data">No Data</string>
 
 
     <!-- FAQ -->

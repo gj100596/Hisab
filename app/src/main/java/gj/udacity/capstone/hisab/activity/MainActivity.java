@@ -178,6 +178,17 @@ public class MainActivity extends AppCompatActivity {
 
         configureNavigationDrawer();
 
+        //If First Time Open Drawer so that they can enter their detail
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.user_shared_preef),MODE_PRIVATE);
+        if(!preferences.getBoolean(getString(R.string.shared_pref_first_time),false)) {
+
+            drawerLayout.openDrawer(Gravity.LEFT);
+            Toast.makeText(this, R.string.first_drawer_text,Toast.LENGTH_LONG).show();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(getString(R.string.shared_pref_first_time), true);
+            editor.apply();
+        }
+
     }
 
     private void configureNavigationDrawer() {
