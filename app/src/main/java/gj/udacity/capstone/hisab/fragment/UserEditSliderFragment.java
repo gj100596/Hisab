@@ -53,10 +53,14 @@ public class UserEditSliderFragment extends BottomSheetDialogFragment {
         name.setText(userDetail.getString(getString(R.string.shared_pref_name),""));
         number.setText(userDetail.getString(getString(R.string.shared_pref_number),""));
 
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!name.getText().toString().isEmpty() && !number.getText().toString().isEmpty()) {
+                if(!name.getText().toString().isEmpty()
+                        && !number.getText().toString().isEmpty()
+                        && number.getText().toString().length() == 10
+                        ) {
                     SharedPreferences.Editor editor = userDetail.edit();
                     editor.putString(getString(R.string.shared_pref_name), name.getText().toString());
                     editor.putString(getString(R.string.shared_pref_number), number.getText().toString());

@@ -9,7 +9,7 @@
     <string name="shared_pref_number">User_number</string>
     <string name="default_usernumber">1234567890</string>
 
-    <!-- USer Detail -->
+    <!-- User Detail -->
     <string name="dp_temp_name">dp_crop.jpg</string>
     <string name="dp_temp_uncrop_name">dp.jpg</string>
     <string name="user_number_info">Number won\'t be shared. It will only be used when friend shares account status.</string>
@@ -158,6 +158,7 @@
     <string name="intro_3_title">Get Expense Analysis</string>
     <string name="intro_3_msg">Keep track of on which things you spent most of your money.</string>
     <string name="no_data">No Data</string>
+    <string name="token">Token</string>
 
 
     <!-- FAQ -->

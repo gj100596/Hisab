@@ -28,9 +28,11 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,72 +102,75 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         thisAct = MainActivity.this;
-        tabletDevice=false;
+        tabletDevice = false;
 
-        //Take Permission
-        if (
-                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS)
-                        != PackageManager.PERMISSION_GRANTED
-                        ||
-                        ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    },
-                    1);
-        }
+        if (savedInstanceState == null) {
+            //Take Permission
+            if (
+                    ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS)
+                            != PackageManager.PERMISSION_GRANTED
+                            ||
+                            ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.READ_CONTACTS,
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        },
+                        1);
+            }
 
-        Bundle notificationBundle = getIntent().getExtras();
-        // For tablet Layout
-        if (findViewById(R.id.detailInMain) != null) {
-            tabletDevice = true;
-            if (notificationBundle != null && notificationBundle.getString("Type") != null) {
+            Bundle notificationBundle = getIntent().getExtras();
+            // For tablet Layout
+            if (findViewById(R.id.detailInMain) != null) {
+                tabletDevice = true;
+                if (notificationBundle != null && notificationBundle.getString("Type") != null) {
+                    DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.detailInMain, detailFragment)
+                            .commit();
+                } else {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.detailInMain, DetailFragment.newInstance(" _ ", 0, 0))
+                            .commit();
+                }
+            }
+
+
+            if (!tabletDevice && notificationBundle != null && notificationBundle.getString("Type") != null) {
+                // App started from notification
                 DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle);
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.detailInMain, detailFragment)
+                        .replace(R.id.feed, detailFragment, "Detail")
+                        .addToBackStack("Notification")
                         .commit();
+
             } else {
+                // Normal Start of app
+                FeedFragment feedFragment = FeedFragment.newInstance(0);
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    Slide slide = new Slide(Gravity.LEFT);
+                    slide.addTarget(R.id.cardLayoutList);
+                    slide.setInterpolator(AnimationUtils
+                            .loadInterpolator(
+                                    MainActivity.this,
+                                    android.R.interpolator.linear_out_slow_in
+                            ));
+                    slide.setDuration(1000);
+                    feedFragment.setExitTransition(slide);
+                    feedFragment.setReenterTransition(null);
+                }
+
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.detailInMain, DetailFragment.newInstance(" _ ", 0, 0))
+                        .replace(R.id.feed, feedFragment, "Feed")
                         .commit();
+
             }
-        }
-
-
-        if (!tabletDevice && notificationBundle != null && notificationBundle.getString("Type") != null) {
-            // App started from notification
-            DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.feed, detailFragment)
-                    .addToBackStack("Notification")
-                    .commit();
-
-        } else {
-            // Normal Start of app
-            FeedFragment feedFragment = FeedFragment.newInstance(0);
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                Slide slide = new Slide(Gravity.LEFT);
-                slide.addTarget(R.id.cardLayoutList);
-                slide.setInterpolator(AnimationUtils
-                        .loadInterpolator(
-                                MainActivity.this,
-                                android.R.interpolator.linear_out_slow_in
-                        ));
-                slide.setDuration(1000);
-                feedFragment.setExitTransition(slide);
-            }
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.feed, feedFragment)
-                    .commit();
-
         }
 
         //Load Ad for future
@@ -179,18 +184,65 @@ public class MainActivity extends AppCompatActivity {
         configureNavigationDrawer();
 
         //If First Time Open Drawer so that they can enter their detail
-        SharedPreferences preferences = getSharedPreferences(getString(R.string.user_shared_preef),MODE_PRIVATE);
-        if(!preferences.getBoolean(getString(R.string.shared_pref_first_time),false)) {
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.user_shared_preef), MODE_PRIVATE);
+        if (!preferences.getBoolean(getString(R.string.shared_pref_first_time), false)) {
 
             drawerLayout.openDrawer(Gravity.LEFT);
-            Toast.makeText(this, R.string.first_drawer_text,Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.first_drawer_text, Toast.LENGTH_LONG).show();
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(getString(R.string.shared_pref_first_time), true);
             editor.apply();
         }
-
     }
 
+
+    /*
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String fragmentType = savedInstanceState.getString("Fragment");
+        switch (fragmentType){
+            case "Feed":
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.feed, FeedFragment.newInstance(0),"Feed")
+                        .commit();
+                ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
+                break;
+            case "Graph":
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.feed, GraphFragment.newInstance(),"Graph")
+                        .commit();
+                break;
+            case "Settle":
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.feed, FeedFragment.newInstance(1),"Settle")
+                        .commit();
+                break;
+            case "Setting":
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.feed, SettingFragment.newInstance(),"Setting")
+                        .commit();
+                break;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(!tabletDevice) {
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.feed);
+            outState.putString("Fragment",currentFragment.getTag());
+        }
+        else{
+            outState.getString("Fragment");
+        }
+    }
+    */
     private void configureNavigationDrawer() {
         navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
 
@@ -201,30 +253,30 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menuHome:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, FeedFragment.newInstance(0))
+                                .replace(R.id.feed, FeedFragment.newInstance(0), "Feed")
                                 .commit();
-                        ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
+                        ((AppCompatActivity) MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.analysis:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, GraphFragment.newInstance())
+                                .replace(R.id.feed, GraphFragment.newInstance(), "Graph")
                                 .commit();
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.menuSettled:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, FeedFragment.newInstance(1))
+                                .replace(R.id.feed, FeedFragment.newInstance(1), "Settle")
                                 .commit();
-                        ((AppCompatActivity)MainActivity.thisAct).getSupportActionBar().setTitle(R.string.settle);
+                        ((AppCompatActivity) MainActivity.thisAct).getSupportActionBar().setTitle(R.string.settle);
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.menuSetting:
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, SettingFragment.newInstance())
+                                .replace(R.id.feed, SettingFragment.newInstance(), "Setting")
                                 .commit();
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
@@ -278,176 +330,246 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reminderDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.reminder_dialogue_title));
-        builder.setMessage(getString(R.string.reminder_dialogue_msg));
-        final Spinner spinner = new Spinner(builder.getContext());
 
-        Cursor dbContact = getContentResolver()
-                .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
+        if (!Constant.CheckConnectivity(this)) {
+            Toast.makeText(this, "Please Connect To Internet.", Toast.LENGTH_LONG).show();
+        } else if (checkMyDetail()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.reminder_dialogue_title));
+            builder.setMessage(getString(R.string.reminder_dialogue_msg));
+            final Spinner spinner = new Spinner(builder.getContext());
 
-        final ArrayList<String> phone = new ArrayList<>();
-        dbContact.moveToFirst();
-        if(dbContact.getCount()>0) {
-            do {
-                String contactName = dbContact.getString(COLUMN_NAME_INDEX);
-                String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
-                int amount = dbContact.getInt(COLUMN_SUM_INDEX);
-                phone.add(
-                        contactName.split(" ")[0] + " " + contactNumber + "...Rs " + amount
-                );
-            }while (dbContact.moveToNext());
-        }
+            Cursor dbContact = getContentResolver()
+                    .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, phone);
-
-        spinner.setAdapter(adapter);
-        builder.setView(spinner);
-        builder.setPositiveButton(getString(R.string.request_dialogue_send), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(!phone.isEmpty()) {
-                    String url = Constant.url + "/hisab/reminder";
-                    JSONObject param = new JSONObject();
-                    try {
-                        SharedPreferences userDetail = MainActivity.thisAct.
-                                getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
-                        param.put("SenderID", userDetail
-                                .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
-                        String selectedContact = phone.get(spinner.getSelectedItemPosition());
-                        String part[] = selectedContact.split(" ");
-                        param.put("Name",part[0]);
-                        String subpart[] = part[1].split("...Rs");
-                        param.put("TargetID", subpart[0]);
-                        param.put("Amount", Integer.parseInt(part[2]));
-
-                        JSONArray transaction = new JSONArray();
-                        Cursor particularTransaction = getContentResolver()
-                                .query(TransactionContract.Transaction.buildUnSettleDetailURI(
-                                        part[0] + "_" + subpart[0]),
-                                        null, null, null, null, null);
-                        particularTransaction.moveToFirst();
-                        if(particularTransaction.getCount()>0) {
-                            do {
-                                JSONObject entry = new JSONObject();
-                                entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
-                                entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
-                                entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
-
-                                transaction.put(entry);
-                            } while (particularTransaction.moveToNext());
-                        }
-                        particularTransaction.close();
-                        param.put("Transaction", transaction);
-                        Log.e("Sent_data", param.toString());
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    JsonObjectRequest reminderRequest = new JsonObjectRequest(Request.Method.POST, url, param,
-                            new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Toast.makeText(MainActivity.this,
-                                            R.string.reminder_dialogue_result,
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-
-                                }
-                            }
+            final ArrayList<String> phone = new ArrayList<>();
+            dbContact.moveToFirst();
+            if (dbContact.getCount() > 0) {
+                do {
+                    String contactName = dbContact.getString(COLUMN_NAME_INDEX);
+                    String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
+                    int amount = dbContact.getInt(COLUMN_SUM_INDEX);
+                    phone.add(
+                            contactName.split(" ")[0] + " " + contactNumber + "...Rs " + amount
                     );
-                    ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(reminderRequest);
-                }
+                } while (dbContact.moveToNext());
             }
-        });
-        builder.setNegativeButton(getString(R.string.reminder_dialogue_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
-        builder.show();
-    }
+            ArrayAdapter<String> adapter =
+                    new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, phone);
 
-    private void requestDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.request_dialogue_title));
-        builder.setMessage(getString(R.string.request_dialogue_msg));
-        final Spinner spinner = new Spinner(builder.getContext());
-
-        Cursor dbContact = getContentResolver()
-                .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
-
-        final ArrayList<String> phone = new ArrayList<>();
-        dbContact.moveToFirst();
-        if(dbContact.getCount()>0) {
-            do{
-                String contactName = dbContact.getString(COLUMN_NAME_INDEX);
-                String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
-                phone.add(
-                        contactName.split(" ")[0] + " " + contactNumber
-                );
-            }while (dbContact.moveToNext());
-        }
-
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, phone);
-
-        spinner.setAdapter(adapter);
-        builder.setView(spinner);
-        builder.setPositiveButton(getString(R.string.request_dialogue_ask), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(!phone.isEmpty()) {
-                    String url = Constant.url + "/hisab/request";
-                    StringRequest request = new StringRequest(Request.Method.POST, url,
-                            new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-                                    Toast.makeText(MainActivity.this, R.string.request_dialogue_result, Toast.LENGTH_SHORT).show();
-                                }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                }
-                            }
-                    ) {
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> param = new HashMap<>();
+            spinner.setAdapter(adapter);
+            builder.setView(spinner);
+            builder.setPositiveButton(getString(R.string.request_dialogue_send), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (!phone.isEmpty()) {
+                        String url = Constant.url + "/hisab/reminder";
+                        JSONObject param = new JSONObject();
+                        try {
                             SharedPreferences userDetail = MainActivity.thisAct.
                                     getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
                             param.put("SenderID", userDetail
                                     .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
-                            param.put("SenderName",userDetail.
-                                    getString(getString(R.string.shared_pref_name), getString(R.string.default_username)));
                             String selectedContact = phone.get(spinner.getSelectedItemPosition());
                             String part[] = selectedContact.split(" ");
-                            param.put("TargetID", part[1]);
-                            param.put("Name",part[0]);
-                            return param;
+                            param.put("Name", part[0]);
+                            String subpart[] = part[1].split("...Rs");
+                            param.put("TargetID", subpart[0]);
+                            param.put("Amount", Integer.parseInt(part[2]));
+
+                            JSONArray transaction = new JSONArray();
+                            Cursor particularTransaction = getContentResolver()
+                                    .query(TransactionContract.Transaction.buildUnSettleDetailURI(
+                                            part[0] + "_" + subpart[0]),
+                                            null, null, null, null, null);
+                            particularTransaction.moveToFirst();
+                            if (particularTransaction.getCount() > 0) {
+                                do {
+                                    JSONObject entry = new JSONObject();
+                                    entry.put("Reason", particularTransaction.getString(COLUMN_REASON_INDEX));
+                                    entry.put("Date", particularTransaction.getString(COLUMN_DATE_INDEX));
+                                    entry.put("Amount", particularTransaction.getInt(COLUMN_AMOUNT_INDEX));
+
+                                    transaction.put(entry);
+                                } while (particularTransaction.moveToNext());
+                            }
+                            particularTransaction.close();
+                            param.put("Transaction", transaction);
+                            Log.e("Sent_data", param.toString());
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    };
 
-                    ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(request);
+                        JsonObjectRequest reminderRequest = new JsonObjectRequest(Request.Method.POST, url, param,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Toast.makeText(MainActivity.this,
+                                                R.string.reminder_dialogue_result,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+
+                                    }
+                                }
+                        );
+                        ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(reminderRequest);
+                    }
                 }
-            }
-        });
-        builder.setNegativeButton(getString(R.string.request_dialogue_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            });
+            builder.setNegativeButton(getString(R.string.reminder_dialogue_cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
+                }
+            });
+            builder.show();
+        }
+    }
+
+    private boolean checkMyDetail() {
+        final SharedPreferences userDetail =
+                getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+
+        if (
+                userDetail.getString(getString(R.string.shared_pref_name), getString(R.string.default_username))
+                        .equals(getString(R.string.default_username))
+                        &&
+                        userDetail.getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber))
+                                .equals(getString(R.string.default_usernumber))
+                ) {
+
+            Toast.makeText(this, "Please First Fill In Your Details", Toast.LENGTH_LONG).show();
+            drawerLayout.openDrawer(Gravity.LEFT);
+            return false;
+        }
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences(
+                getString(R.string.user_shared_preef), MODE_PRIVATE);
+        if (!sharedPreferences.getBoolean(getString(R.string.SENT_TOKEN_TO_SERVER), false)) {
+            String token = sharedPreferences.getString(getString(R.string.token), "");
+            if (!token.isEmpty()) {
+                sendRegistrationToServer(token);
+                sharedPreferences.edit().putBoolean(getString(R.string.SENT_TOKEN_TO_SERVER), true).apply();
             }
-        });
-        builder.show();
+        }
+
+        return true;
+    }
+
+    private void sendRegistrationToServer(final String token) {
+        String url = Constant.url + "/hisab/postid";
+        StringRequest tokenRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> param = new HashMap<>();
+                SharedPreferences userDetail = MainActivity.thisAct.
+                        getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+                param.put("UserID", userDetail.getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
+                param.put("IID", token);
+                return param;
+            }
+        };
+        ServerRequest.getInstance(this).getRequestQueue().add(tokenRequest);
+    }
+
+    private void requestDialog() {
+
+        if (!Constant.CheckConnectivity(this)) {
+            Toast.makeText(this, "Please Connect To Internet.", Toast.LENGTH_LONG).show();
+        } else if (checkMyDetail()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.request_dialogue_title));
+            builder.setMessage(getString(R.string.request_dialogue_msg));
+            final Spinner spinner = new Spinner(builder.getContext());
+
+            Cursor dbContact = getContentResolver()
+                    .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
+
+            final ArrayList<String> phone = new ArrayList<>();
+            dbContact.moveToFirst();
+            if (dbContact.getCount() > 0) {
+                do {
+                    String contactName = dbContact.getString(COLUMN_NAME_INDEX);
+                    String contactNumber = dbContact.getString(COLUMN_NUMBER_INDEX);
+                    phone.add(
+                            contactName.split(" ")[0] + " " + contactNumber
+                    );
+                } while (dbContact.moveToNext());
+            }
+
+            ArrayAdapter<String> adapter =
+                    new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, phone);
+
+            spinner.setAdapter(adapter);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(10, 0, 10, 0);
+            spinner.setLayoutParams(params);
+            builder.setView(spinner);
+            builder.setPositiveButton(getString(R.string.request_dialogue_ask), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (!phone.isEmpty()) {
+                        String url = Constant.url + "/hisab/request";
+                        StringRequest request = new StringRequest(Request.Method.POST, url,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        Toast.makeText(MainActivity.this, R.string.request_dialogue_result, Toast.LENGTH_SHORT).show();
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                    }
+                                }
+                        ) {
+                            @Override
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                Map<String, String> param = new HashMap<>();
+                                SharedPreferences userDetail = MainActivity.thisAct.
+                                        getSharedPreferences(getString(R.string.user_shared_preef), Context.MODE_PRIVATE);
+                                param.put("SenderID", userDetail
+                                        .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
+                                param.put("SenderName", userDetail.
+                                        getString(getString(R.string.shared_pref_name), getString(R.string.default_username)));
+                                String selectedContact = phone.get(spinner.getSelectedItemPosition());
+                                String part[] = selectedContact.split(" ");
+                                param.put("TargetID", part[1]);
+                                param.put("Name", part[0]);
+                                return param;
+                            }
+                        };
+
+                        ServerRequest.getInstance(MainActivity.this).getRequestQueue().add(request);
+                    }
+                }
+            });
+            builder.setNegativeButton(getString(R.string.request_dialogue_cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.show();
+        }
     }
 
     private void configureNavigationHeader(final View headerView) {
@@ -609,7 +731,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        if(getSupportFragmentManager().getBackStackEntryCount() == 0) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             if (mInterstitialAd.isLoaded())
                 mInterstitialAd.show();
         }

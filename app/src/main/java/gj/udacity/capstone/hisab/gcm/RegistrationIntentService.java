@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -34,7 +33,8 @@ public class RegistrationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(
+                getString(R.string.user_shared_preef),MODE_PRIVATE);
 
         try {
             // In the (unlikely) event that multiple refresh operations occur simultaneously,
@@ -50,12 +50,20 @@ public class RegistrationIntentService extends IntentService {
                     id = arg.getString("id");
                 else
                     id = null;
-                sendRegistrationToServer(token);
 
-                // You should store a boolean that indicates whether the generated token has been
-                // sent to your server. If the boolean is false, send the token to your server,
-                // otherwise your server should have already received the token.
-                sharedPreferences.edit().putBoolean(getString(R.string.SENT_TOKEN_TO_SERVER), true).apply();
+                if(!Constant.CheckConnectivity(this)) {
+                    this.startService(intent);
+                    sharedPreferences.edit().putBoolean(getString(R.string.SENT_TOKEN_TO_SERVER), false).apply();
+                    sharedPreferences.edit().putString(getString(R.string.token), token).apply();
+                }
+                else {
+                    sendRegistrationToServer(token);
+
+                    // You should store a boolean that indicates whether the generated token has been
+                    // sent to your server. If the boolean is false, send the token to your server,
+                    // otherwise your server should have already received the token.
+                    sharedPreferences.edit().putBoolean(getString(R.string.SENT_TOKEN_TO_SERVER), true).apply();
+                }
             }
         } catch (Exception e) {
             Log.d(TAG, "Failed to complete token refresh", e);

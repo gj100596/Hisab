@@ -36,7 +36,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     private final int COLUMN_SUM_INDEX = 2;
     private final int COLUMN_DATE_INDEX = 3;
 
-    public FeedRecyclerViewAdapter(FragmentActivity context, Cursor cursor, int fragmentMode){//}, OnListFragmentInteractionListener listener) {
+    public FeedRecyclerViewAdapter(FragmentActivity context, Cursor cursor, int fragmentMode) {//}, OnListFragmentInteractionListener listener) {
         this.context = context;
         this.cursor = cursor;
         this.fragmentMode = fragmentMode;
@@ -59,13 +59,13 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
 
         cursor.moveToPosition(position);
         final Integer amount = Integer.parseInt(cursor.getString(COLUMN_SUM_INDEX));
-        holder.mAmount.setText(""+amount);//mValues.get(position).id);
-        if(amount<0)
+        holder.mAmount.setText("" + amount);//mValues.get(position).id);
+        if (amount < 0)
             holder.mTransactionColor.setBackgroundResource(R.color.sliderOptionBG);
         else
             holder.mTransactionColor.setBackgroundResource(R.color.materialGreen);
         holder.mName.setText(cursor.getString(COLUMN_NAME_INDEX));//mValues.get(position).content);
-        holder.mName.setTag(cursor.getString(COLUMN_NAME_INDEX)+"_"+cursor.getString(COLUMN_NUMBER_INDEX));//mValues.get(position).content);
+        holder.mName.setTag(cursor.getString(COLUMN_NAME_INDEX) + "_" + cursor.getString(COLUMN_NUMBER_INDEX));//mValues.get(position).content);
         holder.mNumber.setText(cursor.getString(COLUMN_NUMBER_INDEX));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +77,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                         fragmentMode);
                 detailFragment.setHasOptionsMenu(true);
 
-                if(MainActivity.tabletDevice){
+                if (MainActivity.tabletDevice) {
 
                     context.getSupportFragmentManager()
                             .beginTransaction()
@@ -85,8 +85,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                             .addSharedElement(holder.mName, context.getString(R.string.shared_transition_person_name))
                             .addToBackStack("Details")
                             .commit();
-                }
-                else {
+                } else {
                     // Enter Transition on History List
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                         Slide slide = new Slide(Gravity.BOTTOM);
@@ -100,17 +99,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                         detailFragment.setEnterTransition(slide);
                     }
                     // Exit Transition on History List
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        Slide slide = new Slide(Gravity.LEFT);
-                        slide.addTarget(R.id.history_list);
-                        slide.setInterpolator(AnimationUtils
-                                .loadInterpolator(
-                                        context,
-                                        android.R.interpolator.linear_out_slow_in
-                                ));
-                        slide.setDuration(1000);
-                        detailFragment.setExitTransition(slide);
-                    }
+                    detailFragment.setReturnTransition(null);
 
                     /*
                     //Transition on Person Name...Shared Transition
@@ -125,7 +114,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                     context.getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.feed, detailFragment)
-                            .addSharedElement(holder.mName, context.getString(R.string.shared_transition_person_name))
+                       //     .addSharedElement(holder.mName, context.getString(R.string.shared_transition_person_name))
                             .addToBackStack("Details")
                             .commit();
                 }
@@ -140,23 +129,21 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
     @Override
     public int getItemCount() {
         if (dataValid && cursor != null) {
-            if(cursor.getCount() == 0){
+            if (cursor.getCount() == 0) {
                 msg1.setVisibility(View.VISIBLE);
                 msg2.setVisibility(View.VISIBLE);
                 arrow.setVisibility(View.VISIBLE);
                 emptyImage.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.INVISIBLE);
 
-                if(fragmentMode == 0){
+                if (fragmentMode == 0) {
                     msg1.setText(context.getString(R.string.msg1_unsettle));
                     msg2.setText(context.getString(R.string.msg2_unsettle));
-                }
-                else{
+                } else {
                     msg1.setText(context.getString(R.string.msg1_settle));
                     msg2.setText(context.getString(R.string.msg2_settle));
                 }
-            }
-            else{
+            } else {
                 msg1.setVisibility(View.INVISIBLE);
                 msg2.setVisibility(View.INVISIBLE);
                 arrow.setVisibility(View.INVISIBLE);
@@ -178,7 +165,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mName,mAmount, mNumber;
+        public final TextView mName, mAmount, mNumber;
         public final ImageView mTransactionColor;
 
         public ViewHolder(View view) {
