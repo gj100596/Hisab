@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'TheKey'
+            keyPassword 'udacity'
+            storeFile file('../signKey.jks')
+            storePassword 'udacity'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "24.0.2"
     defaultConfig {
@@ -16,6 +24,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
@@ -24,7 +33,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
     compile 'com.android.volley:volley:1.0.0'
