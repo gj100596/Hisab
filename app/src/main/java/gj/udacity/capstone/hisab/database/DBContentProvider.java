@@ -1,5 +1,7 @@
 package gj.udacity.capstone.hisab.database;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -8,6 +10,9 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import java.util.Calendar;
+
+import gj.udacity.capstone.hisab.R;
+import gj.udacity.capstone.hisab.widget.WidgetProvider;
 
 import static gj.udacity.capstone.hisab.database.TransactionContract.CONTENT_AUTHORITY;
 import static gj.udacity.capstone.hisab.database.TransactionContract.Transaction;
@@ -294,10 +299,24 @@ public class DBContentProvider extends ContentProvider {
 
         long id = mOpenHelper.getWritableDatabase().insert(Transaction.TABLE_NAME,null,values);
         getContext().getContentResolver().notifyChange(uri, null);
+
+        updateAllWidgets();
+
         return Transaction.buildUnSettleDetailURI(
                 values.getAsString(Transaction.COLUMN_NAME)+"_"+
                 values.getAsString(Transaction.COLUMN_NUMBER)
                 );
+
+    }
+
+    private void updateAllWidgets() {
+        AppWidgetManager appWidgetManager =
+                AppWidgetManager.getInstance(getContext().getApplicationContext());
+        int[] appWidgetIds = appWidgetManager
+                .getAppWidgetIds(new ComponentName(getContext().getApplicationContext(), WidgetProvider.class));
+        if (appWidgetIds.length > 0) {
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list);
+        }
     }
 
 
@@ -319,8 +338,7 @@ public class DBContentProvider extends ContentProvider {
                 rowDeleted = deleteAll(uri);
                 break;
         }
-
-
+        updateAllWidgets();
         return rowDeleted;
     }
 
@@ -421,6 +439,8 @@ public class DBContentProvider extends ContentProvider {
 
         if (rowsUpdated != 0)
             getContext().getContentResolver().notifyChange(uri, null);
+
+        updateAllWidgets();
         return rowsUpdated;
     }
 }

@@ -2,6 +2,7 @@ package gj.udacity.capstone.hisab.adapter;
 
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Slide;
@@ -95,7 +96,7 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
                                         context,
                                         android.R.interpolator.linear_out_slow_in
                                 ));
-                        slide.setDuration(1000);
+                        slide.setDuration(700);
                         detailFragment.setEnterTransition(slide);
                     }
                     // Exit Transition on History List
@@ -175,6 +176,9 @@ public class FeedRecyclerViewAdapter extends RecyclerView.Adapter<FeedRecyclerVi
             mAmount = (TextView) view.findViewById(R.id.amount);
             mNumber = (TextView) view.findViewById(R.id.date);
             mTransactionColor = (ImageView) view.findViewById(R.id.transactionTypeColor);
+            Typeface typeFace=Typeface.createFromAsset(context.getAssets(),"Slabo.ttf");
+            mName.setTypeface(typeFace);
+            mAmount.setTypeface(typeFace);
         }
     }
 

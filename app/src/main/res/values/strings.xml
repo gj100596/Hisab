@@ -63,8 +63,8 @@
     <string name="add_hint_mobile_number">Mobile Number</string>
     <string name="add_hint_reason">Reason</string>
     <string name="add_hint_amount">Amount</string>
-    <string name="add_hint_given">Given</string>
-    <string name="add_hint_taken">Taken</string>
+    <string name="add_hint_given">Lend</string>
+    <string name="add_hint_taken">Borrow</string>
     <string name="add_hint_add">Add</string>
 
     <!-- Graph Fragment -->

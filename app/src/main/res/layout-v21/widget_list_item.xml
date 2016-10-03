@@ -5,6 +5,7 @@
     android:layout_marginLeft="@dimen/standard_15"
     android:layout_marginStart="@dimen/standard_15"
     android:orientation="horizontal"
+    android:id="@+id/widgetListItem"
     android:background="#FFFFFF"
     android:weightSum="3">
 

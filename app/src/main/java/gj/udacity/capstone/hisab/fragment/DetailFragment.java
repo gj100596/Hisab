@@ -3,6 +3,7 @@ package gj.udacity.capstone.hisab.fragment;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -106,6 +107,8 @@ public class DetailFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         TextView nameTextView = (TextView) view.findViewById(R.id.history_name);
         nameTextView.setText(userName);
+        Typeface typeFace=Typeface.createFromAsset(getActivity().getAssets(),"Slabo.ttf");
+        nameTextView.setTypeface(typeFace);
 
         historyList = (RecyclerView) view.findViewById(R.id.history_list);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));

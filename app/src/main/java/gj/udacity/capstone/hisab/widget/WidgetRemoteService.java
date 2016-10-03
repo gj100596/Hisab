@@ -64,9 +64,12 @@ public class WidgetRemoteService extends RemoteViewsService {
                 RemoteViews views = new RemoteViews(getPackageName(),
                         R.layout.widget_list_item);
 
-                views.setTextViewText(R.id.reason, data.getString(COLUMN_NAME_INDEX));
+                String name = data.getString(COLUMN_NAME_INDEX);
+                String number = data.getString(COLUMN_NUMBER_INDEX);
 
-                views.setTextViewText(R.id.date, data.getString(COLUMN_NUMBER_INDEX));
+                views.setTextViewText(R.id.reason, name);
+
+                views.setTextViewText(R.id.date, number);
 
                 int amount = data.getInt(COLUMN_SUM_INDEX);
                 if ( amount < 0) {
@@ -78,12 +81,12 @@ public class WidgetRemoteService extends RemoteViewsService {
 
                 views.setTextViewText(R.id.amount, ""+amount);
 
-                /*
+
                 final Intent fillInIntent = new Intent();
                 fillInIntent.putExtra(
-                        getString(R.string.symbol_intent_keyword), data.getString(data.getColumnIndex(QuoteColumns.SYMBOL)));
-                views.setOnClickFillInIntent(R.id.customListParent, fillInIntent);
-                */
+                        "Widget_Data", name+"_"+number+"_"+amount);
+                views.setOnClickFillInIntent(R.id.widgetListItem, fillInIntent);
+
 
                 return views;
 

@@ -138,8 +138,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-
-            if (!tabletDevice && notificationBundle != null && notificationBundle.getString("Type") != null) {
+            if(getIntent().getStringExtra("Widget_Data")!=null){
+                String data[] = getIntent().getStringExtra("Widget_Data").split("_");
+                DetailFragment detailFragment = DetailFragment.newInstance(
+                        data[0]+"_"+data[1],
+                        Integer.parseInt(data[2]),
+                        0);
+                detailFragment.setHasOptionsMenu(true);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.feed, detailFragment, "Detail")
+                        .commit();
+            }
+            else if (!tabletDevice && notificationBundle != null && notificationBundle.getString("Type") != null) {
                 // App started from notification
                 DetailFragment detailFragment = DetailFragment.newInstance(notificationBundle);
                 getSupportFragmentManager()
@@ -160,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                                     MainActivity.this,
                                     android.R.interpolator.linear_out_slow_in
                             ));
-                    slide.setDuration(1000);
+                    slide.setDuration(700);
                     feedFragment.setExitTransition(slide);
                     feedFragment.setReenterTransition(null);
                 }
@@ -203,9 +214,22 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menuHome:
+                        FeedFragment feedFragment = FeedFragment.newInstance(0);
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            Slide slide = new Slide(Gravity.LEFT);
+                            slide.addTarget(R.id.cardLayoutList);
+                            slide.setInterpolator(AnimationUtils
+                                    .loadInterpolator(
+                                            MainActivity.this,
+                                            android.R.interpolator.linear_out_slow_in
+                                    ));
+                            slide.setDuration(700);
+                            feedFragment.setExitTransition(slide);
+                            feedFragment.setReenterTransition(null);
+                        }
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, FeedFragment.newInstance(0))
+                                .replace(R.id.feed, feedFragment)
                                 .commit();
                         ((AppCompatActivity) MainActivity.thisAct).getSupportActionBar().setTitle(R.string.pending);
                         drawerLayout.closeDrawer(Gravity.LEFT);
@@ -218,9 +242,22 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
                     case R.id.menuSettled:
+                        FeedFragment settleFragment = FeedFragment.newInstance(1);
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            Slide slide = new Slide(Gravity.LEFT);
+                            slide.addTarget(R.id.cardLayoutList);
+                            slide.setInterpolator(AnimationUtils
+                                    .loadInterpolator(
+                                            MainActivity.this,
+                                            android.R.interpolator.linear_out_slow_in
+                                    ));
+                            slide.setDuration(700);
+                            settleFragment.setExitTransition(slide);
+                            settleFragment.setReenterTransition(null);
+                        }
                         getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.feed, FeedFragment.newInstance(1))
+                                .replace(R.id.feed, settleFragment)
                                 .commit();
                         ((AppCompatActivity) MainActivity.thisAct).getSupportActionBar().setTitle(R.string.settle);
                         drawerLayout.closeDrawer(Gravity.LEFT);
