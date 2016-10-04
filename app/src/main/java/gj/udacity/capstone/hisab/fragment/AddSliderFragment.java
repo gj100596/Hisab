@@ -92,26 +92,28 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
             Cursor contactCursor = cr
                     .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
 
-            while (contactCursor.moveToNext()) {
-                String contactName = contactCursor.getString(
-                        contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String contactNumber = contactCursor.getString(
-                        contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            contactCursor.moveToFirst();
+            if(contactCursor.getCount()>0) {
+                do {
+                    String contactName = contactCursor.getString(
+                            contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String contactNumber = contactCursor.getString(
+                            contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-                //Remove any non numeric character like - or ( or )
-                contactNumber.replaceAll("[^\\d.]", "");
+                    //Remove any non numeric character like - or ( or )
+                    contactNumber.replaceAll("[^\\d.]", "");
 
-                String newNo = contactNumber.replace(" ", "");
-                if (newNo.length() > 9) {
-                    newNo = newNo.substring(newNo.length() - 10);
+                    String newNo = contactNumber.replace(" ", "");
+                    if (newNo.length() > 9) {
+                        newNo = newNo.substring(newNo.length() - 10);
 
-                    String concat = contactName.split(" ")[0] + " " + newNo;
-                    if (!phone.contains(concat))
-                        phone.add(concat);
-                }
-                else{
-                    Log.e("HLOG","Number less than 10 digit");
-                }
+                        String concat = contactName.split(" ")[0] + " " + newNo;
+                        if (!phone.contains(concat))
+                            phone.add(concat);
+                    } else {
+                        Log.e("HLOG", "Number less than 10 digit");
+                    }
+                } while (contactCursor.moveToNext());
             }
             contactCursor.close();
         }
@@ -119,15 +121,17 @@ public class AddSliderFragment extends BottomSheetDialogFragment {
         Cursor dbContact = cr
                 .query(Transaction.getNameNoUri(), null, null, null, null);
 
-        while (dbContact.moveToNext()) {
-            String contactName = dbContact.getString(0);
-            String contactNumber = dbContact.getString(1);
-            String concat = contactName.split(" ")[0] + " " + contactNumber;
-            if (!phone.contains(concat))
-                phone.add(concat);
+        if(dbContact.getCount()>0) {
+            do {
+                String contactName = dbContact.getString(0);
+                String contactNumber = dbContact.getString(1);
+                String concat = contactName.split(" ")[0] + " " + contactNumber;
+                if (!phone.contains(concat))
+                    phone.add(concat);
+            } while (dbContact.moveToNext());
         }
 
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, phone);
+            adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, phone);
 
         selectedContact = (FlowLayout) contentView.findViewById(R.id.selectedContact);
 

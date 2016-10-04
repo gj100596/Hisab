@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.NavigationView;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -186,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Load Ad for future
         mInterstitialAd = new InterstitialAd(MainActivity.this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+        mInterstitialAd.setAdUnitId(Constant.AD_ID);
         AdRequest adRequest1 = new AdRequest.Builder()
-                .addTestDevice("396C375CF6E46B104E5089AC176E8A1B")//AdRequest.DEVICE_ID_EMULATOR)
+               // .addTestDevice("396C375CF6E46B104E5089AC176E8A1B")//AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mInterstitialAd.loadAd(adRequest1);
 
@@ -497,12 +499,38 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.request_dialogue_title));
             builder.setMessage(getString(R.string.request_dialogue_msg));
-            final Spinner spinner = new Spinner(builder.getContext());
+            final AutoCompleteTextView selectedText = new AutoCompleteTextView(builder.getContext());
 
+            final ArrayList<String> phone = new ArrayList<>();
+            Cursor contactCursor = getContentResolver()
+                    .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+            contactCursor.moveToFirst();
+            if(contactCursor.getCount()>0) {
+                do {
+                    String contactName = contactCursor.getString(
+                            contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String contactNumber = contactCursor.getString(
+                            contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                    //Remove any non numeric character like - or ( or )
+                    contactNumber.replaceAll("[^\\d.]", "");
+
+                    String newNo = contactNumber.replace(" ", "");
+                    if (newNo.length() > 9) {
+                        newNo = newNo.substring(newNo.length() - 10);
+
+                        String concat = contactName.split(" ")[0] + " " + newNo;
+                        if (!phone.contains(concat))
+                            phone.add(concat);
+                    } else {
+                        Log.e("HLOG", "Number less than 10 digit");
+                    }
+                } while (contactCursor.moveToNext());
+            }
             Cursor dbContact = getContentResolver()
                     .query(TransactionContract.Transaction.UNSETTLE_URI, null, null, null, null);
 
-            final ArrayList<String> phone = new ArrayList<>();
+
             dbContact.moveToFirst();
             if (dbContact.getCount() > 0) {
                 do {
@@ -516,13 +544,16 @@ public class MainActivity extends AppCompatActivity {
 
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, phone);
+            selectedText.setAdapter(adapter);
 
-            spinner.setAdapter(adapter);
+            //spinner.setAdapter(adapter);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             params.setMargins(10, 0, 10, 0);
-            spinner.setLayoutParams(params);
-            builder.setView(spinner);
+            //spinner.setLayoutParams(params);
+            selectedText.setLayoutParams(params);
+           // builder.setView(spinner);
+            builder.setView(selectedText);
             builder.setPositiveButton(getString(R.string.request_dialogue_ask), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -550,7 +581,8 @@ public class MainActivity extends AppCompatActivity {
                                         .getString(getString(R.string.shared_pref_number), getString(R.string.default_usernumber)));
                                 param.put("SenderName", userDetail.
                                         getString(getString(R.string.shared_pref_name), getString(R.string.default_username)));
-                                String selectedContact = phone.get(spinner.getSelectedItemPosition());
+
+                                String selectedContact = selectedText.getText().toString();
                                 String part[] = selectedContact.split(" ");
                                 param.put("TargetID", part[1]);
                                 param.put("Name", part[0]);

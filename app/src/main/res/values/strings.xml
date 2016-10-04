@@ -159,6 +159,7 @@
     <string name="intro_3_msg">Keep track of on which things you spent most of your money.</string>
     <string name="no_data">No Data</string>
     <string name="token">Token</string>
+    <string name="Shared_pref_detail_first">Detail_First_Time</string>
 
 
     <!-- FAQ -->

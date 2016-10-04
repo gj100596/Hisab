@@ -56,7 +56,7 @@ public class sendRequestResponseBroadcast extends BroadcastReceiver {
                 JSONArray transaction = new JSONArray();
                 Cursor particularTransaction = context.getContentResolver()
                         .query(TransactionContract.Transaction.buildUnSettleDetailURI(
-                                senderName+"_"+requestingUserNumber),
+                                requestingUserNumber),
                                 null, null, null, null, null);
                 int sum = 0;
                 if(particularTransaction.getCount()>0) {

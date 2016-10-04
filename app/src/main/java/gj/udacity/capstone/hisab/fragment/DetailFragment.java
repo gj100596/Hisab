@@ -2,6 +2,7 @@ package gj.udacity.capstone.hisab.fragment;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +37,7 @@ import gj.udacity.capstone.hisab.adapter.DetailRecyclerViewAdapter;
 import gj.udacity.capstone.hisab.adapter.DetailViewNotificationAdapter;
 import gj.udacity.capstone.hisab.database.TransactionContract;
 
+import static android.content.Context.MODE_PRIVATE;
 import static gj.udacity.capstone.hisab.database.TransactionContract.BASE_URI;
 
 public class DetailFragment extends Fragment
@@ -168,6 +171,16 @@ public class DetailFragment extends Fragment
             }
 
         }
+
+        SharedPreferences preferences = getActivity()
+                .getSharedPreferences(getString(R.string.user_shared_preef),MODE_PRIVATE);
+
+        if(!preferences.getBoolean(getString(R.string.Shared_pref_detail_first),false)){
+            Toast.makeText(getActivity(),"Swipe Row to Left For Deletion",Toast.LENGTH_LONG).show();
+            preferences.edit().putBoolean(getString(R.string.Shared_pref_detail_first),true).apply();
+        }
+
+
         return view;
     }
 
@@ -190,6 +203,16 @@ public class DetailFragment extends Fragment
                 public void onClick(DialogInterface dialog, int which) {
                     try {
                         JSONArray array = new JSONArray(notificationBundle.getString("data"));
+
+                        String name = notificationBundle.getString("Name");
+                        String number = notificationBundle.getString("User");
+
+                        cursor = MainActivity.thisAct.getContentResolver()
+                                .query(
+                                        TransactionContract.Transaction.buildUnSettleDetailURI(
+                                                name+"_"+number
+                                        ),
+                                        null, null, null, null);
 
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject jsonObject = array.getJSONObject(i);
