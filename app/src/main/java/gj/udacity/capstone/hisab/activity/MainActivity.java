@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     slide.setDuration(700);
                     feedFragment.setExitTransition(slide);
                     feedFragment.setReenterTransition(null);
+                    feedFragment.setEnterTransition(null);
                 }
 
                 getSupportFragmentManager()
@@ -208,6 +209,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     */
+
     private void configureNavigationDrawer() {
         navigationView = (NavigationView) findViewById(R.id.navigation_drawer);
 
@@ -228,6 +233,9 @@ public class MainActivity extends AppCompatActivity {
                             slide.setDuration(700);
                             feedFragment.setExitTransition(slide);
                             feedFragment.setReenterTransition(null);
+                            feedFragment.setEnterTransition(null);
+                            feedFragment.setReturnTransition(null);
+
                         }
                         getSupportFragmentManager()
                                 .beginTransaction()
@@ -254,8 +262,10 @@ public class MainActivity extends AppCompatActivity {
                                             android.R.interpolator.linear_out_slow_in
                                     ));
                             slide.setDuration(700);
+                            settleFragment.setEnterTransition(null);
                             settleFragment.setExitTransition(slide);
                             settleFragment.setReenterTransition(null);
+                            settleFragment.setReturnTransition(null);
                         }
                         getSupportFragmentManager()
                                 .beginTransaction()

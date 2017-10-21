@@ -1,3 +1,4 @@
+
 <resources>
     <string name="app_name">Hisab</string>
     <string name="action_settings">Settings</string>
@@ -160,6 +161,9 @@
     <string name="no_data">No Data</string>
     <string name="token">Token</string>
     <string name="Shared_pref_detail_first">Detail_First_Time</string>
+    <string name="backup">BACKUP</string>
+    <string name="back">Backup</string>
+    <string name="restore">Restore</string>
 
 
     <!-- FAQ -->
